@@ -1,0 +1,84 @@
+
+<script src="/javascripts/merklestore.js"></script> 
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    init("{{ protocol }}", "{{ domain }}", "{{address}}", "{{ ipfspath }}");
+});
+</script>
+
+<div class="container padbottom">
+
+	<center><div id="mainhead" style="margin-bottom:0;">Verifiable RDF Dataset</div></center>
+	<hr class="headingunderline"><br>
+
+	<div id="contracttitle" style='font-weight: bold; font-size: 20px;'>Details relating to the dataset contract</div>
+	</br>
+	<table style="color:#555;">
+		<tr>
+			<td style='padding: 5px'>Contract:</td>
+			<td style='padding: 5px' id="contract"></td>
+		</tr>
+		<tr>
+			<td style='padding: 5px'>Contract Transaction:</td>
+			<td style='padding: 5px' id="transaction"></td>
+		</tr>
+		<tr>
+			<td style='padding: 5px'>Owner:</td>
+			<td style='padding: 5px' id="owner"></td>
+		</tr>
+		<tr>
+			<td style='padding: 5px'>IPFS Address to Index JSON File:</td>
+			<td style='padding: 5px' id="ipfsindex"></td>
+		</tr>
+		<tr>
+			<td style='padding: 5px'>Created:</td>
+			<td style='padding: 5px' id="created"></td>
+		</tr>
+	</table>
+	
+	<br><br>
+	
+	<div id="transactiontitle" style='font-weight: bold; font-size: 20px;'>Details relating to the contract transaction</div>
+	<br>
+	<div id="transactionid">Contract Transaction:</div>
+	<br>
+	<div id="transactiondata" style="display: block; width:100%; height:250px; padding:10px; word-wrap: break-word; overflow-y: auto; border-style: solid; border-width: 2px; border-color: #ccc; background: #f6f6f6;"></div>
+	
+	<br><br>
+	<div id="transactionreceipttitle" style='font-weight: bold; font-size: 20px;'>Details relating to the contract transaction receipt</div>
+	<br>
+	<div id="transactionreceiptdata" style="display: block; width:100%; height:250px; padding:10px; word-wrap: break-word; overflow-y: auto; border-style: solid; border-width: 2px; border-color: #ccc; background: #f6f6f6;"></div>
+	
+	<br><br>
+	<div id="blocktitle" style='font-weight: bold; font-size: 20px;'>Details relating to the blockchain block</div>
+	<br>
+	<div id="blockid">Block Number:</div>
+	<br>
+	<div id="blockdata" style="display: block; width:100%; height:250px; padding:10px; word-wrap: break-word; overflow-y: auto; border-style: solid; border-width: 2px; border-color: #ccc; background: #f6f6f6;"></div>
+	
+	<br><br>
+	
+	<div id="ipfsindextitle" style='font-weight: bold; font-size: 20px;'>Merkle Index File on IPFS</div>
+	<br>
+	<div id="ipfsindexurl">IPFS Address:</div>
+	<br>
+	<div id="ipfsindexdata" style="display: block; width:100%; height:250px; padding:10px; word-wrap: break-word; overflow-y: auto; border-style: solid; border-width: 2px; border-color: #ccc; background: #f6f6f6;"></div>
+	
+	<br><br>
+	
+	<div id="ipfsindextitle" style='font-weight: bold; font-size: 20px;'>Merkle Tree File on IPFS</div>
+	<br>
+	<div id="ipfshashid">IPFS hash:</div>
+	<div id="ipfsurl">IPFS Address:</div>
+	<br>
+	<div id="ipfsdata" style="display: block; width:100%; height:250px; padding:10px; word-wrap: break-word; overflow-y: auto; border-style: solid; border-width: 2px; border-color: #ccc; background: #f6f6f6;"></div>
+
+	<div class="clearit"></div>
+	<br><br>
+
+	<div style="color: #555">If you have any issues with any of these materials please email:<a href="mailto:michelle.bachler@open.ac.uk?subject=ISWS Summer School">michelle.bachler@open.ac.uk</a></div>
+	<br>
+	<br>
+
+</div>

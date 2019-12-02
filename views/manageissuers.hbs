@@ -1,0 +1,147 @@
+
+<script src="/javascripts/manageissuers.js"></script>
+
+<div class="container padbottom">
+	<div id="content">
+		<div id="mainhead" style="margin-bottom:0;">{{title}}</div>
+		<hr class="headingunderline"><br>
+
+		<p style="text-align: left; font: 0.8em helvetica, sans-serif;line-height: 130%;"><b>Please Note:</b> 
+		When you have created an Issuer Record you will be able to create them a login account using the 'Create Account' button.
+		Issuers will then be emailed using the Login Email address you have given 
+		in order to verify their email address and create their login accounts on this website.<p> 
+
+		<p style="text-align: left; font: 0.8em helvetica, sans-serif;line-height: 100%;">
+		You will not be able to use issuers against badges who have not completed the registration process.</p>
+
+		<br>
+
+		<center><input id="createFormShowButton" type="button" value="Create Issuer" onclick="showCreateForm();"></center>
+
+		<!-- FORM TO CREATE NEW ISSUER -->
+		<div id="createDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			Create new Issuer<br>
+			<div class="boxy addform">
+				<form id="formRec" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<div>
+						<div style="float:left;min-width:120px;">Name<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="name" id="name" style="background-color:white;" placeholder="Enter the Issuer Name"></div>
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Description</div>
+						<div style="float:left;width:80%;"><textarea rows="3" cols="74" name="description" id="description" style="background-color:white;" placeholder="Enter the Issuer Description (Optional)"></textarea></div>
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Website URL<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="url" id="url" style="background-color:white;" placeholder="Enter the Issuer website URL"></div>
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Logo URL<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="imageurl" id="imageurl" style="background-color:white;" placeholder="Enter the Issuer logo / image URL"></div>
+					</div>
+					<div>
+						<div style="float:left;min-width:120px;">Email</div>
+						<div style="float:left;width:80%;"><input type="text" name="email" id="email" style="background-color:white;" placeholder="Enter the Issuer Email"></div>
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Telephone</div>
+						<div style="float:left;width:80%;"><input type="text" name="telephone" id="telephone" style="background-color:white;" placeholder="Enter the Issuer Telephone (Optional)"></div>
+					</div>
+					<div style="clear:both;"></div>
+					<br>
+					<center><input type="button" value="Save" onclick="createIssuer();"><span style="padding-left:30px"></span><input type="button" value="Cancel" onclick="cancelCreateForm();"></center>
+				</form>
+			</div>						
+		</div>
+
+		<!-- FORM TO EDIT EXISTING ISSUER -->
+		<div id="editDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			
+			Edit Issuer<br>
+			<div class="boxy editform">
+				<form id="formRecEdit" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<input type="hidden" id="issuerid" name="issuerid" value="">
+					<div>
+						<div style="float:left;min-width:120px;">Name<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="name" id="name" style="background-color:white;" placeholder="Enter the Issuer Name"></div>
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Description</div>
+						<div style="float:left;width:80%;"><textarea rows="3" cols="74" name="description" id="description" style="background-color:white;" placeholder="Enter the Issuer Description (Optional)"></textarea></div>
+					</div>
+					<div>
+						<div style="float:left;min-width:120px;">Website URL<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="url" id="url" style="background-color:white;" placeholder="Enter the Issuer website URL"></div>
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Logo URL<span style="color:red">&#42;</div>
+						<div style="float:left;width:80%;"><input type="text" name="imageurl" id="imageurl" style="background-color:white;" placeholder="Enter the Issuer logo / image URL"></div>
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Email</div>
+						<div style="float:left;width:80%;"><input type="text" name="email" id="email" style="background-color:white;" placeholder="Enter the Issuer Email"></div>
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Telephone</div>
+						<div style="float:left;width:80%;"><input type="text" name="telephone" id="telephone" style="background-color:white;" placeholder="Enter the Issuer Telephone (Optional)"></div>
+					</div>
+					<div style="clear:both;"></div>
+					<br>
+					<center><input type="button" value="Update" onclick="updateIssuer();"><span style="padding-left:30px"></span><input type="button" value="Cancel" onclick="cancelEditForm();"></center>
+				</form>
+			</div>						
+		</div>
+
+		<!-- FORM TO VIEW EXISTING ISSUER -->
+		<div id="viewDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			View Issuer<br>
+			<div class="boxy viewform">
+				<form id="formRecView" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<div>
+						<div style="float:left;min-width:120px;">Name</div>
+						<div style="float:left;width:80%;"><input readonly type="text" name="name" id="name" style="background-color:white;"></div>
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Description</div>
+						<div style="float:left;width:80%;"><textarea readonly rows="3" cols="74" name="description" id="description" style="background-color:white;"></textarea></div>
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Website URL</div>
+						<div style="float:left;width:80%;"><input readonly type="text" name="url" id="url" style="background-color:white;"></div>
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Logo URL</div>
+						<div style="float:left;width:80%;"><input readonly type="text" name="imageurl" id="imageurl" style="background-color:white;"></div>
+					</div>
+					<div>
+						<div style="float:left;min-width:120px;">Email</div>
+						<div style="float:left;width:80%;"><input readonly type="text" name="email" id="email" style="background-color:white;"></div>
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Telephone</div>
+						<div style="float:left;width:80%;"><input readonly type="text" name="telephone" id="telephone" style="background-color:white;"></div>
+					</div>
+					<div style="clear:both;"></div>
+					<br>
+					<center><input type="button" value="Close" onclick="closeViewForm();"></center>
+				</form>
+			</div>						
+		</div>
+	</div>
+	<div style="clear:both;"></div>
+	<br><br>
+	<div id="storedList" style="margin-left:auto;margin-right:auto">You have not added any issuers yet</div>
+</div>
+

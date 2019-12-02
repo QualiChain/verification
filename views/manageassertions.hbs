@@ -1,0 +1,77 @@
+
+<script src="/javascripts/dateformat.js"></script>
+<script src="/javascripts/manageassertions.js"></script>
+ 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    initializePage('{{ protocol }}', '{{ domain }}');
+});
+</script>
+
+<div class="container padbottom">
+	<div id="content">
+		<div id="mainhead" style="margin-bottom:0;">{{title}}</div>
+		<hr class="headingunderline"><br>
+
+		<!-- FORM TO ADD A NEW BADGE ISSUANCE -->
+		<div id="createDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:block">
+			Ceate a Badge Issuance<br>
+			<div class="boxy addform">
+				<form id="formRec" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<div>
+						<div style="float:left;min-width:120px;">Recipient<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;" id="recipientlist"></div>
+
+					</div><br>
+					<div>
+						<div style="float:left;min-width:120px;">Badge<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;" id="badgelist"></div>
+					</div>
+					<br>
+
+					<center><input type="button" value="Save" onclick="createAssertion();"></center>
+				</form>
+
+			</div> 
+		</div> 
+
+		<!-- FORM TO EDIT AN EXISTING BADGE ISSUANCE -->
+		<div id="editDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			Edit Pending Badge Issuance<br>
+			<div class="boxy editform">
+				<form id="formRecEdit" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<input type="hidden" id="assertionid" name="assertionid" value="">
+					<div>
+						<div style="float:left;min-width:120px;">Recipient Name<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;" id="recipientlistedit"></div>
+
+					</div><br>
+					<div>
+						<div style="float:left;min-width:120px;">Badge Name<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;" id="badgelistedit"></div>
+					</div>
+
+					<br>
+
+					<center><input type="button" value="Update" onclick="updateAssertion();">
+					<span style="padding-left:30px"></span>
+					<input type="button" value="Cancel" onclick="cancelEditForm();"></center>
+				</form>
+
+			</div> 
+		</div>
+
+		<br><br>
+		
+		Pending Badge Issuances:
+		<div id="storedList" style="margin-left:auto;margin-right:auto">List</div>
+		
+		Issued Badges:
+		<div id="storedList2" style="margin-left:auto;margin-right:auto">List</div>
+		</div>
+
+		<!-- <br><br>
+		Revoked Badges:
+		<div id="storedList4" style="margin-left:auto;margin-right:auto">List</div>-->
+	</div>
+</div>

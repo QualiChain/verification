@@ -1,0 +1,120 @@
+
+<script type="text/javascript" src="/javascripts/dateformat.js"></script>
+<script type="application/javascript" src="javascripts/viewbasebadge.js"></script>
+<link rel="stylesheet" type="text/css" href="stylesheets/viewbasebadge.css">
+
+<script type="application/javascript">
+
+	var badgeid = "{{id}}";
+	document.addEventListener('DOMContentLoaded', function() {
+		viewbadgeinfo(badgeid);
+	});
+</script>
+
+<div class="container padbottom">
+
+	<div class="panel" style="width:95%;">
+
+		<center><div id="mainhead" style="margin-bottom:0;">Badge Data</div></center>
+		<hr class="headingunderline"><br>
+		
+		<div style="clear:both;float:left;">
+			<h3 style="color:#555"><span style="display:inline-block;margin-right:3px;width:4px;height:18px;background-color:#fcc010;"></span>Issuer</h3>
+			<div class="innerpanel" style="font-size:11pt">
+
+				<div class="section">
+					<label class="lbl">Image:</label>
+					<img src="" height="50" id="issuerimage"></img>
+				</div>
+				<br>
+				<div class="section">
+					<label class="lbl">Name:</label>
+					<label style="font-weight:400;" id="issuername"></label>
+				</div>
+				<div class="section">
+				  <label class="lbl">Description:</label>
+				  <label style="font-weight:400;" id="issuerdescription"></label>
+				</div>
+				<div class="section">
+				  <label class="lbl">URL:</label>
+				  <label style="font-weight:400;" id="issuerurl"></label>
+				</div>
+				<div class="section">
+				  <label class="lbl">Email:</label>
+				  <label style="font-weight:400;" id="issueremail"></label>
+				</div>
+				<div class="section">
+				  <label class="lbl">Telephone:</label>
+				  <label style="font-weight:400;" id="issuertel"></label>
+				</div>
+			</div>
+		</div>
+		
+		  <div style="clear:both;float:left; margin-top:20px;">
+			  <h3 style="color:#555"><span style="display:inline-block;margin-right:3px;width:4px;height:18px;background-color:#fcc010;"></span>Badge</h3>
+				<div class="section">
+					<label class="lblhuge">Name:</label>
+					<label id="badgename"></label>
+				</div>
+				<div class="section">
+					<label class="lblhuge">Description:</label>
+					<div id="badgedescription" style="height:60px;overflow:auto;" ></div>
+				</div>
+				<div class="section"><label></label></div>
+				<div class="section" style="margin-bottom:10px;">
+					<label class="lblhuge">Image:</label>
+					<div style="float:left;width:100px;">
+						<img src="" height="100" id="badgeimage" />
+					</div>
+				</div>
+				<div class="section">
+					<label class="lblhuge">Tags:</label>
+					<ul id="badgetags" style="height:60px;" ></ul>
+				</div>										
+				<div class="section">
+					<label class="lblhuge">Criteria:</label>
+					<label id="criterianarrative"></label>
+				</div>
+
+				<div class="section">&nbsp;
+				</div>
+
+				<div class="section" id="alignmentsection" style="clear:both;float:left;display:none;">
+					<label class="lblbig">Alignments:</label>
+					<div id="alignmentlist" style="float:left;margin-top:5px;clear:both;height:80px;overflow:auto; font-size:10pt">
+						<table style="width:100%;border-collapse:collapse;background-color:white;border-spacing:0px;" cellpadding="8">
+							<thead  style="font-weight:bold;background-color:#E8E8E8">
+								<td width="20%" class="tdborder"><b>Name</b></td>
+								<td width="40%" class="tdborder"><b>Url</b></td>
+								<td width="40%" class="tdborder"><b>Description</b></td>
+								<td width="40%" class="tdborder"><b>Framework</b></td>
+								<td width="40%" class="tdborder"><b>Code</b></td>
+							</thead >
+							<tbody id="alignmentitems">
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<div class="section" id="endorsementsection" style="clear:both;float:left;margin-top:20px;display:none;">
+					<label class="lbl">Endorsements:</label>
+					<div id="alignmentlist" style="float:left;margin-top:5px;clear:both;height:300px;overflow:auto; font-size:10pt" >
+						<table style="width:100%;border-collapse:collapse;background-color:white;border-spacing:0px;" cellpadding="8">
+							<thead  style="font-weight:bold;background-color:#E8E8E8">
+								<td width="20%" class="tdborder"><b>Endorsement Statement</b></td>
+								<td width="10%" class="tdborder"><b>By</b></td>
+								<td width="10%" class="tdborder"><b>Icon</b></td>
+								<td width="20%" class="tdborder"><b>Description</b></td>
+								<td width="10%" class="tdborder"><b>Url</b></td>
+								<td width="10%" class="tdborder"><b>Email</b></td>
+								<td width="10%" class="tdborder"><b>Telephone</b></td>
+							</thead >
+							<tbody id="endorsementitems">
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

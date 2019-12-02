@@ -1,0 +1,114 @@
+
+<link rel="stylesheet" type="text/css" href="/stylesheets/merklevalidate.css">
+<script src="/javascripts/merklevalidate.js"></script> 
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    init("{{ protocol }}", "{{ domain }}", "{{address}}", "{{ ipfspath }}");
+});
+</script>
+
+<div class="container padbottom">
+	<center><div id="mainhead" style="margin-bottom:0;">Validating against a Verifiable RDF Dataset</div></center>
+	<hr class="headingunderline"><br>
+
+	<div id="title" style='font-weight: bold; font-size: 20px;'>Title: </div></br>
+	<div id="contract" style="color:#555;">Contact address: {{ address }}</div></br>
+	<div id="indexurl" style="color:#555;font-size: 13px;">URL to Merkle Tree Index: </div>
+	</br>
+
+	<hr style="border: 3px solid #eee;border-radius:3px;">
+	<div id="contractsettitle" style='font-weight: bold; font-size: 20px;'>Validate an RDF dataset</div>
+	</br>
+	
+	<table width="100%">
+		<tr>
+			<td align="left" valign="top">
+				<form id="merkleset" enctype="multipart/form-data">
+				<input type="hidden" name="contract" value="{{ address }}" />
+				<input name="data" type="file" style="font-size:1em;" /> 
+				<input type="submit" id="validatesetbutton" value="validate" style="font-size:1em;" />
+				</form><br>
+				<i>NOTE: Triples/quads must be in N-Triple format. There is a file upload limit of 20MB and large files may take a little time to process.</i>
+			</td>
+			<td align="right" valign="top">
+				<div id="validatesetresult"></div>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" valign="top">
+				<br>
+				Or
+				<br>
+				<form id="merklesetfromurl" enctype="multipart/form-data">
+				<input type="hidden" name="contract" value="{{ address }}" />
+				<input name="url" type="text" style="font-size:1em;" placeholder="Enter publically accessible Url to ntriple data to test" /> 
+				<input type="submit" id="validatesetfromurlbutton" value="validate" style="font-size:1em;" />
+				</form><br>
+				<i>NOTE: Triples/quads must be in N-Triple format.</i>
+			</td>
+		</tr>
+  	</table>	
+	</br>
+
+	<hr style="border: 3px solid #eee;border-radius:3px;">
+	<div id="contractsingletitle" style='font-weight: bold; font-size: 20px;'>Validate an individual RDF Triple</div>
+	</br>
+	<table width="100%">
+	<tr>
+	<td align="left" valign="top">
+	<form id="validatesingle">
+	<input type="hidden" name="contract" value="{{ address }}" />
+ 	<span style="color: #555">Enter a single triple to be validated:</span></br></br>
+ 	<textarea name="triple" style="width: 70%; height: 50px;"></textarea></br></br>
+  	<input type="submit" id="validatesinglebutton" value="validate" style="font-size:1em;" />
+  	</form><br>
+	<i>NOTE: The Triple/quad must be in N-Triple format.</i>
+  	</td>
+  	<td align="right" valign="top">
+  	<div id="validatesingleresult"></div>
+  	</td>
+  	</tr>
+  	</table>
+	</br>
+
+	<hr style="border: 3px solid #eee;border-radius:3px;">
+	<div id="contractsubsettitle" style='font-weight: bold; font-size: 20px;'>Validate an RDF data subset</div>
+	</br>
+	<table width="100%">
+		<tr>
+			<td align="left" valign="top">
+				<form id="merklesubset" enctype="multipart/form-data">
+				<input type="hidden" name="contract" value="{{ address }}" />
+				<input name="data" type="file" style="font-size:1em;" /> 
+				<input type="submit" id="validatesubsetbutton" value="validate" style="font-size:1em;" />
+				</form><br>
+				<i>NOTE: Triples/quads must be in N-Triple format. Subsets can be no larger than 1000 triples/quads at present.</i>
+			</td>
+			<td align="right" valign="top">
+				<div id="validatesubsetresult"></div>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" valign="top">
+				<br>
+				Or
+				<br>
+				<form id="merklesubsetfromurl" enctype="multipart/form-data">
+				<input type="hidden" name="contract" value="{{ address }}" />
+				<input name="url" type="text" style="font-size:1em;" placeholder="Enter publically accessible Url to ntriple data to test" /> 
+				<input type="submit" id="validatesubsetfromurlbutton" value="validate" style="font-size:1em;" />
+				</form><br>
+				<i>NOTE: Triples/quads must be in N-Triple format. Subsets can be no larger than 1000 triples/quads at present.</i>
+			</td>
+		</tr>
+  	</table>
+	</br>
+	</br>
+  	<div id="validatesubsetrecordresult" style="display: none; overflow-y: auto; height: 400px; padding-left: 5px; padding-right: 20px;"></div>
+	<div class="clearit"></div>
+	<br><br>
+	<div style="color: #555">If you have any issues with any of these materials please email:<a href="mailto:michelle.bachler@open.ac.uk?subject=ISWS Summer School">michelle.bachler@open.ac.uk</a></div>
+	<br>
+	<br>
+</div>

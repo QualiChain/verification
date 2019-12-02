@@ -1,0 +1,466 @@
+<script type="text/javascript" src="/javascripts/dateformat.js"></script>
+<script type="text/javascript" src="/javascripts/viewbadge.js"></script>
+
+
+<div class="container padbottom">
+	<div id="content">
+		<div id="mainhead" style="margin-bottom:0;">{{title}}</div>
+		<hr class="headingunderline"><br>
+
+		<div style="font-size:0.8em;color:#555;line-height:140%;text-align:left;margin-bottom:20px;">To validate a badge, select a .png file of a badge, enter the recipient&#39;s email address and press the validate button.<br>The answer will appear in the results panel, a <i>tick</i> for a valid badge, a <i>cross</i> for an invalid badge. Press show details for more detailed information.</div>
+		<form id="validatebadge" enctype="multipart/form-data" class="boxy" style="padding:20px;overflow:hidden;">
+			<input type="file" id="badgetoupload" accept=".png" style="font-size:0.8em;color:#555;line-height:0;margin-left:18px;" />
+			<div style="text-align:left;margin:20px;"><span style="font-size:0.8em;color:#555;">Enter recipient&#39;s email </span><input type="text" id="emailtoupload" style="width:70%;font-size:0.8em;line-height:0;background-color:white;"/></div>		
+			<input type="submit" id="validatesetbutton" value="validate" style="margin-top:20px;padding-top:5px;font-size:1em;" />
+  		</form>	
+  		<br>
+  		<div id="validationblock" class="boxy" style="padding-left:28px; display: none;"><!--style="width: 1024px;"-->
+			<table style="width:97%;">
+				<tr>
+					<td align="left" id="badegimage" style="width: 100px;"></td>
+					<td align="left"><span id="badegtitle"></span><br><a href="javascript:showhidetitle();" style="font-size:0.8em;cursor:pointer;text-decoration:underline!important;" id="t_details"> ...show details</a></td>
+					<td align="right">
+						<span style="font-size:1em;">Validation Result:</span><br>
+						<a href="javascript:showhidedetails();" style="font-size:0.8em;cursor:pointer;text-decoration:underline!important;" id="details"> ...show validation</a>
+					</td>
+					<td align="right" id="validationresult" style="width: 100px;"></td>
+					
+				</tr>	
+			</table> 		
+  		</div>	
+  		
+  		<br>
+  		<div id="t_panel" class="content" style="display: none; text-align: left; overflow:auto"> <!--style="width: 1024px; display: none;"-->
+  		
+			<h1>Badge Data</h1>
+
+			<div style="clear:both;float:left;">
+				<div class="innerpanel" style="font-size:11pt">
+					<div class="section">
+						<label class="lbl">Issued On :</label>
+						<label style="font-weight:400;" id="issuedon"></label>
+					</div>
+				</div>
+			</div>
+
+			<div style="clear:both;float:left;">
+				<h3 style="color:#555"><span style="display:inline-block;margin-right:3px;width:4px;height:18px;background-color:#fcc010;"></span>Issuer</h3>
+					<div class="innerpanel" style="font-size:11pt">
+						<div class="section">
+							<label class="lbl">Image:</label>
+							<img src="" width="80" id="databadgeissuerimage"></img>
+						</div>
+						<br>
+						<div class="section">
+							<label class="lbl">Name:</label>
+							<label style="font-weight:400;" id="dataissuername"></label>
+						</div>
+						<div class="section">
+							<label class="lbl">Description:</label>
+							<label style="font-weight:400;" id="dataissuerdesc"></label>
+						</div>
+						<div class="section">
+							<label class="lbl">URL:</label>
+							<label style="font-weight:400;" id="dataissuerurl"></label>
+						</div>
+						<div class="section">
+							<label class="lbl">Email:</label>
+							<label style="font-weight:400;" id="dataissueremail"></label>
+						</div>
+						<div class="section">
+							<label class="lbl">Telephone:</label>
+							<label style="font-weight:400;" id="dataissuertelephone"></label>
+						</div>
+					</div>
+				</div>
+
+				<div style="clear:both;float:left; margin-top:20px;">
+					<h3 style="color:#555"><span style="display:inline-block;margin-right:3px;width:4px;height:18px;background-color:#fcc010;"></span>Recipient</h3>
+					<div class="innerpanel" style="font-size:11pt">
+						<div class="section">
+							<label class="lbl">Recipient identity:</label>
+							<label style="font-weight:400;" id="recipient"></label>
+						</div>
+					<div class="section">
+						<label class="lbl">Identity type:</label>
+						<label style="font-weight:400;" id="recipienttype"></label>
+					</div>
+					<div class="section">
+						<label class="lbl">Identity hashed:</label>
+						<label style="font-weight:400;" id="recipienthashed"></label>
+					</div>
+					<div class="section">
+						<label class="lbl">Identity salt:</label>
+						<label style="font-weight:400;" id="recipientsalt"></label>
+					</div>
+				</div>
+			</div>
+
+			<div id="evidencearea" style="clear:both;display:none;float:left; margin-top:20px;">
+				<h3 style="color:#555"><span style="display:inline-block;margin-right:3px;width:4px;height:18px;background-color:#fcc010;"></span>Evidence</h3>
+				<div class="innerpanel" style="font-size:10pt">
+					<div class="section">
+						<table style="width:100%;border-collapse:collapse;background-color:white;border-spacing:0px;" cellpadding="8">
+							<thead  style="font-weight:bold;background-color:#E8E8E8">
+								<td width="40%" class="tdborder"><b>Url</b></td>
+								<td width="20%" class="tdborder"><b>Name</b></td>
+								<td width="40%" class="tdborder"><b>Description</b></td>
+								<td width="40%" class="tdborder"><b>Narrative</b></td>
+								<td width="40%" class="tdborder"><b>Genre</b></td>
+								<td width="40%" class="tdborder"><b>Audience</b></td>
+							</thead >
+							<tbody id="evidenceitems">
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+			<div style="clear:both;float:left; margin-top:20px;">
+				<h3 style="color:#555"><span style="display:inline-block;margin-right:3px;width:4px;height:18px;background-color:#fcc010;"></span>Badge</h3>
+				<div class="innerpanel" style="font-size:11pt">
+					<div class="section">
+						<label class="lbl">Image:</label>
+						<img src="" width="80" id="databadgeimage"></img>
+					</div>
+					<br>
+					<div class="section">
+						<label class="lbl">Name:</label>
+						<label style="font-weight:400;" id="databadgename"></label>
+					</div>
+					<div class="section">
+						<label class="lbl">Description:</label>
+						<div id="databadgedescription" style="height:100px;overflow:auto;" ></div>
+					</div>
+					<br>
+					<div class="section">
+						<label class="lbl">Criteria:</label>
+						<div id="criteriaurl" style="height:100px;overflow:auto;" ></div>
+					</div>
+
+					<div class="section" id="alignmentsection" style="clear:both;float:left;display:none;">
+						<label class="lblbig">Alignment Items:</label>
+						<div id="alignmentlist" style="float:left;margin-top:5px;clear:both;height:80px;overflow:auto; font-size:10pt">
+							<table style="width:100%;border-collapse:collapse;background-color:white;border-spacing:0px;" cellpadding="8">
+								<thead  style="font-weight:bold;background-color:#E8E8E8">
+									<td width="20%" class="tdborder"><b>Name</b></td>
+									<td width="40%" class="tdborder"><b>Url</b></td>
+									<td width="40%" class="tdborder"><b>Description</b></td>
+									<td width="40%" class="tdborder"><b>Framework</b></td>
+									<td width="40%" class="tdborder"><b>Code</b></td>
+								</thead >
+								<tbody id="alignmentitems">
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<div class="section" id="endorsementsection" style="clear:both;float:left;margin-top:20px;display:none;">
+						<label class="lbl" >Badge Endorsements:</label>
+						<div id="alignmentlist" style="float:left;margin-top:5px;clear:both;height:300px;overflow:auto; font-size:10pt" >
+							<table style="width:100%;border-collapse:collapse;background-color:white;border-spacing:0px;" cellpadding="8">
+								<thead  style="font-weight:bold;background-color:#E8E8E8">
+									<td width="20%" class="tdborder"><b>Endorsement Statement</b></td>
+									<td width="10%" class="tdborder"><b>Endorsed On</b></td>
+									<td width="10%" class="tdborder"><b>By</b></td>
+									<td width="10%" class="tdborder"><b>Icon</b></td>
+									<td width="20%" class="tdborder"><b>Description</b></td>
+									<td width="10%" class="tdborder"><b>Url</b></td>
+									<td width="10%" class="tdborder"><b>Email</b></td>
+									<td width="10%" class="tdborder"><b>Telephone</b></td>
+								</thead >
+								<tbody id="endorsementitems">
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div style="clear:both;float:left; margin-top:10px;padding-bottom:85px;">
+				<h3 style="color:#555"><span style="display:inline-block; margin-right:3px; width:4px; height:18px; background-color:#fcc010;"></span>Raw Badge JSON Data from PNG:</h3>
+				<div style="clear:both; height:400px; overflow:auto; border:1px solid lightgrey; background:white; color:#555; font: 0.7em helvetica, sans-serif;" id="bakedbadgeinfo"></div>
+			</div>
+
+
+  		</div>
+		<div id="detailspanel" style="display: none;" class="content"> <!--style="width: 1024px; display: none;"-->
+			<table style="width: 97%; height: 100px; padding: 40px;">
+				
+				<tr class="spaceUnder">
+					<td align="left" colspan="3"><b>Validation Summary</b></td>
+				</tr>
+				
+				<tr class="spaceUnder">
+					<td align="left" style="width: 15px;">&nbsp;</td>
+					<td align="left" colspan="2" id="validationsummary"></td>
+				</tr>
+				
+				<tr class="spaceUnder" id="validationissuestitle" style="display: none;">
+					<td align="left" colspan="3"><b>Details  of the Validation Issues</b></td>
+				</tr>
+				
+				<tr id="emailissuediv1" style="display: none;">
+					<td align="center" style="width: 15px;">&bull;</td>
+					<td align="left" colspan="2">Email mismatch:</td>
+				</tr>
+				<tr class="spaceUnder" id="emailissuediv2" style="display: none;">
+					<td align="center">&nbsp;</td>
+					<td align="left" colspan="2">
+						<div id="emailtext"></div>
+					</td>
+				</tr>
+				
+				<tr id="contractissuediv1" style="display: none;">
+					<td align="center" style="width: 15px;">&bull;</td>
+					<td align="left" colspan="2">Contract invalid:</td>
+				</tr>
+				<tr class="spaceUnder" id="contractissuediv2" style="display: none;">
+					<td align="center">&nbsp;</td>
+					<td align="left" colspan="2">
+						<div id="contracttext"></div>
+					</td>
+				</tr>
+				
+				<tr id="metaissuediv1" style="display: none;">
+					<td align="center" style="width: 15px;">&bull;</td>
+					<td align="left" colspan="2">Metadata file:</td>
+				</tr>
+				<tr class="spaceUnder" id="metaissuediv2" style="display: none;">
+					<td align="center">&nbsp;</td>
+					<td align="left" colspan="2">
+						<div id="metatext"></div>
+					</td>
+				</tr>
+				
+				<tr id="jsonhashissuediv1" style="display: none;">
+					<td align="center" style="width: 15px;">&bull;</td>
+					<td align="left" colspan="2">Mismatch of the hash of the Open Badges JSON:</td>
+				</tr>
+				<tr class="spaceUnder" id="jsonhashissuediv2" style="display: none;">
+					<td align="center">&nbsp;</td>
+					<td align="left" colspan="2">
+						<div id="jsonjsonhashissue"></div>
+					</td>
+				</tr>
+				<tr class="spaceUnder" id="jsonhashissuediv3" style="display: none;">
+					<td align="center">&nbsp;</td>
+					<td align="left" colspan="2">
+						<div id="jsonmetahashissue"></div>
+					</td>
+				</tr>
+				
+				<tr id="recipientissuediv1" style="display: none;">
+					<td align="center" style="width: 15px;">&bull;</td>
+					<td align="left" colspan="2">Recipient mismatch:</td>
+				</tr>
+				<tr class="spaceUnder" id="recipientissuediv2" style="display: none;">
+					<td align="center">&nbsp;</td>
+					<td align="left" colspan="2">
+						<div id="reipienttext"></div>
+					</td>
+				</tr>
+				
+				<tr id="issuerissuediv1" style="display: none;">
+					<td align="center" style="width: 15px;">&bull;</td>
+					<td align="left" colspan="2">Issuer mismatch:</td>
+				</tr>
+				<tr class="spaceUnder" id="issuerissuediv2" style="display: none;">
+					<td align="center">&nbsp;</td>
+					<td align="left" colspan="2">
+						<div id="issuertext"></div>
+					</td>
+				</tr>
+
+				<tr id="embeddedjsondiv1" style="display: none;">
+					<td align="center" style="width: 15px;">
+						<img id="embeddedjsonhideshow" src="/images/opened_arrow.png" style="height: 15px; cursor: pointer;" onclick="showhideembeddedjson();">
+					</td>
+					<td align="left" colspan="2">
+						Embedded JSON data
+					</td>
+				</tr>
+				
+				<tr class="spaceUnder" id="embeddedjsondiv2" style="display: none;">
+					<td align="center">
+						&nbsp;
+					</td>
+					<td colspan="2">
+						<div id="embeddedjson" style="display: block; width: 100%; height:500px; padding:10px; text-align: left; line-height:100%; font: 0.8em helvetica, sans-serif; word-wrap: break-word; overflow-y: auto; border-style: solid; border-width: 2px; border-color: #999; background: #fff;">
+						</div>
+					</td>
+				</tr>
+				
+				<tr id="badgejsondiv1" style="display: none;">
+					<td align="center" style="width: 15px;">
+						<img id="badgejsonhideshow" src="/images/closed_arrow.png" style="height: 15px; cursor: pointer;" onclick="showhidebadgejson();">
+					</td>
+					<td align="left" colspan="2">
+						Raw Open Badge JSON
+					</td>
+				</tr>
+				<tr id="badgejsondiv2" style="display: none;">
+					<td align="center">
+						&nbsp;
+					</td>
+					<td colspan="2">
+						<textarea id="thebadgejson" style="display: none; width:100%; height:500px; padding:10px; overflow-y: auto; border-style: solid; border-width: 2px; border-color: #999; background: #fff; text-align: left; line-height:100%; font: 0.8em helvetica, sans-serif;">
+						</textarea>
+					</td>
+				</tr>				
+				<tr class="spaceUnder" id="badgejsondiv3" style="display: none;">
+					<td align="center">
+						&nbsp;
+					</td>
+					<td align="left">
+						Calculated Hash of JSON: 
+						<!--<button onclick="calculatehash();">Calculate Hash</button> -->
+					</td>
+					<td align="left">
+						<div class="hashstyle1" style="width:600px; height:29px; text-align: left; padding: 8px; line-height:100%; font: 0.8em helvetica, sans-serif;" id="badgehash"></div>
+					</td>
+				</tr>
+				
+
+				<tr id="proofjsondiv1" style="display: none;">
+					<td align="center" style="width: 15px;">
+						<img id="proofjsonhideshow" src="/images/closed_arrow.png" style="height: 15px; cursor: pointer;" onclick="showhideproofjson();">
+					</td>
+					<td align="left" colspan="2">
+						ERC721 Extended JSON
+					</td>
+				</tr>
+
+				<tr class="spaceUnder" id="proofjsondiv2" style="display: none;">
+					<td align="center">
+						&nbsp;
+					</td>
+					<td colspan="2">
+						<div id="theproofjson" style="display: none; width: 100%; height:330px; padding:10px; word-wrap: break-word; overflow-y: auto; border-style: solid; border-width: 2px; border-color: #999; background: #fff; text-align: left; line-height:100%; font: 0.8em helvetica, sans-serif;">
+						</div>
+					</td>
+				</tr>
+
+				<tr id="contractdata1" style="display: none;">
+					<td colspan="3" align="left">
+						<h3>Check the Blockchain Data</h3>
+					</td>
+				</tr>
+
+				<tr class="spaceUnder" id="contractdata2" style="display: none;">
+					<td align="center">
+						&nbsp;
+					</td>
+					<td align="left">
+						ERC721 Token Contract from JSON:
+					</td>
+					<td align="left">
+						<div class="hashstyle3" id="tokencontract" id="badgehash" style="padding-left: 8px;"></div>
+					</td>
+				</tr>
+
+				<tr class="spaceUnder" id="contractdata3" style="display: none;">
+					<td align="center">
+						&nbsp;
+					</td>
+					<td align="left">
+						ERC721 Token issued:
+					</td>
+					<td align="left">
+						<div class="hashstyle2" id="tokenid" style="padding-left: 8px;"></div>
+					</td>
+				</tr>
+				
+				<!--<tr class="spaceUnder">
+					<td align="center">
+						&nbsp;
+					</td>
+					<td align="left" colspan="2">
+						<button onclick="tokendata();" id="tokendatabutton" disabled>Query blockchain to retrieve token data</button>
+					</td>
+				</tr>-->
+		
+				<tr class="spaceUnder" id="contractdata4" style="display: none;">
+					<td align="center">
+						&nbsp;
+					</td>
+					<td align="left">
+						Token Owner:
+					</td>
+					<td align="left">
+						<div class="hashstyle4" id="tokenowner"></div>
+					</td>
+				</tr>
+		
+				<tr class="spaceUnder" id="contractdata5" style="display: none;">
+					<td align="center">
+						&nbsp;
+					</td>
+					<td align="left">
+						Token Issuer:
+					</td>
+					<td align="left">
+						<div class="hashstyle5" id="tokenissuer"></div>
+					</td>
+				</tr>
+		
+				<tr class="spaceUnder" id="contractdata6" style="display: none;">
+					<td align="center">
+						&nbsp;
+					</td>
+					<td align="left">
+						Token Metadata URI:
+					</td>
+					<td align="left">
+						<div id="tokenmeta"></div>
+					</td>
+				</tr>
+		
+				<tr class="spaceUnder" id="contractdata7" style="display: none;">
+					<td align="center">
+						&nbsp;
+					</td>
+					<td align="left">
+						Token Badge Contract:
+					</td>
+					<td align="left">
+						<div id="tokenbadge"></div>
+					</td>
+				</tr>
+
+				<!--<tr class="spaceUnder">
+					<td align="center">
+						&nbsp;
+					</td>
+					<td align="left" colspan="2">
+						<button onclick="tokenmetabutton();" id="tokenmetabutton" disabled>Retrieve token metadata</button>
+					</td>
+				</tr>-->
+				
+				<tr id="metajson1" style="display: none;">
+					<td align="center" style="width: 15px;">
+						<img id="metajsonhideshow" src="/images/opened_arrow.png" style="height: 15px; cursor: pointer;" onclick="showhidemetajson();">
+					</td>
+					<td align="left" colspan="2">
+						Token Metadata
+					</td>
+				</tr>
+
+				<tr id="metajson2" style="display: none;">
+					<td align="center">
+						&nbsp;
+					</td>
+					<td colspan="2">
+						<div id="tokenmetadata" style="display: block; width:920px; height:150px; padding:10px; word-wrap: break-word; overflow-y: auto; border-style: solid; border-width: 2px; border-color: #999; background: #fff; text-align: left; line-height:100%; font: 0.8em helvetica, sans-serif;">
+						</div>
+					</td>
+				</tr>
+				
+			</table>			
+		</div>
+	</div>
+</div>
+<script src="/lib/pack.js"></script>
+<script src="/lib/crc32.js"></script>
+<script src="/lib/unpack.js"></script>
+<script src="/javascripts/utilities.js"></script>
+<script src="/javascripts/validate.js"></script>

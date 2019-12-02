@@ -1,0 +1,176 @@
+
+<script src="/javascripts/dateformat.js"></script>
+<script src="/javascripts/manageevidence.js"></script>
+ 
+<script type="text/javascript">
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializePage('{{ protocol }}', '{{ domain }}', '{{ badgeissuedid }}');
+});
+
+</script>
+
+<div class="container padbottom" style="margin-top:0px;padding-top:0px">
+	
+	<div id="content" style="margin-top:0px;padding-top:0px">		
+		<a style="padding:0px" href="/assertions">&lsaquo;&lsaquo; Back</a>
+
+		<div id="mainhead" style="margin-bottom:0;">{{title}}</div>
+		 for <span style="font-weight:bold" id="badgename"></span> being issued to <span style="font-weight:bold" id="recipientname"></span>
+		<hr class="headingunderline"><br>
+
+		<center><input id="createFormShowButton" type="button" value="Create Evidence Item" onclick="showCreateForm();"></center>
+
+		<!-- FORM TO ADD EVIDENCE TO BADGE ISSUANCE -->
+		<div id="createDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			Add Evidence<br>
+			<div class="boxy addform">
+				<form id="formAddEvid" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<div>
+						<div style="float:left;min-width:120px;">Name<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="name" id="name" style="background-color:white;"placeholder="Enter the Evidence Name"></div>
+					</div>
+
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">URL<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="url" id="url" style="background-color:white;"placeholder="Enter the Evidence URL"></div>
+
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Description</div>
+						<div style="float:left;width:80%;"><textarea rows="3" cols="74" name="description" id="description" style="background-color:white;"placeholder="Enter the Evidence Description (Optional)"></textarea></div>
+
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Narrative</div>
+						<div style="float:left;width:80%;"><textarea rows="3" cols="74" name="narrative" id="narrative" style="background-color:white;"placeholder="Enter the Evidence Narrative (Optional)"></textarea></div>
+
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Genre</div>
+						<div style="float:left;width:80%;"><input type="text" name="genre" id="genre" style="background-color:white;"placeholder="Enter the Evidence Genre (Optional)"></div>
+
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Audience</div>
+						<div style="float:left;width:80%;"><input type="text" name="audience" id="audience" style="background-color:white;"placeholder="Enter the Evidence Audience (Optional)"></div>
+
+					</div>
+					<br>
+
+					<center><input type="button" value="Add Evidence" onclick="createEvidence();"><span style="padding-left:30px"></span><input type="button" value="Cancel" onclick="cancelCreateForm();"></center>
+				</form>
+
+			</div> 
+		</div>
+
+		<!-- FORM TO EDIT EXISTING EVIDENCE ON A BADGE ISSUANCE -->
+		<div id="editDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			Edit Evidence<br>
+			<div class="boxy editform">
+				<form id="formEditEvid" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<input type="hidden" id="evidenceid" name="evidenceid" value="">
+					<div>
+						<div style="float:left;min-width:120px;">Name<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="name" id="name" style="background-color:white;"placeholder="Enter the Evidence Name"></div>
+					</div>
+
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">URL<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="url" id="url" style="background-color:white;"placeholder="Enter the Evidence URL"></div>
+
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Description</div>
+						<div style="float:left;width:80%;"><textarea rows="3" cols="74" name="description" id="description" style="background-color:white;"placeholder="Enter the Evidence Description (Optional)"></textarea></div>
+
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Narrative</div>
+						<div style="float:left;width:80%;"><textarea rows="3" cols="74" name="narrative" id="narrative" style="background-color:white;"placeholder="Enter the Evidence Narrative (Optional)"></textarea></div>
+
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Genre</div>
+						<div style="float:left;width:80%;"><input type="text" name="genre" id="genre" style="background-color:white;"placeholder="Enter the Evidence Genre (Optional)"></div>
+
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Audience</div>
+						<div style="float:left;width:80%;"><input type="text" name="audience" id="audience" style="background-color:white;"placeholder="Enter the Evidence Audience (Optional)"></div>
+
+					</div>
+					<br>
+
+					<center><input type="button" value="Update Evidence" onclick="updateEvidence();">
+					<span style="padding-left:30px"></span>
+					<input type="button" value="Cancel" onclick="cancelEvidence();"></center>
+				</form>
+
+			</div> 
+		</div>
+ 
+		<!-- FORM TO VIEW EXISTING EVIDENCE ON A BADGE ISSUANCE -->
+		<div id="viewDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			View Evidence<br>
+			<div class="boxy viewform">
+				<form id="formViewEvid" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<input type="hidden" id="evidenceid" name="evidenceid" value="">
+					<div>
+						<div style="float:left;min-width:120px;">Name : </div>
+						<div style="float:left;width:80%;"><input type="text" name="name" id="name" readonly></div>
+					</div>
+
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">URL : </div>
+						<div style="float:left;width:80%;"><input type="text" name="url" id="url" readonly></div>
+
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Description</div>
+						<div style="float:left;width:80%;"><textarea rows="3" cols="74" name="description" id="description" style="background-color:#eee" readonly></textarea></div>
+
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Narrative</div>
+						<div style="float:left;width:80%;"><textarea rows="3" cols="74" name="narrative" id="narrative" style="background-color:#eee" readonly></textarea></div>
+
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Genre</div>
+						<div style="float:left;width:80%;"><input type="text" name="genre" id="genre" readonly></div>
+
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Audience</div>
+						<div style="float:left;width:80%;"><input type="text" name="audience" id="audience" readonly></div>
+
+					</div>
+					<br>
+
+					<center>
+					<span style="padding-left:30px"></span>
+					<input type="button" value="Close" onclick="cancelEvidence();"></center>
+				</form>
+
+			</div> 
+		</div>
+		<br>
+		<div id="storedList" style="margin-left:auto;margin-right:auto"></div>
+	</div>
+</div>

@@ -1,0 +1,49 @@
+
+<script type="application/javascript" src="javascripts/viewbadgecontract.js"></script>
+<link rel="stylesheet" type="text/css" href="stylesheets/viewbasebadge.css">
+
+<script type="application/javascript">
+	var address = "{{ address }}";
+	
+	document.addEventListener('DOMContentLoaded', function() {
+	    viewbadgeinfo(address);
+	});
+</script>
+
+<div class="container padbottom" style="overflow:auto">
+
+	<div class="panel" style="width:95%;">
+	
+		<center><div id="mainhead" style="margin-bottom:0;">Badge Blockchain Data</div></center>
+		<hr class="headingunderline"><br>
+	
+		<div class="innerpanel" style="font-size:10pt">
+
+			<div class="section">
+				<label class="lblhuge">Blockchain contract address:</label>
+				<label id="badgeaddress"></label>
+			</div>
+			<div class="section">
+				<label class="lblhuge">Contract Owner:</label>
+				<label id="badgeowner"></label>
+			</div>
+			<div class="section"><label></label></div>
+
+			<div class="section">
+				<label class="lblhuge">Contract RDF Data:</label>
+				<div id="storelist" style="float:left;margin-top:5px;clear:both;height:100%;width:100%" >
+					<table style="height:auto;width:100%;border-collapse:collapse;background-color:white;border-spacing:0px;" cellpadding="8">
+						<thead  style="font-weight:bold;background-color:#E8E8E8">
+							<td width="30%" class="tdborder"><b>Subject</b></td>
+							<td width="30%" class="tdborder"><b>Predicate</b></td>
+							<td width="35%" class="tdborder"><b>Object</b></td>
+							<td width="5%" class="tdborder"><b>Graph</b></td>
+						</thead >
+						<tbody id="storeitems">
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

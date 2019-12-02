@@ -1,0 +1,125 @@
+
+<script src="/javascripts/managealignments.js"></script>
+
+<div class="container padbottom">
+	<div id="content">
+		<div id="mainhead" style="margin-bottom:0;">{{title}}</div>
+		<hr class="headingunderline"><br>
+
+		<center><input id="createFormShowButton" type="button" value="Create Alignment" onclick="showCreateForm();"></center>
+		
+		<!-- FORM TO CREATE A NEW ALIGNMENT -->
+		<div id="createDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			Create new Alignment<br>
+			<div class="boxy addform">
+				<form id="formRec" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<div>
+						<div style="float:left;min-width:135px;">Name<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="name" id="name" style="background-color:white;" placeholder="Enter the Target Name"></input></div>
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:135px;">URL<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="url" id="url" style="background-color:white;" placeholder="Enter the Target URL"></div>
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:135px;">Description<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><textarea rows="3" cols="74" name="description" id="description" style="background-color:white;" placeholder="Enter the Target Description"></textarea></div>
+					</div>
+					<div>
+						<div style="float:left;min-width:135px;">Code</div>
+						<div style="float:left;width:80%;"><input type="text" name="code" id="code" style="background-color:white;" placeholder="Enter the Target Code (Optional)"></div>
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:135px;">Framework</div>
+						<div style="float:left;width:80%;"><input type="text" name="framework" id="framework" style="background-color:white;" placeholder="Enter the Target Framework (Optional)"></div>
+					</div> 
+					<br>
+					<div style="clear:both;"></div>
+					<br>
+					<center><input type="button" value="Submit" onclick="createAlignment();"><span style="padding-left:30px"></span><input type="button" value="Cancel" onclick="cancelCreateForm();"></center>
+				</form>
+			</div>
+		</div>
+
+		<!-- FORM TO EDIT EXISTING ALIGNMENT -->
+		<div id="editDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			Edit Alignment <br>
+			<div class="boxy editform">
+				<form id="formRecEdit" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<input type="hidden" id="alignmentid" name="alignmentid" value="">
+				
+					<div>
+						<div style="float:left;min-width:135px;">Name<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="name" id="name" style="background-color:white;" placeholder="Enter the Target Name"></input></div>
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:135px;">URL<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="url" id="url" style="background-color:white;" placeholder="Enter the Target URL"></div>
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:135px;">Description<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><textarea rows="3" cols="74" name="description" id="description" style="background-color:white;" placeholder="Enter the Target Description"></textarea></div>
+					</div>
+					<div>
+						<div style="float:left;min-width:135px;">Code</div>
+						<div style="float:left;width:80%;"><input type="text" name="code" id="code" style="background-color:white;" placeholder="Enter the Target Code (Optional)"></div>
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:135px;">Framework</div>
+						<div style="float:left;width:80%;"><input type="text" name="framework" id="framework" style="background-color:white;" placeholder="Enter the Target Framework (Optional)"></div>
+					</div> 
+					<br>
+					<div style="clear:both;"></div>
+					<br>
+					<center><input type="button" value="Update" onclick="updateAlignment();"><span style="padding-left:30px"></span><input type="button" value="Cancel" onclick="cancelEditForm();"></center>
+				</form>
+			</div>
+		</div>
+
+		<!-- FORM TO VIEW EXISTING ALIGNMENT -->
+		<div id="viewDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			View Alignment <br>
+			<div class="boxy viewform">
+				<form id="formRecView" style="text-align:left;font-size:0.8em;padding-left:15px;">				
+					<div>
+						<div style="float:left;min-width:135px;">Name<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input readonly type="text" name="name" id="name" style="background-color:white;" /></div>
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:135px;">URL<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input readonly type="text" name="url" id="url" style="background-color:white;" /></div>
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:135px;">Description<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><textarea readonly rows="3" cols="74" name="description" id="description" style="background-color:white;" /></textarea></div>
+					</div>
+					<div>
+						<div style="float:left;min-width:135px;">Code</div>
+						<div style="float:left;width:80%;"><input readonly type="text" name="code" id="code" style="background-color:white;" /"></div>
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:135px;">Framework</div>
+						<div style="float:left;width:80%;"><input readonly type="text" name="framework" id="framework" style="background-color:white;" /></div>
+					</div> 
+					<br>
+					<div style="clear:both;"></div>
+					<br>
+					<center><input type="button" value="Close" onclick="closeViewForm();"></center>
+				</form>
+			</div>
+		</div>
+
+	<br>
+	</div>
+	<div style="clear:both;"></div>
+	<div id="storedList" style="margin-left:auto;margin-right:auto">You have not added any alignments yet</div>
+</div>

@@ -1,0 +1,191 @@
+
+<script src="/javascripts/managebadges.js"></script>
+
+<div class="container padbottom">
+	<div id="content">
+		<div id="mainhead" style="margin-bottom:0;">{{title}}</div>
+		<hr class="headingunderline"><br>
+
+		<center><input id="createFormShowButton" type="button" value="Create Badge" onclick="showCreateForm();"></center>
+
+		<!-- FORM TO CREATE NEW BADGE -->
+		<div id="createDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			Create new Badge<br>
+			<div class="boxy addform">
+				<form id="formRec" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Title<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="title" id="title" style="background-color:white;" placeholder="Enter the Badge Title"></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Description<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><textarea rows="3" cols="74" name="description" id="description" style="background-color:white;" placeholder="Enter the Badge Description"></textarea></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Image URL<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="imageurl" id="imageurl" style="background-color:white;" placeholder="Enter the Image URL to a png file which will be used for the issued badge"></div>
+					</div>
+					<div style="clear:both">
+						<div style="float:left;clear:both;width:80%;line-height:100%"><span style="font-size:10pt;">Note: The image on this url will be downloaded ready for badge issuing when you save this data. Therefore, please create a new url and edit this record, if you wish our system to download a new badge image.</span></div>
+					</div>
+					<br>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Version<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="version" id="version" style="background-color:white;" placeholder="Enter the Badge Version"></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Issuer<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;" id="issueridlist"></div>
+
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Criteria<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><textarea rows="3" cols="74" name="criterianarrative" id="criterianarrative" style="background-color:white;" placeholder="Enter the Badge Criteria"></textarea></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Tags</div>
+						<div style="float:left;width:80%;"><input type="text" name="tags" id="tags" style="background-color:white;" placeholder="Enter the Badge Tags Seperated by Commas (Optional)"></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Alignment(s)</div>
+						<div style="float:left;width:80%;" id="allignmentlist"></div>
+					</div>
+					<br>
+					<center><input type="button" value="Save" onclick="createBadge();"><span style="padding-left:30px"></span><input type="button" value="Cancel" onclick="cancelCreateForm();"></center>
+				</form>
+			</div> 
+		</div>
+
+		<!-- FORM TO EDIT EXISTING BADGE -->
+		<div id="editDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			Edit Badge<br>
+			<div class="boxy editform">
+				<form id="formRecEdit" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<input type="hidden" id="badgeid" name="badgeid" value="">
+
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Title<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="title" id="title" style="background-color:white;" placeholder="Enter the Badge Title"></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Description<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><textarea rows="3" cols="74" name="description" id="description" style="background-color:white;" placeholder="Enter the Badge Description"></textarea></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Image URL<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="imageurl" id="imageurl" style="background-color:white;" placeholder="Enter the Image URL"></div>
+					</div>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Image path</div>
+						<div style="float:left;width:80%;"><input type="text" enabled="false" name="imagepath" id="imagepath"></div>
+					</div>
+					<div style="clear:both">
+						<div style="float:left;clear:both;width:80%;line-height:100%"><span style="font-size:10pt;">Note: The image on the image url will be downloaded ready for badge issuing to the local image path when you save this data. Therefore, please create a new url and edit this record, if you wish our system to download a new badge image.</span></div>
+					</div>
+					<br>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Version<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="version" id="version" style="background-color:white;" placeholder="Enter the Badge Version"></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Issuer<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;" id="issueridlistedit"></div>
+
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Criteria<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><textarea rows="3" cols="74" name="criterianarrative" id="criterianarrative" style="background-color:white;" placeholder="Enter the Badge Criteria"></textarea></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Tags</div>
+						<div style="float:left;width:80%;"><input type="text" name="tags" id="tags" style="background-color:white;" placeholder="Enter the Badge Tags Seperated by Commas (Optional)"></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Alignment(s)</div>
+						<div style="float:left;width:80%;" id="allignmentlistedit"></div>
+					</div>
+					<br>
+					<center><input type="button" value="Update" onclick="updateBadge();"><span style="padding-left:30px"></span><input type="button" value="Cancel" onclick="cancelEditForm();"></center>
+				</form>
+			</div> 
+		</div>
+
+		<!-- FORM TO VIEW EXISTING BADGE -->
+		<div id="viewDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			View Badge<br>
+			<div class="boxy viewform">
+				<form id="formRecView" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Title<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input readonly type="text" name="title" id="title" style="background-color:white;"></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Description<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><textarea readonly rows="3" cols="74" name="description" id="description" style="background-color:white;"></textarea></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Image URL<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input readonly type="text" name="imageurl" id="imageurl" style="background-color:white;"></div>
+					</div>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Image path</div>
+						<div style="float:left;width:80%;"><input readonly type="text" enabled="false" name="imagepath" id="imagepath"></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Version<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input readonly type="text" name="version" id="version" style="background-color:white;"></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Issuer<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input readonly type="text" name="issueridview" id="issueridview" style="background-color:white;"></div>
+
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Criteria<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><textarea readonly rows="3" cols="74" name="criterianarrative" id="criterianarrative" style="background-color:white;"></textarea></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Tags</div>
+						<div style="float:left;width:80%;"><input readonly type="text" name="tags" id="tags" style="background-color:white;"></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Alignment(s)</div>
+						<div style="float:left;width:80%;" id="allignmentlistview"></div>
+					</div>
+					<br>
+					<center><input type="button" value="Close" onclick="closeViewForm();"></center>
+				</form>
+			</div> 
+
+		</div>		
+	</div> 
+	<div style="clear:both;"></div>
+	
+	<label>Filter by Issuer&nbsp;</label><select onchange="redrawBadgeList()" id="categories"></select>
+	<br><br>
+	<span id="countblock"><label>Count: </label><span id="itemcount"></span></span>
+	<br><br>
+	
+	<div id="storedList" style="margin-left:auto;margin-right:auto">You have not added any badges yet</div>
+</div>

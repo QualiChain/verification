@@ -1,0 +1,92 @@
+
+<script src="/javascripts/dateformat.js"></script>
+<script src="/javascripts/viewissuerbadges.js"></script>
+
+
+ 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+ //   initializePage('{{ protocol }}', '{{ domain }}', {{ query }});
+    initializePage('{{ protocol }}', '{{ domain }}');
+});
+</script> 
+ 
+<div class="container padbottom">
+	<div id="content">
+Badge Blockchain Data
+		<div id="mainhead" style="margin-bottom:0;">{{title}}</div>
+		<hr class="headingunderline"><br>
+
+		<div id="viewDiv" style="float:left;clear:both;margin-bottom:40px;width:100%; display:none">
+			<div class="boxy viewform">
+				<form id="formRecView" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Title </div>
+						<div style="float:left;width:80%;"><input type="text" name="title" id="title" style="background-color:white;" placeholder="Badge Title" disabled></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Description </div>
+						<div style="float:left;width:80%;"><textarea rows="3" cols="74" name="description" id="description" style="background-color:white;" placeholder="Badge Description" disabled></textarea></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Image URL </div>
+						<div style="float:left;width:80%;"><input readonly type="text" name="imageurl" id="imageurl" style="background-color:white;"></div>
+					</div>
+					<div style="clear:both">
+						<div style="float:left;clear:both;width:80%;line-height:100%"><span style="font-size:10pt;"></span></div>
+					</div>
+					
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Version </div>
+						<div style="float:left;width:80%;"><input readonly type="text" name="version" id="version" style="background-color:white;"></div>
+					</div>
+					<br>
+					<!-- div style="clear:both">
+						<div style="float:left;min-width:120px;">Issuer ID </div>
+                        			<div style="float:left;width:80%;"><input readonly type="text" name="issueridview" id="issueridview" style="background-color:white;"></div>						
+					</div -->
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Criteria </div>
+						<div style="float:left;width:80%;"><textarea readonly rows="3" cols="74" name="criterianarrative" id="criterianarrative" style="background-color:white;"></textarea></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Tags</div>
+						<div style="float:left;width:80%;"><input readonly type="text" name="tags" id="tags" style="background-color:white;"></div>
+					</div>
+					<br>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Alignments</div>
+						<div style="float:left;width:80%;">
+						
+							<center><table style="width:100%;line-height:120%;font-size: 14px;">
+							<tr>
+							<th width="15%" style="background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;">Name</th>
+							<th width="15%" style="background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;">Url</th>
+							<!-- th width="40%" style="background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;">Description</th>
+							<th width="15%" style="background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;">Framework</th>
+							<th width="15%" style="background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;">Code</th -->						
+							<tr>
+							
+							<tbody id="alignmentlistview">
+							
+							</tbody>
+							
+							</table></center><br>
+						</div>
+					</div>
+					<br>
+					<center><input type="button" value="Close" onclick="closeViewForm();"></center>
+				</form>
+			</div> 
+		</div>		
+		
+		<br>
+		<div id="badgelist" style="margin-left:auto;margin-right:auto">List</div>
+
+	</div>
+</div>

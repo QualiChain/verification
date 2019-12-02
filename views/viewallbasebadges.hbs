@@ -1,0 +1,23 @@
+
+<script type="application/javascript" src="/javascripts/viewallbasebadges.js"></script>
+<link rel="stylesheet" type="text/css" href="/stylesheets/viewallbasebadges.css">
+
+<script type="application/javascript">
+	var dArray={{{data}}};
+</script>
+
+<div class="container padbottom">
+    <center>
+	<div id="listcontainer" style="width: 100%">
+		<div id="mainhead" style="margin-bottom:0;">Issued Badges</div>
+		<hr class="headingunderline"><br>
+		<br>
+		<label>Issuers</label> <select onchange="redrawSubcategories()" id="categories" title="Filter by Issuer"></select>
+		<label style="margin-left:20px;">Year</label> <select title="Sub-filter Issuer by year" onchange="redrawTable()" id="subcategories"><option value="all">All</option></select>
+		<br><br>
+		<span id="countblock"><label>Count: </label><span id="itemcount"></span></span>
+		<br><br>
+		<table id="thetable" style="width: 100%"></table>
+	</div>
+    </center>
+</div>

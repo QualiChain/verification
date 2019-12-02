@@ -1,0 +1,76 @@
+
+<script src="/javascripts/managerecipients.js"></script>
+
+<div class="container padbottom">
+	<div id="content">
+		<div id="mainhead" style="margin-bottom:0;">{{title}}</div>
+		<hr class="headingunderline"><br>
+
+		<p style="text-align: left; font: 0.8em helvetica, sans-serif;line-height: 130%;"><b>Please Note:</b> 
+		Once you are happy the details are correct for a given Recipient record entry, press the 'Create Account' button in the Account Status field.
+		Recipients will then be emailed using the email address you have given in their Recipient record,
+		in order to verify the email address and create their login accounts on this website.
+		Once you have pressed the 'Create Account' button, you will no longer be able to edit their email address.<p> 
+
+		<p style="text-align: left; font: 0.8em helvetica, sans-serif;line-height: 100%;">
+		You will not be able to issue badges to recipients who have not completed the registration process.</p>
+		
+		<br>
+
+		<center><input id="createFormShowButton" type="button" value="Create Recipient" onclick="showCreateForm();"></center>
+
+		<div id="createDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			Create new Recipient<br>
+			<div class="boxy addform">
+				<form id="formRec" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<div>
+						<div style="float:left;min-width:120px;">Full Name<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="name" id="name" style="background-color:white;"placeholder="Enter the Recipient Name"></div>
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Email<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="email" id="email" style="background-color:white;"placeholder="Enter the Recipient Email"></div>
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Unique ID</div>
+						<div style="float:left;width:80%;"><input type="text" name="uniqueid" id="uniqueid" style="background-color:white;"placeholder="Enter the Recipient Unique ID (Optional)"></div>
+					</div>
+					<div style="clear:both;"></div>
+					<br>
+					<center><input type="button" value="Save" onclick="createRecipient();"><span style="padding-left:30px"></span><input type="button" value="Cancel" onclick="cancelCreateForm();"></center>
+				</form>
+			</div>
+		</div>
+
+		<div id="editDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			Edit Recipient<br>
+			<div class="boxy editform">
+				<form id="formRecEdit" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<input type="hidden" id="recipientid" name="recipientid" value="">
+					<div>
+						<div style="float:left;min-width:120px;">Full Name<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="name" id="name" style="background-color:white;"placeholder="Enter the Recipient Name"></div>
+					</div>
+					<div id="editemaildiv" style="display:block">
+						<br>
+						<div style="float:left;min-width:120px;">Email<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="email" id="email" style="background-color:white;"placeholder="Enter the Recipient Email"></div>
+					</div>
+					<br>
+					<div>
+						<div style="float:left;min-width:120px;">Unique ID</div>
+						<div style="float:left;width:80%;"><input type="text" name="uniqueid" id="uniqueid" style="background-color:white;"placeholder="Enter the Recipient Unique ID (Optional)"></div>
+					</div>
+					<div style="clear:both;"></div>
+					<br>
+					<center><input type="button" value="Update" onclick="updateRecipient();"><span style="padding-left:30px"></span><input type="button" value="Cancel" onclick="cancelEditForm();"></center>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div style="clear:both;"></div>
+	<br><br>
+	<div id="storedList" style="margin-left:auto;margin-right:auto">You have not added any recipients yet</div>
+</div>

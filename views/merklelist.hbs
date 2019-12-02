@@ -1,0 +1,31 @@
+
+<script src="/javascripts/merklelist.js"></script> 
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    init("{{ protocol }}", "{{ domain }}");
+});
+</script>
+
+<div class="container padbottom">
+	<center><div id="mainhead" style="margin-bottom:0;">Merkle based Verifiable RDF Data Sets</div></center>
+	<hr class="headingunderline"><br>
+
+	<div class="boxy">
+	<form id="merkle" enctype="multipart/form-data">
+	Enter a Title:<br><input type="text" name="title" id="titlefield" style="width: 276px;background-color:white;"> </br></br>
+	<input name="tripledatafile" type="file" style="font-size:1em;" /> 
+	<input type="submit" id="addbutton" value="Add" style="font-size:1em;" />
+	</form> <br>
+	<i>NOTE: Triples/Quads must be in N-Triple format. There is a file upload limit of 20MB and large files may take a little time to process.</i>
+	</div>
+	<br><br>
+	<div id="storedlist"></div>
+
+	<div class="clearit"></div>
+	<br><br>
+
+	<div style="color: #555">If you have any issues with any of these materials please email:<a href="mailto:michelle.bachler@open.ac.uk?subject=ISWS Summer School">michelle.bachler@open.ac.uk</a></div>
+	<br>
+	<br>
+</div>

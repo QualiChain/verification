@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- /views/layouts/layout.hbs 
+Holds basic HTML skeleton - other view files use it 
+
+ 2 curly brackets and > points to a partial layout
+ 2 curly brackets means display variable as text 
+ 3 curly brackets means render as html -->
+ <head>
+	{{> head}}	
+</head>
+<body onload="init(); j_menuonload();">
+	{{> bodyheader}}
+	
+	{{{ body }}}
+	
+	{{> bodyfooter}}
+</body>
+</html>

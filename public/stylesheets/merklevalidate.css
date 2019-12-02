@@ -1,0 +1,28 @@
+.bigboxdiv {
+	width: 60px;
+	height: 60px;
+	border: 5px solid lightgrey;
+	font: 2.5em arial, sans-serif;
+	text-align: center;
+	color: white;
+	background: white;
+	border-radius: 5px;
+	box-sizing: border-box;
+}
+.boxdiv {
+	width: 20px;
+	height: 20px;
+	border: 2px solid lightgrey;
+	font: 0.75em arial, sans-serif;
+	text-align: center;
+	color: white;
+	background: white;
+	border-radius: 5px;
+	box-sizing: border-box;
+}
+.redb {
+	background: red;
+}
+.greenb {
+	background: green;
+}

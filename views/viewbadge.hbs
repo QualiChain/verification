@@ -1,0 +1,168 @@
+
+<script type="text/javascript" src="/javascripts/dateformat.js"></script>
+<script type="text/javascript" src="/javascripts/viewbadge.js"></script>
+
+<script>
+	var data = {{{json}}};
+	document.addEventListener('DOMContentLoaded', function() {
+	    processExtractedJSON(data);
+	});
+</script>
+
+<div class="container padbottom">
+	<div style="overflow:auto">
+	
+		<div id="mainhead" style="margin-bottom:0;">View Badges</div>
+		<hr class="headingunderline"><br>
+
+		  <div style="clear:both;float:left;">
+			  <div class="innerpanel" style="font-size:11pt">
+				  <div class="section">
+					  <label class="lbl">Issued On :</label>
+					  <label style="font-weight:400;" id="issuedon"></label>
+				  </div>
+			  </div>
+		  </div>
+
+		  <div style="clear:both;float:left;">
+			  <h3 style="color:#555"><span style="display:inline-block;margin-right:3px;width:4px;height:18px;background-color:#fcc010;"></span>Issuer</h3>
+			  <div class="innerpanel" style="font-size:11pt">
+				<div class="section">
+					<label class="lbl">Image:</label>
+					<img src="" width="80" id="databadgeissuerimage"></img>
+				</div>
+				<br>
+				<div class="section">
+					<label class="lbl">Name:</label>
+					<label style="font-weight:400;" id="dataissuername"></label>
+				</div>
+				<div class="section">
+				  <label class="lbl">Description:</label>
+				  <label style="font-weight:400;" id="dataissuerdesc"></label>
+				</div>
+				<div class="section">
+				  <label class="lbl">URL:</label>
+				  <label style="font-weight:400;" id="dataissuerurl"></label>
+				</div>
+				<div class="section">
+				  <label class="lbl">Email:</label>
+				  <label style="font-weight:400;" id="dataissueremail"></label>
+				</div>
+				<div class="section">
+				  <label class="lbl">Telephone:</label>
+				  <label style="font-weight:400;" id="dataissuertelephone"></label>
+				</div>
+			  </div>
+		  </div>
+
+		  <div style="clear:both;float:left; margin-top:20px;">
+			  <h3 style="color:#555"><span style="display:inline-block;margin-right:3px;width:4px;height:18px;background-color:#fcc010;"></span>Recipient</h3>
+			  <div class="innerpanel" style="font-size:11pt">
+				<div class="section">
+					<label class="lbl">Recipient identity:</label>
+					<label style="font-weight:400;" id="recipient"></label>
+				</div>
+				<div class="section">
+					<label class="lbl">Identity type:</label>
+					<label style="font-weight:400;" id="recipienttype"></label>
+				</div>
+				<div class="section">
+					<label class="lbl">Identity hashed:</label>
+					<label style="font-weight:400;" id="recipienthashed"></label>
+				</div>
+				<div class="section">
+					<label class="lbl">Identity salt:</label>
+					<label style="font-weight:400;" id="recipientsalt"></label>
+				</div>
+			</div>
+		</div>
+
+		<div id="evidencearea" style="clear:both;display:none;float:left; margin-top:20px;">
+			<h3 style="color:#555"><span style="display:inline-block;margin-right:3px;width:4px;height:18px;background-color:#fcc010;"></span>Evidence</h3>
+			<div class="innerpanel" style="font-size:10pt">
+				<div class="section">
+					<table style="width:100%;border-collapse:collapse;background-color:white;border-spacing:0px;" cellpadding="8">
+						<thead  style="font-weight:bold;background-color:#E8E8E8">
+							<td width="40%" class="tdborder"><b>Url</b></td>
+							<td width="20%" class="tdborder"><b>Name</b></td>
+							<td width="40%" class="tdborder"><b>Description</b></td>
+							<td width="40%" class="tdborder"><b>Narrative</b></td>
+							<td width="40%" class="tdborder"><b>Genre</b></td>
+							<td width="40%" class="tdborder"><b>Audience</b></td>
+						</thead >
+						<tbody id="evidenceitems">
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		
+		  <div style="clear:both;float:left; margin-top:20px;">
+			  <h3 style="color:#555"><span style="display:inline-block;margin-right:3px;width:4px;height:18px;background-color:#fcc010;"></span>Badge</h3>
+			  <div class="innerpanel" style="font-size:11pt">
+				<div class="section">
+				 <label class="lbl">Image:</label>
+				  <img src="" width="80" id="databadgeimage"></img>
+				</div>
+				<br>
+				<div class="section">
+				  <label class="lbl">Name:</label>
+				  <label style="font-weight:400;" id="databadgename"></label>
+				</div><br>
+				<div class="section">
+				  <label class="lbl">Description:</label>
+				  <div id="databadgedescription" style="height:100px;overflow:auto;" ></div>
+				</div>
+				<br>
+				<div class="section">
+				  <label class="lbl">Criteria:</label>
+				  <div id="criteriaurl" style="height:100px;overflow:auto;" ></div>
+				</div>
+
+				<div class="section" id="alignmentsection" style="clear:both;float:left;display:none;">
+					<label class="lblbig">Alignment Items:</label>
+					<div id="alignmentlist" style="float:left;margin-top:5px;clear:both;height:80px;overflow:auto; font-size:10pt">
+						<table style="width:100%;border-collapse:collapse;background-color:white;border-spacing:0px;" cellpadding="8">
+							<thead  style="font-weight:bold;background-color:#E8E8E8">
+								<td width="20%" class="tdborder"><b>Name</b></td>
+								<td width="40%" class="tdborder"><b>Url</b></td>
+								<td width="40%" class="tdborder"><b>Description</b></td>
+								<td width="40%" class="tdborder"><b>Framework</b></td>
+								<td width="40%" class="tdborder"><b>Code</b></td>
+							</thead >
+							<tbody id="alignmentitems">
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<div class="section" id="endorsementsection" style="clear:both;float:left;margin-top:20px;display:none;">
+					<label class="lbl" >Badge Endorsements:</label>
+					<div id="alignmentlist" style="float:left;margin-top:5px;clear:both;height:300px;overflow:auto; font-size:10pt" >
+						<table style="width:100%;border-collapse:collapse;background-color:white;border-spacing:0px;" cellpadding="8">
+							<thead  style="font-weight:bold;background-color:#E8E8E8">
+								<td width="20%" class="tdborder"><b>Endorsement Statement</b></td>
+								<td width="10%" class="tdborder"><b>Endorsed On</b></td>
+								<td width="10%" class="tdborder"><b>By</b></td>
+								<td width="10%" class="tdborder"><b>Icon</b></td>
+								<td width="20%" class="tdborder"><b>Description</b></td>
+								<td width="10%" class="tdborder"><b>Url</b></td>
+								<td width="10%" class="tdborder"><b>Email</b></td>
+								<td width="10%" class="tdborder"><b>Telephone</b></td>
+							</thead >
+							<tbody id="endorsementitems">
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+			  </div>
+		  </div>
+
+
+		  <div style="clear:both;float:left; margin-top:10px;padding-bottom:85px;">
+			  <h3 style="color:#555"><span style="display:inline-block;margin-right:3px;width:4px;height:18px;background-color:#fcc010;"></span>Raw Badge JSON Data from PNG:</h3>
+			  <div style="clear:both;height:400px;overflow:auto;border:1px solid lightgrey;background:white;color:#555" id="bakedbadgeinfo"></div>
+		  </div>
+	</div>
+</div>
