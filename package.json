@@ -23,7 +23,7 @@
     "debug": "~2.6.3",
     "express": "~4.15.2",
     "express-api-doc": "0.0.12",
-    "express-fileupload": "^0.4.0",
+    "express-fileupload": "^1.1.9",
     "express-handlebars": "^3.0.0",
     "express-slash": "^2.0.1",
     "express-validator": "^4.1.1",
