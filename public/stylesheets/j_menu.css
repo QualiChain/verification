@@ -62,8 +62,8 @@
 #j_menu {
 	position: absolute;
 	width: 300px;
-	height: 405px; /* change if add/remove a link */
-	top: -410px; /* allow for shadow */
+	height: 470px; /* change if add/remove a link */
+	top: -475px; /* allow for shadow */
 	right: 0px;
 	background-color: #2b69b1;
 	font: 0.9em helvetica, sans-serif;

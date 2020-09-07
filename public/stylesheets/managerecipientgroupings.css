@@ -1,0 +1,26 @@
+.groupSelect select { max-width: 65% }
+
+.tablewrap { display: inline-block; width: 45%; float: left; margin-bottom: 40px; }
+.tablewrap .tableinner { border: 1px solid #bbb; padding: 10px 30px; min-height: 680px; }
+.tablewrap h2 { padding-top: 20px; text-align: center; }
+.tablewrap .dt-buttons { display: block; width: 100%; margin-bottom: 30px; }
+.tablewrap .dataTables_filter { display: block; width: 100%; }
+.tablewrap .dataTables_filter label { display: block; width: 100%; text-align: left; }
+.tablewrap .dataTables_filter label input { width: 80%; float: right; margin-bottom: 5px; }
+.tablewrap .dataTables_paginate { display: block; width: 100%; text-align: center; margin-top: 20px; }
+.tablewrap .dataTables_info { display: block; width: 100%; font-size: 0.9rem; text-align: left; margin-top: 0; padding-top: 0; }
+.tablewrap .dataTables_info span { margin-left: 0.5em; text-align: right; display: block; float: right; }
+
+table tr td:nth-child(3) { max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+table tr td:last-child { text-align: center; }
+
+.tableActions { display: inline-block; width: 10%; float: left; text-align: center; padding: 10px; min-height: 625px; }
+.tableActions input[type="button"] { display: block; padding: 0; width: 100%; top: 350px; position: relative; }
+.tableActions input[type="button"].disabled { pointer-events: none; background-color: #ddd; border-color: #ccc; color: #888; }
+
+@media only screen and (max-width: 1200px) {
+    .tablewrap { width: 100%; float: none; margin-bottom: 5px; min-height: unset; }
+    .tablewrap.rightTable { margin-bottom: 50px; }
+    .tableActions { display: block; width: 50%; margin: 20px auto; float: none; min-height: unset;  }
+    .tableActions input[type="button"] { top: 0px;  }
+}

@@ -1,0 +1,205 @@
+
+.badgeContainerDiv {
+	position: relative;
+	top: 0;
+	width: 95%;
+	margin: 0 auto;
+	font: 0.9em sans-serif;
+}
+.badgePicDiv {
+	float:left;
+	/*position: absolute;*/
+	/*top: 0;*/
+	/*left: 0;*/
+	min-width: 400px;
+	border: 1px solid lightgrey;
+}
+.badgePicDiv img {
+	position: relative;
+	top: 0;
+	left: 0;
+}
+.badgeContentDiv {
+	float:left;
+	width: 900px;
+	padding-left:20px;
+	/*position: absolute;*/
+	/*top: 0;*/
+	/*left: 0;*/
+	/*margin-left: 420px;*/
+}
+.badgeCreationRow {
+	position: relative;
+	display: block;
+	top: 0;
+	left: 0;
+	padding: 10px 0px 10px 0px;
+	border-bottom: 1px solid lightgrey;
+	line-height: 195%;
+	white-space: nowrap;
+	overflow:hidden;
+}
+.badgeHeaderCol {
+	position: relative;
+	display: inline-block;
+	top: 0;
+	left: 0;
+	max-width: 160px;
+	min-width: 160px;
+	color: #777;
+	vertical-align: top;
+}
+.badgeHeaderData {
+	position: relative;
+	display: inline-block;
+	top: 0;
+	left: 0;
+}
+input[type=text] {
+	background-color: #ddf5ff;
+	border: 1px solid lightgrey;
+	font-size: 0.9em;
+}
+input[type=file] {
+	font-size: 0.9em;
+}
+input[type="number"] {
+	-webkit-appearance: textfield;
+	-moz-appearance: textfield;
+	appearance: textfield;
+	width: 20px;
+	border: 0px;
+	color: #77f;
+	font-size: 1em;
+}
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+	-webkit-appearance: none;
+}
+select {
+	font-size: 0.9em;
+}
+button {
+	font-size: 0.9em;
+}
+hr.divider {
+	border: 0;
+	height: 0;
+	border-top: 1px solid rgba(0, 0, 0, 0.3);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+hr.divider2 {
+	border: 0;
+	height: 0;
+	border-top: 1px solid rgba(150, 150, 150, 0.2);
+	border-bottom: 1px solid rgba(255, 255, 255, 1);
+	margin: 2px 10px;
+}
+span ~ span {
+	padding-left: 10px;
+}
+.datanums {
+	color: #77f;
+}
+.badgeHeaderData button {
+	min-width: 30px;
+	height: 20px;
+	background-color: #ddf5ff;
+	border: 0;
+	border-radius: 3px;
+	margin: 0px 2px;
+	box-shadow: 1px 1px 1px darkgrey;
+	color: #555;
+}
+.badgeHeaderData button:hover {
+	background-color: #bbd3dd;
+	color: #000;
+}
+.badgeHeaderData .greenb {
+	background-color: #ebfad9;
+}
+.badgeHeaderData .greenb:hover {
+	background-color: #bbddbd;
+	color: #000;
+}
+.badgeHeaderData .redb {
+	background-color: #fce7e1;
+}
+.badgeHeaderData .redb:hover {
+	background-color: #ddc3bb;
+	color: #000;
+}
+.bsavebut {
+	min-width: 80px;
+	height: 30px;
+	background-color: #b0d085;
+	border: 0;
+	border-radius: 5px;
+	margin-left: 20px;
+	box-shadow: 2px 2px 2px darkgrey;
+	color: #fff;
+}
+.bsavebut:hover {
+	background-color: #d0f2a7;
+	color: #000;
+}
+.bsavebutred {
+	min-width: 80px;
+	height: 30px;
+	background-color: #d09085;
+	border: 0;
+	border-radius: 5px;
+	margin-left: 20px;
+	box-shadow: 2px 2px 2px darkgrey;
+	color: #fff;
+}
+.bsavebutred:hover {
+	background-color: #f2b2a7;
+	color: #000;
+}
+.bloadbut {
+	min-width: 80px;
+	height: 30px;
+	background-color: #aaa;
+	border: 0;
+	border-radius: 5px;
+	box-shadow: 2px 2px 2px darkgrey;
+	color: #fff;
+}
+.bloadbut:hover {
+	background-color: #ccc;
+	color: #000;
+}
+#badgejson {
+	width: 100%;
+	height: 200px;
+	color: #999;
+	border: 1px solid #ccc;
+}
+
+#file-container {
+	display: inline;
+	min-width: 80px;
+	min-height: 30px;
+	background-color: #aaa;
+	border: 0;
+	border-radius: 5px;
+	box-shadow: 2px 2px 2px darkgrey;
+	color: #fff;
+	padding: 7px 24px 7px 24px;
+	font: 0.7 arial;
+}
+#file-container:hover {
+	background-color: #ccc;
+	color: black;
+}
+
+#file-input {
+	display: none;
+}
+
+.controlrow {
+ 	border-bottom:0;
+ 	background-color:#eee;
+ 	padding: 10px;
+}
