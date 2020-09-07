@@ -1,0 +1,47 @@
+
+<script src="/javascripts/eventstats.js"></script>
+<script src="/javascripts/leaderboard.js"></script>
+
+<script type="text/javascript">
+
+	document.addEventListener('DOMContentLoaded', function() {
+		var event = {};
+		event.id = "{{event.id}}";
+		event.name = "{{event.name}}";
+		event.description = "{{event.description}}";
+		event.startdate = {{event.startdate}};
+		event.enddate = {{event.enddate}}
+		event.location_name = "{{event.location_name}}";
+		event.location_pobox = "{{event.location_pobox}}";
+		event.location_streetaddress = "{{event.location_streetaddress}}";
+		event.location_locality = "{{event.location_locality}}";
+		event.location_region = "{{event.location_region}}";
+		event.location_country = "{{event.location_country}}";
+		event.location_postcode = "{{event.location_postcode}}";
+
+		initializeEventStatsData(event);
+		initializePage(event);
+	});
+
+</script>
+
+<div class="leadercontainer padbottom">
+	<div id="leaderHead">{{event.name}}</div>
+	<div id="leaderContainer">
+		<div id="latestContainer">
+			<div id="latestBoardTableHead">Most Recent Badge Earners</div> <!-- date highlight 6's -->
+			<div id="latestBoardTable"></div>
+		</div>
+		<div id="firstContainer">
+			<div id="firstBoardTableHead">Leaderboard</div> <!-- quantity then date -->
+			<div id="firstBoardTable"></div>
+		</div>
+		<div id="badgeContainer">
+			<div id="leaderBadgeDisplayHead">Earned Badges</div>
+			<div id="leaderBadgeDisplay"></div>
+		</div>
+	</div>
+	<div style="clear:both;"></div>
+	<canvas id="canvas"></canvas>
+	<div id="leaderTagLine"></div>
+</div>

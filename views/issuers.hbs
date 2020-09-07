@@ -1,17 +1,24 @@
+
 <div class="container padbottom">
 	<div id="content">
-		<div id="mainhead" style="margin-bottom:0;">{{title}}</div>
+		<div style="position:relative;">
+			<div id="mainhead" style="display:block; margin:auto;">{{title}}<a href="/issuers/information/"></a></div>
+			<div style="position:absolute; top:10px; right:0px;"><a href="/issuers/guide"><img src="/images/infobut.png" title="View Issuer Information for IoC Badging" /></a></div>
+		</div>
 		<hr class="headingunderline"><br>
+	</div>
+	<center>
+	<div style="width:100%">
+		<input class="button" style="margin:20px;min-width:350px;min-height:100px;border-radius:50px;font-size:1.2em;" type="button" value="View Badges" onclick="window.location.href=cfg.proxy_path+cfg.badges_path+'/issuer';"/>
+		<input class="button" style="margin:20px;min-width:350px;min-height:100px;border-radius:50px;font-size:1.2em;" type="button" value="Manage Badge Issuing" onclick="window.location.href=cfg.proxy_path+'/assertions';"/>
+		<input class="button" style="margin:20px;min-width:350px;min-height:100px;border-radius:50px;font-size:1.2em;" type="button" value="Manage Claimed Badges" onclick="window.location.href=cfg.proxy_path+'/assertions/claims';"/>
+		<input class="button" style="margin:20px;min-width:350px;min-height:100px;border-radius:50px;font-size:1.2em;" type="button" value="Manage Badge Recipients" onclick="window.location.href=cfg.proxy_path+'/recipients/manage';"/>
+		<input class="button" style="margin:20px;min-width:350px;min-height:100px;border-radius:50px;font-size:1.2em;" type="button" value="Recipient groups" onclick="window.location.href=cfg.proxy_path+'/recipients/groups';"/>
+		<input class="button" style="margin:20px;min-width:350px;min-height:100px;border-radius:50px;font-size:1.2em;" type="button" value="Recipient groupings" onclick="window.location.href=cfg.proxy_path+'/recipients/groups/members';"/>
+		<input class="button" style="margin:20px;min-width:350px;min-height:100px;border-radius:50px;font-size:1.2em;" type="button" value="Recipient Event Permissions" onclick="window.location.href=cfg.proxy_path+'/events/managerecipientpermissions';"/>
 
-		<form>
-		<input class="roundBut" style="min-width:300px;min-height:100px;border-radius:50px;font-size:1.2em;" type ="button" value="Manage Badge Recipients" onclick="window.location.href=cfg.proxy_path+'/recipients/manage';"/>
-		<input class="roundBut" style="min-width:300px;min-height:100px;border-radius:50px;font-size:1.2em;" type ="button" value="Manage Badge Issuing" onclick="window.location.href=cfg.proxy_path+'/assertions';"/>
-		<input class="roundBut" style="min-width:300px;min-height:100px;border-radius:50px;font-size:1.2em;" type ="button" value="View Badges" onclick="window.location.href=cfg.proxy_path+'/badges/issuer';"/>
 		<br><br>
-		<br><br>
-		<!-- input class="roundBut" style="min-width:300px;min-height:100px;border-radius:50px;font-size:1.2em;" type ="button" value="Manage Endorsers" onclick="window.location.href=cfg.proxy_path+'/endorsers/manage';"/>
-		<br><br -->
-
-		</form>
+		<!-- input class="button" style="margin:20px;min-width:300px;min-height:100px;border-radius:50px;font-size:1.2em;" type="button" value="Manage Endorsers" onclick="window.location.href=cfg.proxy_path+'/endorsers/manage';"/>
 	</div> 
+	</center>
 </div>

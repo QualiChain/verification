@@ -1,8 +1,14 @@
 
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
+
 <script src="/javascripts/managealignments.js"></script>
 
 <div class="container padbottom">
 	<div id="content">
+		<a style="padding:0px" href="/admin/">&lsaquo;&lsaquo; Back</a>
+
 		<div id="mainhead" style="margin-bottom:0;">{{title}}</div>
 		<hr class="headingunderline"><br>
 
@@ -121,5 +127,8 @@
 	<br>
 	</div>
 	<div style="clear:both;"></div>
-	<div id="storedList" style="margin-left:auto;margin-right:auto">You have not added any alignments yet</div>
+
+	<div style="padding-top:20px;padding-bottom:20px;">
+		<center><table id="storedList" class='manageTables' width="100%"></table></center>
+	</div>
 </div>

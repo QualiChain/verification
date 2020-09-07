@@ -1,51 +1,102 @@
 
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
+
 <script src="/javascripts/managerecipients.js"></script>
 
 <div class="container padbottom">
 	<div id="content">
+		<a style="padding:0px" href="/issuers/">&lsaquo;&lsaquo; Back</a>
+
 		<div id="mainhead" style="margin-bottom:0;">{{title}}</div>
-		<hr class="headingunderline"><br>
+		<hr class="headingunderline" />
 
 		<p style="text-align: left; font: 0.8em helvetica, sans-serif;line-height: 130%;"><b>Please Note:</b> 
 		Once you are happy the details are correct for a given Recipient record entry, press the 'Create Account' button in the Account Status field.
 		Recipients will then be emailed using the email address you have given in their Recipient record,
 		in order to verify the email address and create their login accounts on this website.
-		Once you have pressed the 'Create Account' button, you will no longer be able to edit their email address.<p> 
+		Once you have pressed the 'Create Account' button, you will no longer be able to edit their email address.</p> 
 
-		<p style="text-align: left; font: 0.8em helvetica, sans-serif;line-height: 100%;">
-		You will not be able to issue badges to recipients who have not completed the registration process.</p>
+		<p style="text-align: left; font: 0.8em helvetica, sans-serif;line-height: 100%;">You will not be able to issue badges to recipients who have not completed the registration process.</p>
 		
-		<br>
+		<br />
 
-		<center><input id="createFormShowButton" type="button" value="Create Recipient" onclick="showCreateForm();"></center>
+		<center>
+			<div id="createButtonsDiv">
+				<input id="createFormShowButton" type="button" value="Create Recipient" onclick="showCreateForm();" />
+				<input id="createBulkFormShowButton" style="margin-left:40px;" type="button" value="Import Bulk Recipients" onclick="showCreateBulkForm();" />
+			</div>
+		</center>
+
+		<div id="createBulkDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			Import Bulk Recipients<br />
+			<div class="boxy addform">		
+				<form id="formRecBulk" enctype="multipart/form-data" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<div>
+						<div style="float:left;min-width:120px;">Select a file<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input name="recipientdatafile" type="file" style="font-size:1em;" /></div>
+					</div>
+					<div style="clear:both;"></div>					
+					<p style="text-align: left; font-size:10pt; line-height: 100%;">
+						The file should be a standard comma-separated values (CSV) file. It should contain three properties, though the last is optional: name, email, uniqueid in that order. The first line of the file should have the field headings: "name", "email", "uniqueid"<br /><br />
+						e.g.<br />					
+
+						<pre style="text-align: left; font-size:10pt; line-height: 90%; overflow: unset;">					
+							"name","email","uniqueid"<br />
+							"Michelle Bachler","michelle.bachler@open.ac.uk","123456"<br />
+							"Fred Blogs","fblogss@open.ac.uk"<br />
+							"George Gently","george@open.ac.uk","678799"<br />					
+							etc...
+						</pre>
+					</p>
+					
+					<div style="clear:both;"></div>
+					<br />
+					<center>
+						<input type="button" id="bulkrecipientimportbutton" value="Import" onclick="importBulkRecipients();" />
+						<span style="padding-left:30px"></span>
+						<input type="button" value="Cancel" onclick="cancelCreateBulkForm();" />
+					</center>
+				</form>
+			</div>
+		</div>
 
 		<div id="createDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
-			Create new Recipient<br>
+			Create new Recipient<br />
 			<div class="boxy addform">
 				<form id="formRec" style="text-align:left;font-size:0.8em;padding-left:15px;">
 					<div>
-						<div style="float:left;min-width:120px;">Full Name<span style="color:red">&#42;</span></div>
-						<div style="float:left;width:80%;"><input type="text" name="name" id="name" style="background-color:white;"placeholder="Enter the Recipient Name"></div>
+						<div style="float:left;min-width:120px;">Full Name <span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="name" id="name" style="background-color:white;" placeholder="Enter the Recipient Name"></div>
 					</div>
-					<br>
+					<br />
 					<div>
-						<div style="float:left;min-width:120px;">Email<span style="color:red">&#42;</span></div>
-						<div style="float:left;width:80%;"><input type="text" name="email" id="email" style="background-color:white;"placeholder="Enter the Recipient Email"></div>
+						<div style="float:left;min-width:120px;">Email <span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="email" id="email" style="background-color:white;" placeholder="Enter the Recipient Email"></div>
 					</div>
-					<br>
+					<br />
 					<div>
 						<div style="float:left;min-width:120px;">Unique ID</div>
-						<div style="float:left;width:80%;"><input type="text" name="uniqueid" id="uniqueid" style="background-color:white;"placeholder="Enter the Recipient Unique ID (Optional)"></div>
+						<div style="float:left;width:80%;"><input type="text" name="uniqueid" id="uniqueid" style="background-color:white;" placeholder="Enter the Recipient Unique ID (Optional)"></div>
 					</div>
+					<div>
+						<div style="float:left;min-width:120px;">Group</div>
+						<div style="float:left;width:80%;" id="grouplist"></div>
+					</div><br />
 					<div style="clear:both;"></div>
-					<br>
-					<center><input type="button" value="Save" onclick="createRecipient();"><span style="padding-left:30px"></span><input type="button" value="Cancel" onclick="cancelCreateForm();"></center>
+					<br />
+					<center>
+						<input type="button" value="Save" onclick="createRecipient();" />
+						<span style="padding-left:30px"></span>
+						<input type="button" value="Cancel" onclick="cancelCreateForm();" />
+					</center>
 				</form>
 			</div>
 		</div>
 
 		<div id="editDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
-			Edit Recipient<br>
+			Edit Recipient<br />
 			<div class="boxy editform">
 				<form id="formRecEdit" style="text-align:left;font-size:0.8em;padding-left:15px;">
 					<input type="hidden" id="recipientid" name="recipientid" value="">
@@ -54,23 +105,29 @@
 						<div style="float:left;width:80%;"><input type="text" name="name" id="name" style="background-color:white;"placeholder="Enter the Recipient Name"></div>
 					</div>
 					<div id="editemaildiv" style="display:block">
-						<br>
+						<br />
 						<div style="float:left;min-width:120px;">Email<span style="color:red">&#42;</span></div>
 						<div style="float:left;width:80%;"><input type="text" name="email" id="email" style="background-color:white;"placeholder="Enter the Recipient Email"></div>
 					</div>
-					<br>
+					<br />
 					<div>
 						<div style="float:left;min-width:120px;">Unique ID</div>
 						<div style="float:left;width:80%;"><input type="text" name="uniqueid" id="uniqueid" style="background-color:white;"placeholder="Enter the Recipient Unique ID (Optional)"></div>
 					</div>
 					<div style="clear:both;"></div>
-					<br>
-					<center><input type="button" value="Update" onclick="updateRecipient();"><span style="padding-left:30px"></span><input type="button" value="Cancel" onclick="cancelEditForm();"></center>
+					<br />
+					<center>
+						<input type="button" value="Update" onclick="updateRecipient();" />
+						<span style="padding-left:30px"></span>
+						<input type="button" value="Cancel" onclick="cancelEditForm();" />
+					</center>
 				</form>
 			</div>
 		</div>
 	</div>
 	<div style="clear:both;"></div>
-	<br><br>
-	<div id="storedList" style="margin-left:auto;margin-right:auto">You have not added any recipients yet</div>
+	<br /><br />
+	<div style="padding-top:20px;padding-bottom:20px;">
+		<center><table id="storedList" class='manageTables' width="100%"></table></center>
+	</div>
 </div>

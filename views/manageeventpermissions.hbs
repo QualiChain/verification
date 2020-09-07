@@ -1,0 +1,143 @@
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
+
+<script src="/lib/dateformat.js"></script>
+<script src="/javascripts/manageeventpermissions.js"></script>
+ 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    initializePage('{{ protocol }}', '{{ domain }}');
+});
+</script>
+
+<div class="container padbottom">
+	<div id="content">
+		<a style="padding:0px" href="/issuers/">&lsaquo;&lsaquo; Back</a>
+
+		<div id="mainhead" style="margin-bottom:0;">{{title}}</div>
+		<hr class="headingunderline"><br>
+
+		<center><div id="createButtonsDiv"><input id="createFormShowButton" type="button" value="Create Recipient Event Permission" onclick="showCreateForm();"><input id="createBulkFormShowButton" style="margin-left:40px;" type="button" value="Import Bulk Recipient Event Permissions" onclick="showCreateBulkForm();"></div></center>
+
+		<!-- FORM TO BULK ADD NEW RECIPIENT EVENT PERMISSIONS -->
+		<div id="createBulkDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			Import Bulk Recipients Event Permissions<br>
+			<div class="boxy addform">		
+				<form id="formRecBulk" enctype="multipart/form-data" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<div>
+						<div style="float:left;min-width:120px;">Event<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;" id="eventlistbulk"></div>
+					</div><br>
+					<div>
+						<div style="float:left;min-width:120px;">Select a file<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input name="recipientdatafile" type="file" style="font-size:1em;" /></div>
+					</div>
+					<div style="clear:both;"></div>					
+					<p style="text-align: left; font-size:10pt; line-height: 100%;">The file should be a standard comma-separated values (CSV) file. It should contain three properties 
+					recipient: name, email, and Yes/No for if their name can be displayed publicall on an event Leader board/Stats Page.<br>
+					The first line of the file should have the field headings: "name", "email", "canshowname".<br>
+					Recipients must already exist in the Issuer's Recipient list to have this data stored. Only existing Recipients without an entry for the selected Event will be added.
+					<br><br>e.g.<br>					
+
+<pre style="text-align: left; font-size:10pt; line-height: 90%;overflow:none;">					
+"name","email","canshowname"<br>
+"Michelle Bachler","michelle.bachler@open.ac.uk","Yes"<br>
+"Fred Blogs","fblogss@open.ac.uk","Yes"<br>
+"George Gently","george@open.ac.uk","No"<br>					
+etc...
+</pre>
+
+					</p>
+					
+					<div style="clear:both;"></div>
+					<br>
+					<center><input type="button" id="bulkrecipientimportbutton" value="Import" onclick="importBulkEventRecipientPermissions();" />
+					<span style="padding-left:30px"></span>
+					<input type="button" value="Cancel" onclick="cancelCreateBulkForm();"></center>
+				</form>
+			</div>
+		</div>
+
+
+		<!-- FORM TO ADD A NEW RECIPIENT EVENT PERMISSION -->
+		<div id="createDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			Create a Recipient Event Permission<br>
+			<div class="boxy addform">
+				<form id="formRec" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<div>
+						<div style="float:left;min-width:120px;">Recipient<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;" id="recipientlist"></div>
+
+					</div><br>
+					<div>
+						<div style="float:left;min-width:120px;">Event<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;" id="eventlist"></div>
+					</div><br>
+					<div>
+						<div style="float:left;min-width:120px;">Allow Public Displaying of Badge Recipient Name?<span style="color:red">&#42;</span>
+							&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="displaynameaddyes" name="displaynameadd" value="yes"> Yes
+							&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="displaynameaddno" name="displaynameadd" value="no"> No
+						</div>
+					</div>
+					<br>
+					<br>
+					<div style="clear:both">
+						<center><input type="button" value="Save" onclick="createEventRecipientPermission();">
+						<span style="padding-left:30px">
+						</span><input type="button" value="Cancel" onclick="cancelCreateForm();"></center>
+					</div>
+				</form>
+
+			</div> 
+		</div> 
+
+		<!-- FORM TO EDIT A RECIPIENT EVENT PERMISSION -->
+		<div id="editDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			Edit Pending Badge Issuance<br>
+			<div class="boxy editform">
+				<form id="formRecEdit" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<input type="hidden" id="recordid" name="recordid" value="">
+					<div>
+						<div style="float:left;min-width:120px;">Recipient Name<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;" id="recipientlistedit"></div>
+
+					</div><br>
+					<div>
+						<div style="float:left;min-width:120px;">Event Name<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;" id="eventlistedit"></div>
+					</div><br>
+					<div>
+						<div style="float:left;min-width:120px;">Allow Public Displaying of Badge Recipient Name?<span style="color:red">&#42;</span>
+							&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="displaynameedityes" name="displaynameedit" value="yes"> Yes
+							&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="displaynameeditno" name="displaynameedit" value="no"> No
+						</div>
+					</div>
+					<br>
+					<br>
+					<div style="clear:both">
+						<center><input type="button" value="Update" onclick="updateEventRecipientPermission();">
+						<span style="padding-left:30px"></span>
+						<input type="button" value="Cancel" onclick="cancelEditForm();"></center>
+					</div>
+				</form>
+
+			</div> 
+		</div>
+	</div>
+
+	<div style="clear:both;"></div>
+
+	<br><br>
+
+	<div style="float:left;clear:both;width:100%">
+		<center><span style="font-size:14pt;font-weight:bold">Recipient Event Permissions</span></center>
+		<div style="padding-top:10px;padding-bottom:10px;">
+			<table id="storedList" class='manageTables' width="100%"></table>
+		</div>
+	</div>
+
+	<div style="clear:both;"></div>
+	<br><br>
+</div>

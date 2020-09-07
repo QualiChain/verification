@@ -1,0 +1,777 @@
+<div class="container padbottom">
+	<div id="content">
+		<div id="mainhead" style="margin-bottom:0;">Information for IoC Badge Issuers</div>
+		<hr class="headingunderline">
+		<img id="printbutton" style="float:right;cursor:pointer;" src="/images/printbut.png" height="33" onclick="window.print();" alt="Print Page" title="Print Page" />
+		<a href="/pdf/issuers/information"><img id="printbutton" style="float:right;cursor:pointer;margin-right:10px;" src="/images/pdfbut.png" height="33" alt="Download PDF" title="Download PDF" /></a>
+		<br>
+		<div class="pagelayout">
+			<div class="infosubhead">Contents<br></div>
+			<div id="infocontentslist">
+				<strong><a href="#what">Issuing IoC badges – What to expect from us?</a></strong><br>
+				<div style="margin-left:20px"><a href="#c_support">Support</a><br>
+				<a href="#c_website">Website and API</a><br></div>
+				<div style="margin-left:40px"><a href="#c_issuers">Badge Issuers</a><br>
+				<a href="#c_recipients">Badge Recipients</a><br>
+				<a href="#c_validators">Badge Validators</a><br>
+				<a href="#c_uses">Badge Uses</a><br></div>
+				<strong><a href="#c_ussuing">Issuing IoC badges – What we need from you?</a></strong><br>
+				<div style="margin-left:20px"><a href="#c_ussuer">Issuer</a><br>
+				<a href="#c_badge">Badge</a><br>
+				<a href="#c_resipient">Recipient</a><br>
+				<a href="#c_assertion">Assertion</a><br>
+				<a href="#c_evidence">Evidence (Optional)</a><br>
+				<a href="#c_endorsment">IoC Endorsement</a><br></div>
+				<strong><a href="#c_levels">Gateway Badging Types</a></strong><br>
+				<strong><a href="#c_appendix">Appendix</a></strong><br>
+				<div style="margin-left:20px"><a href="#c_fundamental">1. Fundamental setup information we need from you for badge issuing</a><br>
+				<a href="#c_pngs">2. Examples of IoC Badge PNGs that have been issued</a><br></div>
+				<div style="margin-left:40px"><i><a href="#c_please">Please note: The super badge image has now changed – see section on 'Gateway Badging Types'</i></a><br></div>
+				<div style="margin-left:20px"><a href="#c_json">3. Example Badge JSON</a><br></div>
+			</div>
+			<br>
+			<div class="infohead"><a name="what"></a>Issuing IoC badges – What to expect from us?</div><br>
+			<p><i>Author: Michelle Bachler, Knowledge Media Institute, The Open University.</i></p>
+			<p>This document aims to describe what you can expect from us and what we will need from you in order to issue IoC badges.</p>
+			
+			<div class="infosubhead"><a name="c_support"></a>Support</div>
+			<p>The Institute of Coding (IoC) is committed to supporting Universities and organizations through the process of designing, managing and issuing their IoC badges. We will work collaboratively with you to setup and run badging for IoC related events.</p>
+			<p>The services we provide are a work in progress and new functionality is being added progressively. If you have any requirements not currently met by our services, please feel free to discuss them with us. We want to ensure the service meets your needs.</p>
+			<div class="infosubhead"><a name="c_website"></a>Website and API</div>
+			<img class="infoimage" src="/images/information_pics/fig1.png" width="100%" alt="IoC website homepage" title="IoC website homepage" />
+			<br>
+			<div class="infocap">Figure 1 – IoC website homepage (not logged in)</div>
+			<br>
+			<p>This website and API currently support three types of end users: 
+			<p style="margin-left:50px;"><strong>1. Badge Issuers</strong>, like yourselves, wanting to issue badges for IoC related events.<br>
+			<strong>2. Badge Recipients</strong> who want to view and download the badges they have been issued.<br>
+			<strong>3. Badge Validators</strong>: Third parties who want to check that a given badge they have been presented with is a valid IoC badge.</p>
+			
+			<div class="infosubhead"><a name="c_issuers"></a>Badge Issuers</div>
+			<p>All IoC approved Issuers will be given a login account to the IoC service. Using the website or the API issuers can view the information for the badges they have been authorized to issue, they can setup their badge recipients and they can issue badges to them:</p>
+			<img class="infoimage" src="/images/information_pics/fig2.png" width="100%" alt="Badge Issuer homepage" title="Badge Issuer homepage" /><br>
+			<span class="infocap">Figure 2 – Badge Issuer homepage</span>
+			<br>
+			<div class="infosubhead"><a name="c_recipients"></a>Badge Recipients</div>
+			<p>Badge recipients will be able to login to our website and view their IoC badge portfolio. Here they can view the details of any of their badges in our friendly viewer page (see figure 4) and download their badges:</p>
+			<img class="infoimage" src="/images/information_pics/fig3.png" width="100%" alt="Main section of the Badge Recipient homepage" title="Main section of the Badge Recipient homepage" /><br>		
+			<span class="infocap">Figure 3 – Main section of the Badge Recipient homepage</span>
+			<br><br>
+			<img class="infoimage" src="/images/information_pics/fig4.png" width="100%" alt="Badge View page with example data" title="Badge View page with example data" /><br>		
+			<span class="infocap">Figure 4 – Badge View page with example data</span>
+			<br>
+			<div class="infosubhead"><a name="c_validators"></a>Validators</div>
+			<p>We have created a website and API endpoint where anyone can come and validate a badge. They must have access to the badge (or for the API the badge JSON) and they must have separately obtained and confirmed the email address of the person who says it is their badge.</p>
+			<br>
+			<img class="infoimage" src="/images/information_pics/fig5.png" width="100%" alt="IoC Validation webpage" title="IoC Validation webpage" /><br>		
+			<span class="infocap">Figure 5 – IoC Validation webpage</span>
+			<br>
+			
+			<div class="infosubhead"><a name="c_uses"></a>Badge Uses</div>
+			<p>There are many Open Badge services in existence for issuing, storing and sharing Open Badges. We will just mention the main badge storing service in this document.</p>
+			
+			<p><strong>Note: Existing services do not yet understand our blockchain verified badges. So in order to interact with existing badge services, learners will need to download the 'Traditionally Verified' badge version from their 'My Badges' portfolio page.</strong></p>
+			
+			<p>Badges are usually stored in what are known as backpacks. Backpacks give the user complete control over their achievements by allowing them to organize, display and manage their badges in one place. Until very recently Mozilla ran the biggest badge portfolio system called ‘Mozilla Backpack’ (<a href="https://backpack.openbadges.org/">https://backpack.openbadges.org/</a>). Mozilla have now closed their service down and handed over the running of a backpack service to a site called Badgr (<a href="https://support.badgr.com/">https://support.badgr.com/</a>). </p>
+			<p>Badgr backpacks allow someone to store and organize their badges into collections and shared badges or collections with others. Badgr allows a person to share badges in three ways:</p>
+			<p style="margin-left:50px;"><strong>1.</strong> Via url links<br>
+			<strong>2.</strong>	Via Social media<br>
+			<strong>3.</strong>	Via embedding</p>
+			<p>For full details please visit: <a href="https://support.badgr.com/portal/kb/articles/sharing-badges-from-badgr">https://support.badgr.com/portal/kb/articles/sharing-badges-from-badgr</a></p>
+			<br>
+			<img class="infoimage" src="/images/information_pics/fig6.png" width="100%" alt="Badgr Backback help page" title="Badgr Backback help page" /><br>		
+			<span class="infocap">Figure 6 – Badgr Backback help page</span><br><br>
+			<p>For more information on Badgr backpacks please visit: <a href="https://support.badgr.com/portal/kb/articles/using-the-badgr-backpack">https://support.badgr.com/portal/kb/articles/using-the-badgr-backpack</a></p>
+			<img class="infoimage" src="/images/information_pics/fig7.png" width="100%" alt="Badgr sharing on Social Media help page" title="Badgr sharing on Social Media help page" /><br>		
+			<span class="infocap">Figure 7 – Badgr sharing on Social Media help page</span><br><br>
+			<p>For more information of how to share badges on Social Media via Badgr please visit: <a href="https://support.badgr.com/portal/kb/articles/sharing-badges-on-social-media">https://support.badgr.com/portal/kb/articles/sharing-badges-on-social-media</a>
+			<br><br>
+			
+			<div class="infohead"><a name="c_ussuing"></a>Issuing IoC badges – What we need from you?</div><br>
+			<p>All our badges are issuing using the Open Badges Specification version 2, which is currently maintained by IMS Global: <a href="https://www.imsglobal.org/sites/default/files/Badges/OBv2p0Final/index.html">https://www.imsglobal.org/sites/default/files/Badges/OBv2p0Final/index.html</a>. We are working towards supporting the entire specification over time.</p>
+			<p>At present, the next sections below describe the information we currently need from you to issue badges. Note: some items are marked as optional. Please note: the items in bold are the minimum data you would need you to send to us to get you setup as an issuer on the system and to setup your badges.</p>
+			
+			<div class="infosubhead"><a name="c_ussuer"></a>Issuer</div>
+			<p>For the Issuer details associated with any badges you issued, and to setup your website admin account, we would need (<a href="http://www.imsglobal.org/sites/default/files/Badges/OBv2p0Final/index.html#Profile">http://www.imsglobal.org/sites/default/files/Badges/OBv2p0Final/index.html#Profile</a>):</p>
+			<table id="infotable">
+				<tr>
+					<th>
+						Property
+					</th>
+					<th>
+						Description
+					</th>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> Name
+					</td>
+					<td>
+						e.g. your university/organisation name
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> Description
+					</td>
+					<td>
+						e.g. a description of your university/organisation
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> Image URL
+					</td>
+					<td>
+						e.g. a URL to a publicly accessible version of your logo (or send us an image and we will host it locally)
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> URL (website)
+					</td>
+					<td>
+						e.g. your university/organisation main website
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Optional:</i> Email
+					</td>
+					<td>
+						e.g. your university/organisation main contact email <i>(optional)</i>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Optional:</i> Telephone
+					</td>
+					<td>
+						e.g. your university/organisation main contact number <i>(optional)</i>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> Account email
+					</td>
+					<td>
+						We would also need an Issuer email address to be used to create the Issuer administration account on our system. This would be used by whoever is setting up the Recipients and Issuing the badges to them. We recommend a generic account that could be shared on your side. We will then setup and Issuer account and this email address will be emailed with a link to complete registration.
+					</td>
+				</tr>
+			</table>
+			<br>
+			<div class="infosubhead"><a  name="c_badge"></a>Badge</div>
+			<p>For each Badge you want to issue we would need (<a href="https://www.imsglobal.org/sites/default/files/Badges/OBv2p0/index.html#BadgeClasshttps://www.imsglobal.org/sites/default/files/Badges/OBv2p0/index.html#BadgeClass">https://www.imsglobal.org/sites/default/files/Badges/OBv2p0/index.html#BadgeClass</a>):
+			<br>
+			<table id="infotable">
+				<tr>
+					<th>
+						Property
+					</th>
+					<th>
+						Description
+					</th>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> Badge title
+					</td>
+					<td>
+						
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> Proposed Badge Type
+					</td>
+					<td>
+						Please see section entitled '<a href="#c_levels">Gateway Badging Types</a>', for more details of the supporting information that maybe needed depending on the type selected.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> Badge description
+					</td>
+					<td>
+						
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> An image file (png) of the Badge
+					</td>
+					<td>
+						e.g. your university/organisation main website.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> An image file (png) of the Badge 
+					</td>
+					<td>
+						We will design this using a template we have and send to you for approval, see <a href="#c_pngs">appendix 2</a> for examples.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> Event type/strapline
+					</td>
+					<td>
+						For the Ribbon on each badge image (see <a href="#c_pngs">Appendix 2</a> for example Ribbon text).
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> Badge Criteria
+					</td>
+					<td class="problemTable">
+						(<a href="https://www.imsglobal.org/sites/default/files/Badges/OBv2p0/index.html#Criteria">https://www.imsglobal.org/sites/default/files/Badges/OBv2p0/index.html#Criteria</a>). This is basically a statement of what the student had to do to earn the badge.
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						<i>Optional:</i> Badge Criteria Events
+					</td>
+					<td>
+						One or more events can be associated with a badge's criteria.
+						<br>Each event has the following properties:
+						<pre>
+Event:
+		Name                                       (required)
+		Description                                         
+		Start Date and Time                        (required)
+		End Date and Time                          (required)
+		Location Name
+		Location Po Box Number
+		Street Address – e.g. 72 Windsor Street
+		Town/City
+		County
+		Post Code
+		Country
+
+		Organizer(s)
+				One or more Organizations (see below)
+
+		Sponsor(s)
+				One or more Organizations (see below)
+
+Organization:
+		Name                                        (required)
+		Email                                       (required)
+		Location Po Box Number
+		Street Address – e.g. 72 Windsor Street
+		Town/City
+		County
+		Post Code
+		Country
+
+						</pre>	
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Optional:</i> You can also add some Tags of your choice.
+					</td>
+					<td>
+						
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Optional:</i> Badges can also have Alignments 
+					</td>
+					<td class="problemTable">
+						(<a href="https://www.imsglobal.org/sites/default/files/Badges/OBv2p0/index.html#Alignment">https://www.imsglobal.org/sites/default/files/Badges/OBv2p0/index.html#Alignment</a>)
+						<br>This is where we would describe any accreditation standards or skills schemas etc. that this badge aligns to.<br>
+						We have APIs that can be referenced here for SFIA and IoC gateway alignments (<a href="https://ioc.kmi.open.ac.uk/badges/list/view/">https://ioc.kmi.open.ac.uk/badges/list/view/</a>).<br>
+						We would need to know more information about what your badges were for exactly, to advise further.<br>
+					</td>
+				</tr>
+			</table>
+			<br>
+			<div class="infosubhead"><a name="c_resipient"></a>Recipient</div>
+			<p>Once you receive your Issuer account on our system, you will have an administration area (see figure 2 above) where you can setup your badge recipients. You will have a form to enter the following details for a recipient (see figure 8 below):</br>
+			(<a href="https://www.imsglobal.org/sites/default/files/Badges/OBv2p0Final/index.html#IdentityObject">https://www.imsglobal.org/sites/default/files/Badges/OBv2p0Final/index.html#IdentityObject</a>)</p>
+			<table id="infotable">
+				<tr>
+					<th>
+						Property
+					</th>
+					<th>
+						Description
+					</th>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> a name
+					</td>
+					<td>
+						We ask for a name, but that is only for use on our system so you can identify the person. It is not put into the badge issuance.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> an email address
+					</td>
+					<td>
+						For the recipient we need their email address. This email should be a personal email that they are likely to control for some time as they will need to show ownership as part of validation of the badge to employer etc. if requested.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Optional:</i> Your unique Identifier
+					</td>
+					<td>
+						Here you can optionally add your own unique identifier for the recipient. This may be useful when tying this to your own system, especially if using the API. This property is also not used in the actual badge issuance.
+					</td>
+				</tr>
+			</table>
+			<br>
+			<img class="infoimage" src="/images/information_pics/fig8.png" width="100%" alt="Section of the Recipient Management page showing the form for creating a new recipient" title="Section of the Recipient Management page showing the form for creating a new recipient" /><br>		
+			<span class="infocap">Figure 8 – Section of the Recipient Management page showing the form for creating a new recipient</span>
+			<br>
+			<div class="infosubhead"><a name="c_assertion"></a>Assertion</div>
+			<p>The issuing of an instance of a badge is known in the Open Badges specification as an Assertion and we often refer to it from a system point of view as an badge issuance, (<a href="https://www.imsglobal.org/sites/default/files/Badges/OBv2p0Final/index.html#Assertion">https://www.imsglobal.org/sites/default/files/Badges/OBv2p0Final/index.html#Assertion</a>).</p>
+			<p>On the Badge Issuing page you will be required to select a Badge Recipient and Select a Badge to save as a pending issuance (see figure 9 below).</p>
+			<img class="infoimage" src="/images/information_pics/fig9.png" width="100%" alt="Section of the IoC Badge Issuing page with example data" title="Section of the IoC Badge Issuing page with example data" /><br>		
+			<span class="infocap">Figure 9 – Section of the IoC Badge Issuing page with example data</span>
+			<br>
+			<div class="infosubhead"><a name="c_evidence"></a>Evidence <i>(Optional)</i></div>
+			<p>Once a badge is pending you can optionally add any Evidence items to the issuance: (<a href="https://www.imsglobal.org/sites/default/files/Badges/OBv2p0Final/index.html#Evidence">https://www.imsglobal.org/sites/default/files/Badges/OBv2p0Final/index.html#Evidence</a>).<br>For a given item of evidence you can add:</p>
+			<table id="infotable">
+				<tr>
+					<th>
+						Property
+					</th>
+					<th>
+						Description
+					</th>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> Name
+					</td>
+					<td>
+						A descriptive title of the evidence.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> URL
+					</td>
+					<td>
+						A publicly accessible url pointing to a webpage presenting evidence of achievement
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Optional:</i> Description
+					</td>
+					<td>
+						A longer description of the evidence.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Optional:</i> Narrative
+					</td>
+					<td>
+						A narrative that describes the evidence and process of achievement that led to an Assertion.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Optional:</i> Genre
+					</td>
+					<td>
+						A string that describes the type of evidence. For example, <i>Poetry</i>, <i>Prose</i>, <i>Film</i>, <i>Photography</i>.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Optional:</i> Audience
+					</td>
+					<td>
+						A description of the intended audience for a piece of evidence.
+					</td>
+				</tr>
+			</table>
+			<br>
+			<i>Note:</i> In a future release of the IoC badge issuing service you will also be able to add Badge Assertion endorsements to a Pending Badge issuance.
+			<br>
+			<div class="infosubhead"><a name="c_endorsment"></a>IoC Endorsement</div>
+			<p>Just for your information, we will automatically add an IoC endorsement to all Badge Objects. It will follow the Open Badges Endorsement object schema: (<a href="http://www.imsglobal.org/sites/default/files/Badges/OBv2p0Final/index.html#Endorsement">http://www.imsglobal.org/sites/default/files/Badges/OBv2p0Final/index.html#Endorsement</a>)</p>
+			<p>This endorsement section will be part of the Badge Object and will appear in each badge Issuance JSON (Assertion) with the following information:</p>
+			<p><strong>Endorsement Issuer</strong></p>
+			<table id="infotable">
+				<tr>
+					<th>
+						Property
+					</th>
+					<th>
+						Description
+					</th>
+				</tr>
+				<tr>
+					<td>
+						Name
+					</td>
+					<td>
+						Institute of Coding
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Description
+					</td>
+					<td>
+						Our mission is to break down barriers to digital learning and employment. We believe learning should be a lifelong process and that everyone has a right to improve their skills. We want to spread opportunity by offering access to education, providing what you need, when you need it, in a place you can reach.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						URL
+					</td>
+					<td>
+						https://instituteofcoding.org/
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Email
+					</td>
+					<td>
+						ioc-badges@open.ac.uk
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Image
+					</td>
+					<td class="problemTable">
+						https://instituteofcoding.open.ac.uk/badges/images/logos/ioc-logo.png
+					</td>
+				</tr>
+			</table>
+			<br>
+			<p><strong>Endorsement Claim</strong></p>
+			<p>The Institute of Coding endorse this badge and its issuer.</p>
+			
+			
+			<div class="infosubhead"><a name="c_levels"></a>Gateway Badging Types</div>
+			<p>IoC currently support the following gateway badging alignment types:</p>
+			<p style="margin-left:50px;">
+			<ul>
+			<li><strong>Attendance</strong> – The badge represents attendance.  To earn this badge the recipient must attend an event.</li>
+			<li><strong>Knowledge Self-Assessed</strong> – This badge represents knowledge of a domain. To earn this badge the recipient must have self-assessed their knowledge of a domain set by an event or course</li>
+			<li><strong>Knowledge Bronze</strong> – This badge represents a basic knowledge of a domain. To earn this badge the recipient must show evidence of a basic knowledge of a domain.</li>
+			<li><strong>Knowledge Silver</strong> – This badge represents an intermediate knowledge of a domain. To earn this badge the recipient must show evidence of an intermediate knowledge of a domain.</li>
+			<li><strong>Knowledge Gold</strong> – This badge represents a confident knowledge of a domain. To earn this badge the recipient must show evidence of a confident knowledge of a domain</li>
+			</ul>
+		
+			<p>IoC Alignment badge images:</p>
+			<p><img style="margin:10px" src="/images/information_pics/alignment_examples/attendance.png" width="150px" alt="IoC attendance alignment badge" title="IoC attendance alignment badge"/><img style="margin:10px" src="/images/information_pics/alignment_examples/self_assessed.png" width="150px" alt="IoC self-assessed knowledge alignment badge" title="IoC self-assessed knowledge alignment badge"/><img style="margin:10px" src="/images/information_pics/alignment_examples/knowledge_bronze.png" width="150px" alt="IoC bronze knowledge alignment badge" title="IoC bronze knowledge alignment badge"/><img style="margin:10px" src="/images/information_pics/alignment_examples/knowledge_silver.png" width="150px" alt="IoC silver knowledge alignment badge" title="IoC silver knowledge alignment badge"/><img style="margin:10px" src="/images/information_pics/alignment_examples/knowledge_gold.png" width="150px" alt="IoC gold knowledge alignment badge" title="IoC gold knowledge alignment badge"/>
+			<p>
+			
+			<p>Examples of the gateway badging types applied to badges:</p>
+			<p><img style="margin:10px" src="/images/information_pics/alignment_examples/attend.png" width="150px" alt="Example of the attendance level aignment applied to a badge" title="Example of the attendance level alignment applied to a badge"/><img style="margin:10px" src="/images/information_pics/alignment_examples/self.png" width="150px" alt="Example of the self-assessed level knowledge alignment applied to a badge" title="Example of the self-assessed level knowledge alignment applied to a badge"/><img style="margin:10px" src="/images/information_pics/alignment_examples/bronze.png" width="150px" alt="Example of the bronze level knowledge alignment applied to a badge" title="Example of the bronze level knowledge alignment applied to a badge"/><img style="margin:10px" src="/images/information_pics/alignment_examples/silver.png" width="150px" alt="Example of the silver level knowledge alignment applied to a badge" title="Example of the silver level knowledge alignment applied to a badge"/><img style="margin:10px" src="/images/information_pics/alignment_examples/gold.png" width="150px" alt="Example of the gold level knowledge alignment applied to a badge" title="Example of the gold level knowledge alignment applied to a badge"/><p>
+			
+			<p>There is also the concept of a ‘Super’ badge if badge recipients complete all of a set of smaller badges. These are not aligned to IoC types but act more like a ‘prize’ for having fully participated.</p>
+			<img src="/images/information_pics/fig12.png" width="200px" alt="Example of a Super badge" title="Example of a Super badge"/><br>
+			
+			<p>
+				<strong>Attendance Badges require the following considerations:</strong>
+				<ul>
+				<li>Courses that require the student to be present at the training for a specified length of time e.g. 80% of the time for a week long course; 100% of the time for a 1 day course.  This should be specified in the badge information on the digital badge webpage</li>
+				<li>Online courses that require the student to complete the course.  There should be consideration given to whether it is possible for students to appear that they have completed the course without engaging with it properly. For example, some platforms allow users to self-declare that they have completed a unit etc.  If there is a risk of this, then there should be some checks introduced that would avoid this possibility</li>
+				<ul><li>How does the Digital Badge issuer know that a student has completed the course?</li></ul>
+				</li></ul>			
+
+				<strong>Knowledge Badges require the following considerations:</strong><br>
+
+				<p>Knowledge badges must be assessed - completion alone is not sufficient as this does not differentiate from attendance. 
+				To be awarded a knowledge badge:
+				<ul>
+				<li>The course details on the digital badge website should clearly explain how this course will be assessed</li>
+				<li>What is the pass rate or notion of success for each assessment (and for the course overall)</li>
+				<li>How is this monitored? How does the student demonstrate this?</li>
+				<li>It must be accepted that students might not pass and may need to repeat the course</li>
+				<li>If a student does not pass, but continues, can they be awarded an attendance badge?</li>
+				<li>If a student gains an attendance rather than a knowledge badge how might this impact the award of a super-badge?</li>
+				<li>Providers must provide the details of every unit of assessment for each course, indicating pass level</li>
+				</ul>
+				
+				<ul><strong>Knowledge Badge levels</strong>
+				<li>Providers need to clearly indicate why a course is e.g. silver rather than bronze. This should include the level at which the training is aimed, in addition to the way that it is assessed</li>
+				<li>We would expect the higher level badges, especially gold, to mainly have e.g. exam-type assessment</li>
+				</ul>
+			</p>
+			
+			<p><strong>Please Note: The IoC badging panel will assess the knowledge badges submitted for consideration. The submission will need to include the details of the points discussed 
+			above.</strong></p>
+			<p>Attendance only badges do not require assessment by the IoC Badging panel.</p>
+			
+			<br>			
+			
+			<div class="infohead"><a name="c_appendix"></a>Appendix</div>
+
+			<div class="infosubhead"><a name="c_fundamental"></a>1. Fundamental setup information we need from you for badge issuing</div>
+			<p>Just to reiterate from the main document, the details that we would need you to send to us so that we can set you up as an issuer and setup the badges for you to issue are:</p>
+			<strong>Issuer</strong>
+			<p>For the Issuer details associated with any badges you issued, and to setup your website admin account, we would need:</p>
+			<table id="infotable">
+				<tr>
+					<th>
+						Property
+					</th>
+					<th>
+						Description
+					</th>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> Name
+					</td>
+					<td>
+						e.g. your university/organisation name
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> Description
+					</td>
+					<td>
+						e.g. a description of your university/organisation
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> Image URL
+					</td>
+					<td>
+						e.g. a URL to a publicly accessible version of your logo<br>(or send us the image file and we will host it locally)
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> URL (website)
+					</td>
+					<td>
+						e.g. your university/organisation main website
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Optional:</i> Email
+					</td>
+					<td>
+						e.g. your university/organisation main contact email <i>(optional)</i>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Optional:</i> Telephone
+					</td>
+					<td>
+						e.g. your university/organisation main contact number <i>(optional)</i>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> Account email
+					</td>
+					<td>
+						We would also need an Issuer email address to be used to create the Issuer administration account on our system. This would be used by whoever is setting up the Recipients and Issuing the badges to them. We recommend a generic account that could be shared on your side. We will then setup and Issuer account and this email address will be emailed with a link to complete registration.
+					</td>
+				</tr>
+			</table>
+			<br>
+			<strong>Badge</strong>
+			<p>For each Badge you want to issue we would need:</p>
+			<table id="infotable">
+				<tr>
+					<th>
+						Property
+					</th>
+					<th>
+						Description
+					</th>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> Badge title
+					</td>
+					<td>
+						
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> Proposed Badge Type
+					</td>
+					<td>
+						Please see section entitled ‘<a href="#c_levels">Gateway Badging Types</a>’, for more Information.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> Badge description
+					</td>
+					<td>
+						
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> An image file (png) of the Badge
+					</td>
+					<td>
+						We will design this using a template we have and send to you for approval, see <a href="#c_pngs">appendix 2</a> for examples.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> Event type/strapline 
+					</td>
+					<td>
+						for the badge Ribbon are on the  image (see <a href="#c_pngs">Appendix 2</a> for example Ribbon text)
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Required:</i> Badge Criteria
+					</td>
+					<td>
+						This is basically a statement of what the student had to do to earn the badge.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Optional:</i> Tags
+					</td>
+					<td>
+						You can also add some Tags of your choice.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<i>Optional:</i> Badges can also have Alignments
+					</td>
+					<td>
+						This is where we would describe any accreditation standards or skills schemas etc. that this badge aligns to.
+					</td>
+				</tr>
+			</table>
+			<br>
+			<div class="infosubhead"><a name="c_pngs"></a>2. Examples of IoC Badge PNGs that have been issued</div>
+			<p><img style="margin:10px" src="/images/information_pics/fig13.png" width="150px" alt="Examples of IoC badges" title="Examples of IoC badges"/><img style="margin:10px" src="/images/information_pics/fig14.png" width="150px" alt="Examples of IoC badges" title="Examples of IoC badges"/><img style="margin:10px" src="/images/information_pics/fig15.png" width="150px" alt="Examples of IoC badges" title="Examples of IoC badges"/><img style="margin:10px" src="/images/information_pics/fig16.png" width="150px" alt="Examples of IoC badges" title="Examples of IoC badges"/><p>
+			Example with multiple badges and then a Super badge for completing all other badges/activities:<br>
+			<p><img style="margin:10px" src="/images/information_pics/fig17.png" width="150px" alt="Examples of IoC badges" title="Examples of IoC badges"/><img style="margin:10px" src="/images/information_pics/fig18.png" width="150px" alt="Examples of IoC badges" title="Examples of IoC badges"/><img style="margin:10px" src="/images/information_pics/fig19.png" width="150px" alt="Examples of IoC badges" title="Examples of IoC badges"/><img style="margin:10px" src="/images/information_pics/fig20.png" width="150px" alt="Examples of IoC badges" title="Examples of IoC badges"/><img style="margin:10px" src="/images/information_pics/fig21.png" width="150px" alt="Examples of IoC badges" title="Examples of IoC badges"/><img style="margin:10px" src="/images/information_pics/fig22.png" width="150px" alt="Examples of IoC badges" title="Examples of IoC badges"/><img style="margin:10px" src="/images/information_pics/fig23.png" width="150px" alt="Examples of IoC badges" title="Examples of IoC badges"/><img style="margin:10px" src="/images/information_pics/fig24.png" width="150px" alt="Examples of IoC badges" title="Examples of IoC badges"/></p>
+			<p><a name="c_please"></a><i>Please note</i>: The super badge image has now changed – see section on ‘Gateway Badging Types’</p>
+			<div class="infosubhead"><a name="c_json"></a>3. Example Badge JSON</div>
+			<br>
+<pre style="max-width:100%;">
+{
+    "@context": [
+        "https://w3id.org/openbadges/v2",
+        "https://w3id.org/blockcerts/v2"
+    ],
+    "type": "Assertion",
+    "id": "http://blockchain20.kmi.open.ac.uk/badges/assertions/9b370317cba6157a05fd8cc14623cf111d4a205e6f29c409e9049b7f4fbb736b",
+    "issuedon": "2019-09-05T10:57:46.609Z",
+    "recipient": {
+        "hashed": true,
+        "identity": "sha256$20c7f9e90645f6fdf40b426bd974d6cf9d4a2c21baf9b415a6c9f87bc2b4e551",
+        "type": "email",
+        "salt": "iocbadges54937210087"
+    },
+    "recipientProfile": {
+        "type": [
+            "RecipientProfile",
+            "Extension"
+        ],
+        "publicKey": "ecdsa-koblitz-pubkey:0x006a3c8cb1e094986875c2be424b1e42c73fa109"
+    },
+    "verification": {
+        "type": [         "ERC721TokenVerification2018",
+            "Extension"
+        ],
+        "publicKey": "ecdsa-koblitz-pubkey:0x00c9ae48683d786a54550255c2456c13930bfcc9"
+    },
+    "badge": {
+        "@context": "https://w3id.org/openbadges/v2",
+        "type": "BadgeClass",
+        "id": "http://blockchain20.kmi.open.ac.uk/badges/848249e9b4ad012b0a1828eac3d7924d2ba5dbc9b624a74ae2917dc000df2b1e",
+        "version": "2.0",
+        "name": "Getting Started with Coding Bootcamp",
+        "description": "This is a three day intensive coding bootcamp on the fundamentals of computer programming, taught using Processing (a dialect of Java). The bootcamp builds participants' programming skills by introducing core constructs - variables, conditionals, loops, basic data structures and functions - as well as the computational thinking necessary to create, debug and adapt simple arcade games.",
+        "image": "http://blockchain20.kmi.open.ac.uk/badges/images/badges/qmu/qmu-ioc-badge-2019.png",
+        "criteria": {
+            "@context": "https://w3id.org/openbadges/v2",
+            "type": "Criteria",
+            "id": "http://blockchain20.kmi.open.ac.uk/badges/criteria/f07aadb67fecb9e3e7362d8166d75477497133aeaa181d64353d4c20f5b1a1b5",
+            "narrative": "Participants must attend all 3 days to be awarded the digital badge."
+        },
+        "issuer": {
+            "@context": "https://w3id.org/openbadges/v2",
+            "type": "Issuer",
+            "id": "http://blockchain20.kmi.open.ac.uk/badges/issuers/a539094e40e1602225cce1045998ec49659aa48097221abe71b8c15722f7a621",
+            "name": "Test Issuer",
+            "description": "A great Issuer",
+            "url": "http://test.net",
+            "email": "test@open.ac.uk",
+            "telephone": "",
+            "image": {
+                "type": "ImageObject",
+                "id": "http://blockchain20.kmi.open.ac.uk/badges/issuers/images/logos/litemaplogo.png"
+            }
+        },
+        "endorsement": [
+            {
+                "@context": "https://w3id.org/openbadges/v2",
+                "type": "Endorsement",
+                "id": "http://blockchain20.kmi.open.ac.uk/badges/endorsements/5b0afeb52309684134bec000bfe7aa8f27de70e528034f0fc603b26e49208471",
+                "issuedon": "2019-09-05T10:57:46.616Z",
+                "issuer": {
+                    "@context": "https://w3id.org/openbadges/v2",
+                    "type": "Issuer",
+                    "id": "http://blockchain20.kmi.open.ac.uk/badges/endorsers/7c63368edf5976dd9d8cc4eb5fbd4b245ef4cd0b3428ddac16a117cac2cf380a",
+                    "name": "Institute of Coding",
+                    "description": "Our mission is to break down barriers to digital learning and employment. We believe learning should be a lifelong process and that everyone has a right to improve their skills. We want to spread opportunity by offering access to education, providing what you need, when you need it, in a place you can reach.",
+                    "url": "https://instituteofcoding.org/",
+                    "email": "ioc-badges@open.ac.uk",
+                    "telephone": "",
+                    "image": {
+                        "type": "ImageObject",
+                        "id": "http://blockchain20.kmi.open.ac.uk/badges/images/logos/ioc-logo.png"
+                    }
+                },
+                "claim": {
+                    "id": "http://blockchain20.kmi.open.ac.uk/badges/848249e9b4ad012b0a1828eac3d7924d2ba5dbc9b624a74ae2917dc000df2b1e",
+                    "endorsementComment": "The Institute of Coding endorse this badge and its issuer"
+                }
+            }
+        ]
+    },
+    "signature": {
+        "type": [
+            "ERC721Token2018",
+            "Extension"
+        ],
+        "targetHash": "844228454a67f0929b962a1bc8d9a50cd072c277fcff651ce24a8ffebacee7c0",
+        "hashType": "Keccak-256",
+        "canonicalizationAlgorithm": "URDNA2015",
+        "tokenId": 10,
+        "anchors": [
+            {
+                "sourceId": "0xa8f9ca0fe4e53cbc6858ab0af80f95b7f0b23df3",
+                "type": "ETHData"
+            }
+        ]
+    }
+}
+<pre>
+		</div>
+	</div>
+</div>

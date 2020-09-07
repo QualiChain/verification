@@ -1,0 +1,192 @@
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
+
+<script src="/lib/dateformat.js"></script>
+<script src="/javascripts/managequalifyingbadges.js"></script>
+<script src="/lib/datetimepicker/datetimepicker_css.js"></script>
+
+<script type="text/javascript">
+	document.addEventListener('DOMContentLoaded', function() {
+	    initializePage('{{ badgeid }}');
+	});
+</script>
+
+<div class="container padbottom">
+	<div id="content">
+		<a style="padding:0px" href="javascript:void(0)" onclick="window.location.href=cfg.proxy_path+cfg.badges_path+'/manage';">&lsaquo;&lsaquo; Back</a>
+
+		<div id="mainhead" style="margin-bottom:0;">{{title}}</div>
+		<hr class="headingunderline"><br>
+
+		<div id="badgeSummary" style="float:left;clear:both;margin-bottom:40px;width:100%">
+			
+		</div>
+
+		<center><input id="createFormShowButton" type="button" value="Add Qualifying Badge" onclick="showAddForm();"></center>
+		<!-- FORM TO ADD NEW QUALIFYING BADGE -->
+		<div id="createDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			Add New Qualifying Badge<br>
+			<div class="boxy addform">
+				<form id="formRec" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Title<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="title" id="title" style="background-color:white;" placeholder="Enter the Badge Title"></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Description<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><textarea rows="3" cols="74" name="description" id="description" style="background-color:white;" placeholder="Enter the Badge Description"></textarea></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Domain<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="domain" id="domain" style="background-color:white;" placeholder="Enter the domain and path to badge without the 'http(s)://'"></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Issuer<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="issuername" id="issuername" style="background-color:white;" placeholder="Enter the Issuer's name"></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Issuer URL<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="issuerurl" id="issuerurl" style="background-color:white;" placeholder="Enter the Issuer URL"></div>
+					</div>
+
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;"><label for="formRec-startdate">Start Date</label></div>
+						<div style="float:left;width:80%;">
+							<input readonly style="width: 300px;" onchange="checkDateChange('formRec')" type="text" name="formRec-startdate" id="formRec-startdate" placeholder="Enter the start date">
+							<img id="formRec-startdatecalendar" src="/lib/datetimepicker/images2/cal.gif" onclick="showCalendar('formRec-startdatecalendar', '/lib/datetimepicker/images2/','formRec-startdate','DDMMMYYYY','dropdown')" style="cursor:pointer;"/>
+						</div>
+					</div>
+					<br>
+
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;"><label for="formRec-enddate">End Date</label></div>
+						<div style="float:left;width:80%;">
+							<input readonly style="width: 300px;"  onchange="checkDateChange('formRec')" type="text" name="formRec-enddate" id="formRec-enddate" placeholder="Enter the end date">
+							<img id="formRec-enddatecalendar" src="/lib/datetimepicker/images2/cal.gif" onclick="showCalendar('formRec-enddatecalendar', '/lib/datetimepicker/images2/','formRec-enddate','DDMMMYYYY','dropdown')" style="cursor:pointer;"/>
+						</div>
+					</div>
+					<br>
+					<br>
+					<center><input type="button" value="Save" onclick="addBadge();"><span style="padding-left:30px"></span><input type="button" value="Cancel" onclick="cancelAddForm();"></center>
+				</form>
+			</div> 
+		</div>
+
+		<!-- FORM TO EDIT EXISTING QUALIFYING BADGE -->
+		<div id="editDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			Edit Qualifying Badge Details<br>
+			<div class="boxy editform">
+				<form id="formRecEdit" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<input type="hidden" id="badgeid" name="badgeid" value="">
+
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Title<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="title" id="title" style="background-color:white;" placeholder="Enter the Badge Title"></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Description<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><textarea rows="3" cols="74" name="description" id="description" style="background-color:white;" placeholder="Enter the Badge Description"></textarea></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Domain<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="domain" id="domain" style="background-color:white;" placeholder="Enter the domain and path to badge without the 'http(s)://'"></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Issuer<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="issuername" id="issuername" style="background-color:white;" placeholder="Enter the Issuer's name"></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Issuer URL<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="issuerurl" id="issuerurl" style="background-color:white;" placeholder="Enter the Issuer URL"></div>
+					</div>
+					<br>
+
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;"><label for="formRecEdit-startdate">Start Date</label></div>
+						<div style="float:left;width:80%;">
+							<input readonly style="width: 300px; float: left;" onchange="checkDateChange('formRecEdit')" type="text" name="formRecEdit-startdate" id="formRecEdit-startdate" placeholder="Enter the start date">
+							<div style="margin-left: 4px; height: 30px; float: left;"><img id="formRecEdit-startdatecalendar" src="/lib/datetimepicker/images2/cal.gif" onclick="showCalendar('formRecEdit-startdatecalendar', '/lib/datetimepicker/images2/','formRecEdit-startdate','DDMMMYYYY','dropdown')" style="cursor:pointer;"/></div><div style="margin-top: 3px; margin-left: 4px; height: 30px; float: left;"><img height="20" src="/images/issuing_buttons/delete.png" style="cursor: pointer;" title="clear date" onclick="clearStartDate();" /></div>
+						</div>
+					</div>
+					<br>
+
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;"><label for="formRecEdit-enddate">End Date</label></div>
+						<div style="float:left;width:80%;">
+							<input readonly style="width: 300px; float: left;"  onchange="checkDateChange('formRecEdit')" type="text" name="formRecEdit-enddate" id="formRecEdit-enddate" placeholder="Enter the end date">
+							<div style="margin-left: 4px; height: 30px; float: left;"><img id="formRecEdit-enddatecalendar" src="/lib/datetimepicker/images2/cal.gif" onclick="showCalendar('formRecEdit-enddatecalendar', '/lib/datetimepicker/images2/','formRecEdit-enddate','DDMMMYYYY','dropdown')" style="cursor:pointer;"/></div><div style="margin-top: 3px; margin-left: 4px; height: 30px; float: left;"><img height="20" src="/images/issuing_buttons/delete.png" style="cursor: pointer;" title="clear date" onclick="clearEndDate();" /></div>
+						</div>
+					</div>
+					<br>
+					<br>
+					<center><input type="button" value="Update" onclick="updateBadge();"><span style="padding-left:30px"></span></span><input type="button" value="Cancel" onclick="cancelEditForm();"></center>
+				</form>
+			</div> 
+		</div>
+
+		<!-- FORM TO VIEW EXISTING QUALIFYING BADGE -->
+		<div id="viewDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			View Qualifying Badge Details<br>
+			<div class="boxy viewform">
+				<form id="formRecView" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Title<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input readonly type="text" name="title" id="title" style="background-color:white;"></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Description<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><textarea readonly rows="3" cols="74" name="description" id="description" style="background-color:white;"></textarea></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Domain<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="domain" id="domain" style="background-color:white;" placeholder="Enter the domain and path to badge without the 'http(s)://'"></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Issuer<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="issuername" id="issuername" style="background-color:white;" placeholder="Enter the Issuer's name"></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Issuer URL<span style="color:red">&#42;</span></div>
+						<div style="float:left;width:80%;"><input type="text" name="issuerurl" id="issuerurl" style="background-color:white;" placeholder="Enter the Issuer URL"></div>
+					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;"><label for="formRecView-startdate">Start Date</label></div>
+						<div style="float:left;width:80%;">
+							<input readonly style="width: 300px;" type="text" name="formRecView-startdate" id="formRecView-startdate">
+						</div>
+					</div>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;"><label for="formRecView-enddate">End Date</label></div>
+						<div style="float:left;width:80%;">
+							<input readonly style="width: 300px;" type="text" name="formRecView-enddate" id="formRecView-enddate">
+						</div>
+					</div> 
+					<br>
+					<br>
+					<center><input type="button" value="Close" onclick="closeViewForm();"></center>
+				</form>
+			</div> 
+
+		</div>		
+	</div> 
+	<div style="clear:both;"></div>
+	
+	<div style="padding-top:20px;padding-bottom:20px;">
+		<center><table id="storedList" class='manageTables' width="100%"></table></center>
+	</div>
+</div>

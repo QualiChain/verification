@@ -1,17 +1,18 @@
 
-<script src="/javascripts/dateformat.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
+
+<script src="/lib/dateformat.js"></script>
 <script src="/javascripts/manageevidence.js"></script>
  
 <script type="text/javascript">
-
-document.addEventListener('DOMContentLoaded', function() {
-    initializePage('{{ protocol }}', '{{ domain }}', '{{ badgeissuedid }}');
-});
-
+	document.addEventListener('DOMContentLoaded', function() {
+	    initializePage('{{ protocol }}', '{{ domain }}', '{{ badgeissuedid }}');
+	});
 </script>
 
-<div class="container padbottom" style="margin-top:0px;padding-top:0px">
-	
+<div class="container padbottom" style="margin-top:0px;padding-top:0px">	
 	<div id="content" style="margin-top:0px;padding-top:0px">		
 		<a style="padding:0px" href="/assertions">&lsaquo;&lsaquo; Back</a>
 
@@ -114,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 					<center><input type="button" value="Update Evidence" onclick="updateEvidence();">
 					<span style="padding-left:30px"></span>
-					<input type="button" value="Cancel" onclick="cancelEvidence();"></center>
+					<input type="button" value="Cancel" onclick="cancelEditForm();"></center>
 				</form>
 
 			</div> 
@@ -165,12 +166,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 					<center>
 					<span style="padding-left:30px"></span>
-					<input type="button" value="Close" onclick="cancelEvidence();"></center>
+					<input type="button" value="Close" onclick="cancelViewForm();"></center>
 				</form>
 
 			</div> 
 		</div>
-		<br>
-		<div id="storedList" style="margin-left:auto;margin-right:auto"></div>
+	</div>
+
+	<div style="clear:both;"></div>
+	<br>
+	<div style="padding-top:20px;padding-bottom:20px;">
+		<center><table id="storedList" class='manageTables' width="100%"></table></center>
 	</div>
 </div>

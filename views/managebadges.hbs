@@ -1,8 +1,14 @@
 
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
+
 <script src="/javascripts/managebadges.js"></script>
 
 <div class="container padbottom">
 	<div id="content">
+		<a style="padding:0px" href="/admin/">&lsaquo;&lsaquo; Back</a>
+
 		<div id="mainhead" style="margin-bottom:0;">{{title}}</div>
 		<hr class="headingunderline"><br>
 
@@ -40,7 +46,6 @@
 					<div style="clear:both">
 						<div style="float:left;min-width:120px;">Issuer<span style="color:red">&#42;</span></div>
 						<div style="float:left;width:80%;" id="issueridlist"></div>
-
 					</div>
 					<br>
 					<div style="clear:both">
@@ -49,14 +54,30 @@
 					</div>
 					<br>
 					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Criteria Event(s)</div>
+						<div style="float:left;width:80%;" id="eventlist" name="eventlist"></div>
+					</div>
+					<br>
+					<div style="clear:both">
 						<div style="float:left;min-width:120px;">Tags</div>
 						<div style="float:left;width:80%;"><input type="text" name="tags" id="tags" style="background-color:white;" placeholder="Enter the Badge Tags Seperated by Commas (Optional)"></div>
 					</div>
 					<br>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">&nbsp;</div>
+						<div style="color:#555;font-size:0.8em;">Select Alignments (Shift for multiple choice, Ctrl/Cmd to select/unselect individual choice).</div>
+					</div>
 					<div style="clear:both">
 						<div style="float:left;min-width:120px;">Alignment(s)</div>
-						<div style="float:left;width:80%;" id="allignmentlist"></div>
+						<div style="float:left;width:80%;" id="alignmentlist" name="alignmentlist"></div>
 					</div>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Parent Badge</div>
+						<div style="float:left;width:80%;" id="parentbadgeidlist"></div>
+					</div>
+					<br>
 					<br>
 					<center><input type="button" value="Save" onclick="createBadge();"><span style="padding-left:30px"></span><input type="button" value="Cancel" onclick="cancelCreateForm();"></center>
 				</form>
@@ -110,16 +131,32 @@
 					</div>
 					<br>
 					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Criteria Event(s)</div>
+						<div style="float:left;width:80%;" id="eventlistedit" name="eventlistedit"></div>
+					</div>
+					<br>
+					<div style="clear:both">
 						<div style="float:left;min-width:120px;">Tags</div>
 						<div style="float:left;width:80%;"><input type="text" name="tags" id="tags" style="background-color:white;" placeholder="Enter the Badge Tags Seperated by Commas (Optional)"></div>
 					</div>
 					<br>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">&nbsp;</div>
+						<div style="color:#555;font-size:0.8em;">Select Alignments (Shift for multiple choice, Ctrl/Cmd to select/unselect individual choice).</div>
+					</div>
 					<div style="clear:both">
 						<div style="float:left;min-width:120px;">Alignment(s)</div>
-						<div style="float:left;width:80%;" id="allignmentlistedit"></div>
+						<div style="float:left;width:80%;" id="alignmentlistedit" name="alignmentlistedit"></div>
 					</div>
 					<br>
-					<center><input type="button" value="Update" onclick="updateBadge();"><span style="padding-left:30px"></span><input type="button" value="Cancel" onclick="cancelEditForm();"></center>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Parent Badge</div>
+						<div style="float:left;width:80%;" id="parentbadgeidlistedit"></div>
+					</div>
+					<br>
+					<br>
+					<center><input type="button" value="Update" onclick="updateBadge();"><span style="padding-left:30px"></span><!-- input type="button" value="Manage Qualifying Badges" onclick="manageQualifyingBadges(document.getElementById('formRecEdit'));" --><span style="padding-left:30px"></span><input type="button" value="Cancel" onclick="cancelEditForm();"></center>
 				</form>
 			</div> 
 		</div>
@@ -129,6 +166,7 @@
 			View Badge<br>
 			<div class="boxy viewform">
 				<form id="formRecView" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<input type="hidden" id="badgeid" name="badgeid" value="">
 					<div style="clear:both">
 						<div style="float:left;min-width:120px;">Title<span style="color:red">&#42;</span></div>
 						<div style="float:left;width:80%;"><input readonly type="text" name="title" id="title" style="background-color:white;"></div>
@@ -165,16 +203,32 @@
 					</div>
 					<br>
 					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Criteria Event(s)</div>
+						<div style="float:left;width:80%;" id="eventlistview" name="eventlistview"></div>
+					</div>
+					<br>
+					<div style="clear:both">
 						<div style="float:left;min-width:120px;">Tags</div>
 						<div style="float:left;width:80%;"><input readonly type="text" name="tags" id="tags" style="background-color:white;"></div>
 					</div>
 					<br>
+					<br>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">&nbsp;</div>
+						<div style="color:#555;font-size:0.8em;">Select Alignments (Shift for multiple choice, Ctrl/Cmd to select/unselect individual choice).</div>
+					</div>
 					<div style="clear:both">
 						<div style="float:left;min-width:120px;">Alignment(s)</div>
-						<div style="float:left;width:80%;" id="allignmentlistview"></div>
+						<div style="float:left;width:80%;" id="alignmentlistview" name="alignmentlistview"></div>
 					</div>
 					<br>
-					<center><input type="button" value="Close" onclick="closeViewForm();"></center>
+					<div style="clear:both">
+						<div style="float:left;min-width:120px;">Parent Badge</div>
+						<div style="float:left;width:80%;"><input readonly type="text" name="parentbadgeidview" id="parentbadgeidview" style="background-color:white;"></div>
+					</div>
+					<br>
+					<br>
+					<center><input type="button" value="Close" onclick="closeViewForm();"><span style="padding-left:30px"></span><!--input type="button" value="Manage Qualifying Badges" onclick="manageQualifyingBadges(document.getElementById('formRecView'));" --></center>
 				</form>
 			</div> 
 
@@ -182,10 +236,14 @@
 	</div> 
 	<div style="clear:both;"></div>
 	
-	<label>Filter by Issuer&nbsp;</label><select onchange="redrawBadgeList()" id="categories"></select>
-	<br><br>
-	<span id="countblock"><label>Count: </label><span id="itemcount"></span></span>
-	<br><br>
+	<label>Filter by Issuer&nbsp;</label><select id="categories"></select>
+	<br>
+		
+	<form action="/qualifying/manage/" method="post" id="qualifyingform">
+		<input type="hidden" id="badgeid" name="badgeid" value="">
+	</form> 
 	
-	<div id="storedList" style="margin-left:auto;margin-right:auto">You have not added any badges yet</div>
+	<div style="padding-top:20px;padding-bottom:20px;">
+		<center><table id="storedList" class='manageTables' width="100%"></table></center>
+	</div>
 </div>

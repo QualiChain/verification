@@ -1,0 +1,75 @@
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
+
+<script src="/lib/dateformat.js"></script>
+<script src="/javascripts/managerecipientgroups.js"></script>
+
+<div class="container padbottom">
+    <div id="content">
+        <a style="padding:0px" href="/issuers/">&lsaquo;&lsaquo; Back</a>
+
+        <div id="mainhead" style="margin-bottom:0;">{{title}}</div>
+        <hr class="headingunderline">
+
+        <br />
+
+        <center>
+            <div id="createButtonsDiv">
+                <input id="createFormShowButton" type="button" value="Create group" onclick="showCreateForm();" />
+            </div>
+        </center>
+
+        <div id="createDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none;">
+            <h3>Create new group</h3>
+            <div class="boxy addform">
+                <form id="formRec" style="text-align:left;font-size:0.8em;padding-left:15px;">
+                    <div>
+                        <div style="float:left;min-width:120px;">Group name <span style="color:red">&#42;</span></div>
+                        <div style="float:left;width:80%;"><input type="text" name="name" id="name" style="background-color:white;" placeholder="Enter the group name"></div>
+                    </div>
+                    <br />
+                    <div>
+                        <div style="float:left;min-width:120px;">
+                            Group status <span style="color:red">&#42;</span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" id="statustrue" name="status" value="1"> Active</label>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" id="statusfalse" name="status" value="0"> Inactive</label>
+                        </div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <br />
+                    <center><input type="button" value="Save" onclick="createRecipientGroup();"><span style="padding-left:30px"></span><input type="button" value="Cancel" onclick="cancelCreateForm();"></center>
+                </form>
+            </div>
+        </div>
+
+        <div id="editDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+            <h3>Edit group</h3>
+            <div class="boxy editform">
+                <form id="formRecEdit" style="text-align:left;font-size:0.8em;padding-left:15px;">
+                    <input type="hidden" id="groupid" name="groupid" value="">
+                    <div>
+                        <div style="float:left;min-width:120px;">Group name<span style="color:red">&#42;</span></div>
+                        <div style="float:left;width:80%;"><input type="text" name="name" id="name" style="background-color:white;" placeholder="Enter the group name"></div>
+                    </div>
+                    <div>
+                        <div style="float:left;min-width:120px;">
+                            Group status <span style="color:red">&#42;</span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" id="statustrue" name="status" value="1"> Active</label>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" id="statusfalse" name="status" value="0"> Inactive</label>
+                        </div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <br />
+                    <center><input type="button" value="Update" onclick="updateRecipientGroup();"><span style="padding-left:30px"></span><input type="button" value="Cancel" onclick="cancelEditForm();"></center>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div style="clear:both;"></div>
+    <br /><br />
+    <div style="padding-top:20px;padding-bottom:20px;">
+        <center><table id="storedList" class='manageTables' width="100%"></table></center>
+    </div>
+</div>

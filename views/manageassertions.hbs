@@ -1,5 +1,9 @@
 
-<script src="/javascripts/dateformat.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
+
+<script src="/lib/dateformat.js"></script>
 <script src="/javascripts/manageassertions.js"></script>
  
 <script>
@@ -10,28 +14,33 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <div class="container padbottom">
 	<div id="content">
+		<a style="padding:0px" href="/issuers/">&lsaquo;&lsaquo; Back</a>
+
 		<div id="mainhead" style="margin-bottom:0;">{{title}}</div>
-		<hr class="headingunderline"><br>
+		<hr class="headingunderline">
+		<p><strong>Note:</strong> Only Recipients with verified emails addresses (accounts) can be issued badges.</p>
 
 		<!-- FORM TO ADD A NEW BADGE ISSUANCE -->
 		<div id="createDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:block">
-			Ceate a Badge Issuance<br>
+			Create a Badge Issuance<br>
 			<div class="boxy addform">
 				<form id="formRec" style="text-align:left;font-size:0.8em;padding-left:15px;">
 					<div>
-						<div style="float:left;min-width:120px;">Recipient<span style="color:red">&#42;</span></div>
-						<div style="float:left;width:80%;" id="recipientlist"></div>
-
+						<div style="float:left;min-width:140px;">Recipient Groups</div>
+					        <div style="float:left;width:80%;" id="groupselectlist" title="Please select a group you wish to select a badge recipient from"></div>
 					</div><br>
 					<div>
-						<div style="float:left;min-width:120px;">Badge<span style="color:red">&#42;</span></div>
+						<div style="float:left;min-width:140px;">Recipient<span style="color:red">&#42;</span></div>
+						<div style="float:left;" id="recipientlist"></div>
+					</div><br>
+					<div>
+						<div style="float:left;min-width:140px;">Badge<span style="color:red">&#42;</span></div>
 						<div style="float:left;width:80%;" id="badgelist"></div>
 					</div>
-					<br>
+					<br><br>
 
 					<center><input type="button" value="Save" onclick="createAssertion();"></center>
 				</form>
-
 			</div> 
 		</div> 
 
@@ -42,36 +51,55 @@ document.addEventListener('DOMContentLoaded', function() {
 				<form id="formRecEdit" style="text-align:left;font-size:0.8em;padding-left:15px;">
 					<input type="hidden" id="assertionid" name="assertionid" value="">
 					<div>
-						<div style="float:left;min-width:120px;">Recipient Name<span style="color:red">&#42;</span></div>
-						<div style="float:left;width:80%;" id="recipientlistedit"></div>
-
+						<div style="float:left;min-width:140px;">Recipient Groups</div>
+					        <div style="float:left;width:80%;" id="groupselectlistedit" title="Please select a group you wish to select a badge recipient from"></div>
 					</div><br>
 					<div>
-						<div style="float:left;min-width:120px;">Badge Name<span style="color:red">&#42;</span></div>
+						<div style="float:left;min-width:140px;">Recipient Name<span style="color:red">&#42;</span></div>
+						<div style="float:left;" id="recipientlistedit"></div>
+					</div><br>
+					<div>
+						<div style="float:left;min-width:140px;">Badge Name<span style="color:red">&#42;</span></div>
 						<div style="float:left;width:80%;" id="badgelistedit"></div>
 					</div>
-
-					<br>
+					<br><br>
 
 					<center><input type="button" value="Update" onclick="updateAssertion();">
 					<span style="padding-left:30px"></span>
 					<input type="button" value="Cancel" onclick="cancelEditForm();"></center>
 				</form>
-
 			</div> 
 		</div>
-
-		<br><br>
-		
-		Pending Badge Issuances:
-		<div id="storedList" style="margin-left:auto;margin-right:auto">List</div>
-		
-		Issued Badges:
-		<div id="storedList2" style="margin-left:auto;margin-right:auto">List</div>
-		</div>
-
-		<!-- <br><br>
-		Revoked Badges:
-		<div id="storedList4" style="margin-left:auto;margin-right:auto">List</div>-->
 	</div>
+
+	<div style="clear:both;"></div>
+
+	<br><br>
+
+	<div style="float:left;clear:both;width:100%">
+		<center>
+			<span style="font-size:14pt;font-weight:bold">Pending Badge Issuances</span>
+			<br><label style="font-size:10pt">The first issuance of a badge type can take up to 30 seconds as it writes some extra data to the blockchain. After that it will be much faster.</label>
+		</center>
+		<div style="padding-top:10px;padding-bottom:10px;">
+			<table id="storedListPending" class='manageTables' width="100%"></table>
+		</div>
+	</div>
+
+	<div style="float:left;clear:both;width:100%;margin-top:30px;">
+		<center><span style="font-size:14pt;font-weight:bold">Issued Badges</span></center>
+		<div style="padding-top:10px;padding-bottom:10px;">
+			<table id="storedListIssued" class='manageTables' width="100%"></table>
+		</div>
+	</div>
+
+	<div style="float:left;clear:both;width:100%;margin-top:30px;">
+		<center><span style="font-size:14pt;font-weight:bold">Revoked Badges</span></center>
+		<div style="padding-top:10px;padding-bottom:10px;">
+			<table id="storedListRevoked" class='manageTables' width="100%"></table>
+		</div>
+	</div>
+
+	<div style="clear:both;"></div>
+	<br><br>
 </div>

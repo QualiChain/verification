@@ -1,0 +1,189 @@
+
+<script type="text/javascript" src="/lib/dateformat.js"></script>
+<script type="text/javascript" src="/javascripts/countries.js"></script>
+<link rel="stylesheet" type="text/css" href="/stylesheets/claims.css">
+<script type="text/javascript">
+	document.addEventListener('DOMContentLoaded', function() {
+	    initializePage();
+	});
+</script>
+<div class="container padbottom">
+	<div id="content">		
+		<center><div id="mainhead" style="margin-bottom:0;">{{title}}</div></center>
+		<hr class="headingunderline"><br>
+		<div style="font-size:0.8em;color:#555;line-height:140%;text-align:left;margin-bottom:20px;">Here you can upload an Open Badge you have been award elsewhere and see if it qualifies you automatically for an associated IoC badge.
+		This system is currently undergoing trials. Unless you have been sent here specifically, from a participating course, you are unlikely to find you can claim a badge.</div>
+	</div>	
+	<div style="clear:both;"></div>
+	<br>
+		<div id="filevalidation" style="display: block;">
+			<center>
+		        <ul class="progress-indicator custom-complex">
+		            <li class="completed">
+	                    <span class="bubble"></span>
+	                    Step 1 - Upload &amp; Check
+		            </li>
+		            <li>
+		                <span class="bubble"></span>
+		                Step 2. Sign in and validate
+		            </li>
+		            <li>
+		                <span class="bubble"></span>
+		                Step 3. Claim the badge
+		            </li>
+		        </ul>		
+			</center>
+			<br><br>
+			<div id="badgefilecheck">
+				<div id = "badgefilecheckstep" style="font-size: 1.2em; color: #555; line-height: 140%; text-align: left; margin-bottom: 20px;">
+					STEP 1. Pick your own badge file and check to see whether it qualifies you to claim a badge.
+				</div>
+				<div id = "badgefilecheckform">
+					<form id="qualifycheckbadge" class="boxy" style="padding: 20px; overflow: hidden;">
+						<div style="text-align: left; margin-left: 20px;">
+							<input type="file" id="badgetoupload" accept=".png" style="font-size: 0.8em; color: #555; line-height: 0;" />
+						</div>
+						<input type="submit" value="check claimable" style="margin-top: 20px; padding-top: 6px; font-size: 1em;" />
+					</form>	
+			</div>
+
+			</div>
+			<br>
+			<div id="checkresultblock" class="boxy" style="padding-left: 28px; display: none;">
+				<table style="width: 97%;">
+
+					<tr id = "successtitle" style="padding-top: 10px; padding-bottom: 20px; font-size: 1.2em; font-weight: bold; display: none;">
+						<td align="left">The following badge is claimable:</td>
+					</tr>	
+					
+					<tr id = "success" style="display: none; padding-bottom: 10px;">
+						<td align="left" id="badgeimage" style="width: 100px;"></td>
+						<td align="left" style="padding-left: 20px;">
+							<span id="badgetitle"></span>
+							<br><br>
+							<span id="badgedescription"></span>
+						</td>
+					</tr>
+
+					<tr id = "successproceed" style="display: none; padding-bottom: 10px;">
+						<td colspan="2">
+							<input id="proceedusercheck" type="button" value="proceed" onclick="proceedToUserCheck();">
+						</td>
+					</tr>
+
+					<tr id = "failuretitle" style="padding-top: 10px; font-size: 1.2em; font-weight: bold; display: none;">
+						<td align="left">The badge you selected does NOT qualify for claiming badges</td>
+					</tr>	
+					<tr id = "failure" style="padding-top: 10px; padding-bottom: 10px; display: none;">
+						<td align="left" id="failuremessage"></td>
+					</tr>	
+				</table> 		
+			</div>
+  		</div>
+
+		<div id="personvalidation" style="display: none;">
+			<center>
+		        <ul class="progress-indicator custom-complex">
+		            <li class="completed">
+	                    <span class="bubble"></span>
+	                    Step 1 - Upload &amp; Check
+		            </li>
+		            <li class="completed">
+		                <span class="bubble"></span>
+		                Step 2. Sign in and validate
+		            </li>
+		            <li>
+		                <span class="bubble"></span>
+		                Step 3. Claim the badge
+		            </li>
+		        </ul>		
+			</center>
+			<br><br>
+			<div id = "personvalidationstep" style="font-size: 1.2em; color: #555; line-height: 140%; text-align: left; margin-bottom: 20px;">
+				STEP 2. Sign in and validate as the person who was issued the qualifying badge.
+			</div>
+
+			<div id="sout" style="display: none; border: 1px solid lightgrey; border-radius: 10px; background-color: #eee; padding: 30px 20px 20px 20px;">
+				<p>You are currently signed in with an account that does not match the person who this badge was originally issued to. Please sign out and follow the subsequent instructions.</p>
+				<p><input id="signoutbut" type="button" value="sign out" onclick="signuserout();"></p>
+			</div>
+
+			<div id="usn" style="display: none; border: 1px solid lightgrey; border-radius: 10px;background-color: #eee; padding: 30px 20px 20px 20px;">
+				<p>Enter the email address of the person the badge was originally issued to.</p>
+				<p>Email <input type="text" name="email" id="emailfield" style="width: 300px; background-color: white;"></p>
+				<p><input id="topassword" type="button" value="next" onclick="topassword();"></p>
+			</div>
+
+			<div id="pwdsignin" style="display: none; border: 1px solid lightgrey; border-radius: 10px;background-color: #eee; padding: 30px 20px 20px 20px;">
+				<p>Enter your account password to proceed to claim the badge.</p>
+				<p>Password <input type="password" name="passwordsignin" id="passwordsigninfield" style="width: 300px; background-color: white;"> <a class="" style="color: #555" href="/users/forgotpasswordpage/">Forgot Password</a></p>
+				<p><input id="proceedsignin" type="button" value="sign in" onclick="accountsignin();"></p>
+				<br><br>	
+				<b>Privacy & Cookies:</b> By logging in to this site you agree to our use of cookies – for more information see here: <a href="/privacy">Cookie Policy.</a>
+			</div>
+
+			<div id="newaccountpwdsignin" style="display: none; border: 1px solid lightgrey; border-radius: 10px;background-color: #eee; padding: 30px 20px 20px 20px;">
+				<p>An email will have been sent to the address you entered previously with a link to activate the account and to set its password. 
+				Once that is completed you will be able to sign in here.</p>
+				<p>Enter your account password to proceed to claim the badge.</p>
+				<p>Password <input type="password" name="passwordsignin" id="passwordsigninfieldnew" style="width: 300px; background-color: white;"> <a class="" style="color: #555" href="/users/forgotpasswordpage/">Forgot Password</a></p>
+				<p><input id="proceedsigninnew" type="button" value="sign in" onclick="accountsigninnew();"></p>
+				<br><br>	
+				<b>Privacy & Cookies:</b> By logging in to this site you agree to our use of cookies – for more information see here: <a href="/privacy">Cookie Policy.</a>
+			</div>
+
+			<div id="newaccount" style="display: none; border: 1px solid lightgrey; border-radius: 10px;background-color: #eee; padding: 30px 20px 20px 20px;">
+				<p>In order to claim this badge you will need to create an account. Enter your full name and then click the button. 
+				An email will be sent to the address you entered previously with a link to activate the account and to set its password. 
+				Once that is completed you will be able to sign in here.</p>
+				<p>Full Name <input type="text" name="username" id="usernamefield" style="width: 300px; background-color: white;"></p>
+				<p><input id="proceednewaccount" type="button" value="create account" onclick="accountcreate();"></p>
+			</div>
+		</div>
+
+		<div id="claimbadge" style="display: none;">
+			<center>
+		        <ul class="progress-indicator custom-complex">
+		            <li class="completed">
+	                    <span class="bubble"></span>
+	                    Step 1 - Upload &amp; Check
+		            </li>
+		            <li class="completed">
+		                <span class="bubble"></span>
+		                Step 2. Sign in and validate
+		            </li>
+		            <li class="completed">
+		                <span class="bubble"></span>
+		                Step 3. Claim the badge
+		            </li>
+		        </ul>		
+			</center>
+			<br><br>
+			<div id = "claimstep" style="font-size: 1.2em; color: #555; line-height: 140%; text-align: left; margin-bottom: 20px;">
+				STEP 3. Claim the badge.
+			</div>
+
+			<div id="alreadyClaimed" style="display: none; border: 1px solid lightgrey; border-radius: 10px;background-color: #eee; padding: 30px 20px 20px 20px;">
+				<p>This badge has already been claimed.</p>				
+				<p><a id="toportfolio" href="/portfolio/">View your Badge portfolio.</a></p>
+			</div>
+
+			<div id="theclaim" style="border: 1px solid lightgrey; border-radius: 10px; background-color: #eee; padding-left: 28px;">
+				<p style="font-size: 1.2em; font-weight: bold; text-align: left; margin-bottom: 20px;">You can claim your badge by clicking the button below.</p>
+				<p>
+					<div id="claimbadgeimage" style="float: left; padding-right: 30px"></div>
+					<div id="claimbadgetitle"></div>
+					<div id="claimbadgedescription"></div>
+				</p>
+				<div class="clearit"></div>
+				<p><input id="makeclaim" type="button" value="claim" onclick="claimbadge();"></p>
+			</div>
+		</div>
+			
+	</div>
+</div>
+<script src="/lib/pack.js"></script>
+<script src="/lib/crc32.js"></script>
+<script src="/lib/unpack.js"></script>
+<script src="/javascripts/utilities.js"></script>
+<script src="/javascripts/claims.js"></script>

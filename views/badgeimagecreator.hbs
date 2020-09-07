@@ -1,0 +1,119 @@
+
+<link rel="stylesheet" href="/stylesheets/badgecreation.css" type='text/css'>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
+
+<script type="text/javascript" src="/javascripts/badgeimagecreator.js"></script>
+
+<div class="container padbottom">
+	<div id="content">
+		<a style="padding:0px" href="/admin/">&lsaquo;&lsaquo; Back</a>
+
+		<div id="mainhead" style="margin-bottom:0;">{{title}}</div>
+		<hr class="headingunderline"><br>
+	</div>
+
+	<div class="badgeContainerDiv">
+		<div id="badgePicDiv" class="badgePicDiv">
+			<canvas id="badgeCanvas" width="400" height="400"></canvas>
+			<div id="png" style="display: none;"></br>PNG:</br><img id="finished"></div>
+		</div>
+		
+		<div id="badgeContentDiv" class="badgeContentDiv">
+			<div class="badgeCreationRow">
+				<div class="badgeHeaderCol">
+					Name<span style="color:red">&#42;</span><br>
+					Shield Type<br>
+				</div>
+				<div class="badgeHeaderData">
+					<input type="hidden" id="badgeimageid" name="badgeimageid" value="" />
+					<input type="text" id="name" name="name" style="width: 300px;" placeholder="Enter a name for this badge image entry"><br>
+					<select id="badgeType" name="badgeType" onchange="updateType(this.value);">
+						<option value="attendance">Attendance Badge</option>
+						<option value="self">Self Assessed Knowlege Badge</option>
+						<option value="bronze">Bronze Level Knowlege Badge</option>
+						<option value="silver">Silver Level Knowlege Badge</option>
+						<option value="gold">Gold Level Knowlege Badge</option>
+						<option value="super">Super Badge</option>
+					</select>
+				</div>
+			</div>
+			<div class="badgeCreationRow" id="single_editrow">
+				<div class="badgeHeaderCol">
+					Edit Type<br>
+					Shield Text<br>
+					Shield Font Weight<br>
+				</div>
+				<div class="badgeHeaderData">
+					<input id="radio_s1" type="radio" name="badgetype1" value="single" onclick="typeChange('single');"> Single Text Area <input id="radio_i1" type="radio" name="badgetype1" value="multiple" onclick="typeChange('multiple');"> Independent Text Lines<br>
+					<input type="text" id="shield" name="shield" placeholder="Enter Shield Text..." onkeyup="updateShield(this.value);"><br>
+					<select id="shieldWeight" name="shieldWeight" onchange="updateShieldWeight(this.value);">
+						<option value="normal">Normal</option>
+						<option value="bold">Bold</option>
+					</select>
+				</div>
+			</div>
+			<div class="badgeCreationRow" id="multi_editrow" style="display:none">
+				<div class="badgeHeaderCol">
+					Edit Type<br>
+					Shield Text<br>
+				</div>
+				<div class="badgeHeaderData">
+					<input id="radio_s2" type="radio" name="badgetype2" value="single" onclick="typeChange('single');"> Single Text Area <input id="radio_i2" type="radio" name="badgetype2" value="multiple" onclick="typeChange('multiple');"> Independent Text Lines<br>
+					<input type="text" id="line1" name="line1" placeholder="Line One" onkeyup="updateText(this.value, 'line1');"> <span>Font size: <input id="line1_fs" type="number" min="1" max="40" step="1" value="20" onblur="changeFontSize('line1', this)" onkeypress="preventNonNumericalInput(event, this)"/></span> <button title="Decrease font size" onclick="downFont('line1');">-</button><button title="Increase font size" onclick="upFont('line1');">+</button> <span>Bold<input type="checkbox" id="line1_weight" name="text_bold" value="bold" style="position:relative;top:-1px" onclick="boldCheck(this, 'line1')"></span><hr class="divider2"><span>Letter Spacing: <input id="line1_es" type="number" min="0" max="10" step="1" value="0" onblur="changeLetterSpacing('line1', this)" onkeypress="preventNonNumericalInput(event, this)"/> <button title="Decrease letter spacing" onclick="downLetterSpacing('line1');">-</button><button title="Increase letter spacing" onclick="upLetterSpacing('line1');">+</button><button title="Make all lines have this letter spacing" class="greenb" onclick=" equalLetterSpacing('line1');">=</button><button title="Restore this line to default letter spacing" class="redb" onclick="resetLetterSpacing('line1');">r</button></span><hr class="divider">
+					<input type="text" id="line2" name="line2" placeholder="Line Two" onkeyup="updateText(this.value, 'line2');"> <span>Font size: <input id="line2_fs" type="number" min="1" max="40" step="1" value="20" onblur="changeFontSize('line2', this)" onkeypress="preventNonNumericalInput(event, this)"/></span> <button title="Decrease font size" onclick="downFont('line2');">-</button><button title="Increase font size" onclick="upFont('line2');">+</button> <span>Bold<input type="checkbox" id="line2_weight" name="text_bold" value="bold" style="position:relative;top:-1px" onclick="boldCheck(this, 'line2')"></span><hr class="divider2"><span>Letter Spacing: <input id="line2_es" type="number" min="0" max="10" step="1" value="0" onblur="changeLetterSpacing('line2', this)" onkeypress="preventNonNumericalInput(event, this)"/> <button title="Decrease letter spacing" onclick="downLetterSpacing('line2');">-</button><button title="Increase letter spacing" onclick="upLetterSpacing('line2');">+</button><button title="Make all lines have this letter spacing" class="greenb" onclick="equalLetterSpacing('line2');">=</button><button title="Restore this line to default letter spacing" class="redb" onclick="resetLetterSpacing('line2');">r</button></span> <span>Line Spacing: <input id="line2_is" type="number" min="0" max="50" step="2" value="10" onblur="changeLineSpacing('line2', this)" onkeypress="preventNonNumericalInput(event, this)"/> <button title="Decrease line spacing" onclick="downLineSpacing('line2');">-</button><button title="Increase line spacing" onclick="upLineSpacing('line2');">+</button><button title="Make all lines have this line spacing" class="greenb" onclick="equalLineSpacing('line2');">=</button><button title="Restore this line to default line spacing" class="redb" onclick="resetLineSpacing('line2');">r</button></span><hr class="divider">
+					<input type="text" id="line3" name="line3" placeholder="Line Three" onkeyup="updateText(this.value, 'line3');"> <span>Font size: <input id="line3_fs" type="number" min="1" max="40" step="1" value="20" onblur="changeFontSize('line3', this)" onkeypress="preventNonNumericalInput(event, this)"/></span> <button title="Decrease font size" onclick="downFont('line3');">-</button><button title="Increase font size" onclick="upFont('line3');">+</button> <span>Bold<input type="checkbox" id="line3_weight"name="text_bold" value="bold" style="position:relative;top:-1px" onclick="boldCheck(this, 'line3')"></span><hr class="divider2"><span>Letter Spacing: <input id="line3_es" type="number" min="0" max="10" step="1" value="0" onblur="changeLetterSpacing('line3', this)" onkeypress="preventNonNumericalInput(event, this)"/> <button title="Decrease letter spacing" onclick="downLetterSpacing('line3');">-</button><button title="Increase letter spacing" onclick="upLetterSpacing('line3');">+</button><button title="Make all lines have this letter spacing" class="greenb" onclick=" equalLetterSpacing('line3');">=</button><button title="Restore this line to default letter spacing" class="redb" onclick="resetLetterSpacing('line3');">r</button></span> <span>Line Spacing: <input id="line3_is" type="number" min="0" max="50" step="2" value="10" onblur="changeLineSpacing('line3', this)" onkeypress="preventNonNumericalInput(event, this)"/> <button title="Decrease line spacing" onclick="downLineSpacing('line3');">-</button><button title="Increase line spacing" onclick="upLineSpacing('line3');">+</button><button title="Make all lines have this line spacing" class="greenb" onclick="equalLineSpacing('line3');">=</button><button title="Restore this line to default line spacing" class="redb" onclick="resetLineSpacing('line3');">r</button></span><hr class="divider">
+					<input type="text" id="line4" name="line4" placeholder="Line Four" onkeyup="updateText(this.value, 'line4');"> <span>Font size: <input id="line4_fs" type="number" min="1" max="40" step="1" value="20" onblur="changeFontSize('line4', this)" onkeypress="preventNonNumericalInput(event, this)"/></span> <button title="Decrease font size" onclick="downFont('line4');">-</button><button title="Increase font size" onclick="upFont('line4');">+</button> <span>Bold<input type="checkbox" id="line4_weight" name="text_bold" value="bold" style="position:relative;top:-1px" onclick="boldCheck(this, 'line4')"></span><hr class="divider2"><span>Letter Spacing: <input id="line4_es" type="number" min="0" max="10" step="1" value="0" onblur="changeLetterSpacing('line4', this)" onkeypress="preventNonNumericalInput(event, this)"/> <button title="Decrease letter spacing" onclick="downLetterSpacing('line4');">-</button><button title="Increase letter spacing" onclick="upLetterSpacing('line4');">+</button><button title="Make all lines have this letter spacing" class="greenb" onclick=" equalLetterSpacing('line4');">=</button><button title="Restore this line to default letter spacing" class="redb" onclick="resetLetterSpacing('line4');">r</button></span> <span>Line Spacing: <input id="line4_is" type="number" min="0" max="50" step="2" value="10" onblur="changeLineSpacing('line4', this)" onkeypress="preventNonNumericalInput(event, this)"/> <button title="Decrease line spacing" onclick="downLineSpacing('line4');">-</button><button title="Increase line spacing" onclick="upLineSpacing('line4');">+</button><button title="Make all lines have this line spacing" class="greenb" onclick="equalLineSpacing('line4');">=</button><button title="Restore this line to default line spacing" class="redb" onclick="resetLineSpacing('line4');">r</button></span><hr class="divider">
+					<input type="text" id="line5" name="line5" placeholder="Line Five" onkeyup="updateText(this.value, 'line5');"> <span>Font size: <input id="line5_fs" type="number" min="1" max="40" step="1" value="20" onblur="changeFontSize('line5', this)" onkeypress="preventNonNumericalInput(event, this)"/></span> <button title="Decrease font size" onclick="downFont('line5');">-</button><button title="Increase font size" onclick="upFont('line5');">+</button> <span>Bold<input type="checkbox" id="line5_weight" name="text_bold" value="bold" style="position:relative;top:-1px" onclick="boldCheck(this, 'line5')"></span><hr class="divider2"><span>Letter Spacing: <input id="line5_es" type="number" min="0" max="10" step="1" value="0" onblur="changeLetterSpacing('line5', this)" onkeypress="preventNonNumericalInput(event, this)"/> <button title="Decrease letter spacing" onclick="downLetterSpacing('line5');">-</button><button title="Increase letter spacing" onclick="upLetterSpacing('line5');">+</button><button title="Make all lines have this letter spacing" class="greenb" onclick=" equalLetterSpacing('line5');">=</button><button title="Restore this line to default letter spacing" class="redb" onclick="resetLetterSpacing('line5');">r</button></span> <span>Line Spacing: <input id="line5_is" type="number" min="0" max="50" step="2" value="10" onblur="changeLineSpacing('line5', this)" onkeypress="preventNonNumericalInput(event, this)"/> <button title="Decrease line spacing" onclick="downLineSpacing('line5');">-</button><button title="Increase line spacing" onclick="upLineSpacing('line5');">+</button><button title="Make all lines have this line spacing" class="greenb" onclick="equalLineSpacing('line5');">=</button><button title="Restore this line to default line spacing" class="redb" onclick="resetLineSpacing('line5');">r</button></span>
+				</div>
+			</div>
+			<div class="badgeCreationRow">
+				<div class="badgeHeaderCol">
+					Ribbon Text<br>
+					Ribbon Font Weight<br>
+					Ribbon X Offset<br>
+					Ribbon Y Offset <br>
+					Ribbon Text Arc
+				</div>
+				<div class="badgeHeaderData">
+					<input type="text" id="ribbon" name="ribbon" placeholder="Enter Ribbon Text..." onkeyup="updateRibbon(this.value);"><br>
+					<select id="ribbonWeight" name="ribbonWeight" onchange="updateRibbonWeight(this.value);">
+						<option value="normal">Normal</option>
+						<option value="bold">Bold</option>
+					</select><br>
+					<button title="Decrease ribbon's X offset" onclick="leftRibbon();">-</button><button title="Increase ribbon's X offset" onclick="rightRibbon();">+</button><br>
+					<button title="Decrease ribbon's Y offset" onclick="upRibbon();">-</button><button title="Increase ribbon's Y offset" onclick="downRibbon();">+</button><br>
+					<button title="Decrease radius of ribbon's text arc" onclick="downDiameter();">-</button><button title="Increase radius of ribbon's text arc" onclick="upDiameter();">+</button>
+				</div>
+			</div>
+			<div class="badgeCreationRow">
+				<div class="badgeHeaderCol">
+					Logo<br>
+					Logo Size<br>
+					Logo Position<br>
+				</div>
+				<div class="badgeHeaderData">
+					<input type="file" id="badgetoupload" accept=".png,.jpg" onchange="handleFiles(this.files);" /><br>
+					<button title="Decrease logo's size" onclick="minusImage();">-</button><button title="Increase logo's size" onclick="plusImage();">+</button><br>
+					<button title="Decrease logo's Y position" onclick="upImage();">-</button><button title="Increase logo's Y position" onclick="downImage();">+</button>
+				</div>
+			</div>
+			<div class="badgeCreationRow">
+				<button id="saveButton" style="float:left; display:inline" title="Save the badge image creation data" class="bsavebut" onmouseup="createBadgeImage();">Save Draft</button>				
+				<button id="updateButton" style="float:left; display:none" title="Update the badge image creation data" class="bsavebut" onmouseup="updateBadgeImage();">Update Draft</button>
+				<button id="clearButton" style="float:left; display:inline" title="Clear data and reset for new image" class="bsavebut" onmouseup="resetBadgeCreator();">Clear</button>
+				<button id="publishButton" disabled style="float:left;" title="Save a png file on the server" class="bsavebutred" onmousedown="publishBadgeImage();">Publish to Server</button>
+			</div>
+		</div>	
+
+		<br><br>
+		<input type="hidden" id="badgejson" style="width:100%;height:200px" onblur="textareaChange();" />	
+	</div>
+	
+	<div style="clear:both;"></div>
+	<div style="padding-top:20px;padding-bottom:20px;">
+		<center><table id="storedList" class='manageTables' width="100%"></table></center>
+	</div>		
+</div>

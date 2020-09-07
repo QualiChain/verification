@@ -1,0 +1,739 @@
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link rel="stylesheet" href="/stylesheets/all.css">
+<link rel="stylesheet" href="/stylesheets/guideissuers.css">
+
+<button onclick="topFunction()" id="toTop" title="Back to top"><i class="fas fa-chevron-up"></i></button> 
+
+<div class="container">
+	<div class="row">
+		<div id="sidebar-wrap" class="col-3">
+			<div class="sidebar">
+				<a href="javascript:void(0)" class="closebtn" onclick="closeNav()"><i class="fas fa-times"></i></a>
+				<div class="sidebar-group">
+					<h4>Main</h4>
+					<ul>
+						<li><a href="#EducatorAdministration">Educator Administration</a></li>
+					</ul>
+				</div>
+				<div class="sidebar-group">
+					<h4>View badges</h4>
+					<ul>
+						<li><a href="#ViewBadges">View badges</a></li>
+						<li>
+							<a href="#BadgeType">Badge type</a>
+							<ul>
+								<li><a href="#BadgeType-ViewEvent">View event</a></li>
+								<li><a href="#BadgeType-ViewEvent-OrgSponsor">View event organiser/sponsor</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<div class="sidebar-group">
+					<h4>Manage badge recipients</h4>
+					<ul>
+						<li>
+							<a href="#ManageBadgeRecipients">Manage badge recipients</a>
+							<ul>
+								<li><a href="#ManageBadgeRecipients-Create">Create</a></li>
+								<li><a href="#ManageBadgeRecipients-BulkCreate">Bulk create</a></li>
+								<li><a href="#ManageBadgeRecipients-Edit">Edit</a></li>
+								<li><a href="#ManageBadgeRecipients-Delete">Delete</a></li>
+								<li><a href="#ManageBadgeRecipients-CreateAccount">Create account</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<div class="sidebar-group">
+					<h4>Manage badge issuing</h4>
+					<ul>
+						<li>
+							<a href="#ManageBadgeIssuing">Manage badge issuing</a>
+							<ul>
+								<li>
+									<a href="#ManageBadgeIssuing-Pending">Pending</a>
+									<ul>
+										<li><a href="#ManageBadgeIssuing-Pending-Edit">Edit</a></li>
+										<li>
+											<a href="#ManageBadgeIssuing-Pending-ManageEvidence">Manage evidence</a>
+											<ul>
+												<li><a href="#ManageBadgeIssuing-Pending-ManageEvidence-Create">Create</a></li>
+												<li><a href="#ManageBadgeIssuing-Pending-ManageEvidence-View">View</a></li>
+												<li><a href="#ManageBadgeIssuing-Pending-ManageEvidence-Edit">Edit</a></li>
+												<li><a href="#ManageBadgeIssuing-Pending-ManageEvidence-Delete">Delete</a></li>
+											</ul>
+										</li>
+										<li><a href="#ManageBadgeIssuing-Pending-Issue">Issue</a></li>
+										<li><a href="#ManageBadgeIssuing-Pending-Delete">Delete</a></li>
+									</ul>
+								</li>
+								<li>
+									<a href="#ManageBadgeIssuing-Issued">Issued</a>
+									<ul>
+										<li><a href="#ManageBadgeIssuing-Issued-View">View</a></li>
+										<li><a href="#ManageBadgeIssuing-Issued-Revoke">Revoke</a></li>
+										<li><a href="#ManageBadgeIssuing-Issued-Revoke-Reason">Revoke reason</a></li>
+									</ul>
+								</li>
+								<li>
+									<a href="#ManageBadgeIssuing-Revoke">Revoked</a>
+									<ul>
+										<li><a href="#ManageBadgeIssuing-Revoke-Edit">Edit</a></li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<div class="sidebar-group">
+					<h4>Recipient Event Permissions</h4>
+					<ul>
+						<li>
+							<a href="#RecipientEventPermissions">Recipient Event Permissions</a>
+							<ul>
+								<li><a href="#RecipientEventPermissions-Create">Create</a></li>
+								<li><a href="#RecipientEventPermissions-BulkCreate">Bulk create</a></li>
+								<li><a href="#RecipientEventPermissions-Edit">Edit</a></li>
+								<li><a href="#RecipientEventPermissions-Delete">Delete</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<div class="sidebar-group">
+					<h4>Recipient Groups</h4>
+					<ul>
+						<li>
+							<a href="#RecipientGroups">Recipient Groups</a>
+							<ul>
+								<li><a href="#RecipientGroups-Create">Create</a></li>
+								<li><a href="#RecipientGroups-Edit">Edit</a></li>
+								<li><a href="#RecipientGroups-Delete">Delete</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<div class="sidebar-group">
+					<h4>Recipient Groupings</h4>
+					<ul>
+						<li>
+							<a href="#RecipientGroupings">Recipient Groupings</a>
+							<ul>
+								<li><a href="#RecipientGroupings-Add">Add</a></li>
+								<li><a href="#RecipientGroupings-Remove">Remove</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<h3 id="sidebar-menu" onclick="openNav()"><i class="fas fa-bars"></i></h3>
+
+		<div class="maincontent col">
+			<div class="printBtn">
+				<a onclick="window.print();"><i class="fas fa-print fa-lg" alt="Print Page" title="Print Page"></i></a>
+				<a href="/pdf/issuers/guide"><i class="far fa-file-pdf fa-lg" alt="Download PDF" title="Download PDF"></i></a>
+			</div>
+			<br />
+
+			<h1><span class="brace">&lt;</span><span class="slash">/</span>Issuers Guide<span class="brace">&gt;</span></h1>
+			<p>This guide explains the varies pages and features that are available to a user that has "Issuer" permissions within the Institute of Coding badging website.</p>
+
+			<hr />
+
+			<h2 id="EducatorAdministration"><span class="brace">&lt;</span><span class="slash">/</span>Educator Administration<span class="brace">&gt;</span></h2>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img1" class="image"><img class="thumbnail" src="/images/guideissuers-img/01.png" /></a>
+						<a href="#_" class="lightbox" id="img1"><img src="/images/guideissuers-img/01.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>When logging in with issuer permissions, this is the first screen that will be visible. From here the user can <a href="#ViewBadges">view the available badges</a>, <a href="#ManageBadgeRecipients">manage the list of recipients</a>, <a href="#ManageBadgeIssuing">issue badges</a>, <a href="#RecipientEventPermissions">manage the permissions of the recipients for events</a>, manage <a href="#RecipientGroups">groups</a> and manage <a href="#RecipientGroupings">recipient groupings</a>.</p>
+				</div>
+			</div>
+
+			<hr />
+
+			<h2 id="ViewBadges"><span class="brace">&lt;</span><span class="slash">/</span>View badges<span class="brace">&gt;</span></h2>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img2" class="image"><img class="thumbnail" src="/images/guideissuers-img/02.png" /></a>
+						<a href="#_" class="lightbox" id="img2"><img src="/images/guideissuers-img/02.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>This page will display a list of badges that is mapped to the issuer. The information will be presented in a table, with the option to view the badges individually using the <a href="#BadgeType"><img src="/images/guideissuers-img/view.png" alt="view" /></a> button.</p>
+					<p><strong>Note:</strong> clicking the <a href="#BadgeType"><img src="/images/guideissuers-img/view.png" alt="view" /></a> button will open a new tab displaying the badge details for that badge.</p>
+				</div>
+			</div>
+
+			<h3 id="BadgeType"><span class="slash">/</span>Badge type</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img3" class="image"><img class="thumbnail" src="/images/guideissuers-img/03.png" /></a>
+						<a href="#_" class="lightbox" id="img3"><img src="/images/guideissuers-img/03.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>This is the individual view of a badge.</p>
+					<p>From this page the user will be able to see all relevant information relating to that badge. For example:</p>
+					<ul>
+						<li>Issuer details</li>
+						<li>Badge details</li>
+						<li>Event details</li>
+						<li>Alignments</li>
+						<li>Endorsements</li>
+					</ul>
+					<p>Clicking the <a href="#BadgeType-ViewEvent">"View Event"</a> button will expand the event information.</p>
+				</div>
+			</div>
+
+			<h3 id="BadgeType-ViewEvent"><span class="slash">/</span>Badge type - View event</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img4" class="image"><img class="thumbnail" src="/images/guideissuers-img/04.png" /></a>
+						<a href="#_" class="lightbox" id="img4"><img src="/images/guideissuers-img/04.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>This section will expand when the "View Event" button has been pressed.</p>
+					<p>From here the user can view more details of the events linked to the badge; as well as see the organiser and sponsor (if any) that are linked to the event.</p>
+					<p>Clicking "Close Event" will collapse the information section.</p>
+				</div>
+			</div>
+
+			<h3 id="BadgeType-ViewEvent-OrgSponsor"><span class="slash">/</span>Badge type - View event organiser/sponsor</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img5" class="image"><img class="thumbnail" src="/images/guideissuers-img/05.png" /></a>
+						<a href="#_" class="lightbox" id="img5"><img src="/images/guideissuers-img/05.png"></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>Within the event information there maybe one or more organisers and sponsors.</p>
+					<p>Both sections display a list of any organizers or sponsors. Each entry in a list has a view button to view more information.</p>
+					<p>Once expanded there will be a close button for each section, which when clicked will collapse the information pane for that section.</p>
+				</div>
+			</div>
+
+			<hr />
+
+			<h2 id="ManageBadgeRecipients"><span class="brace">&lt;</span><span class="slash">/</span>Manage badge recipients<span class="brace">&gt;</span></h2>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img6" class="image"><img class="thumbnail" src="/images/guideissuers-img/06.png" /></a>
+						<a href="#_" class="lightbox" id="img6"><img src="/images/guideissuers-img/06.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>From this page the issuer will be able to manage the recipients that will be receiving the badges.</p>
+					<p>The issuer will be able to <a href="#ManageBadgeRecipients-Create">add new recipients</a> and <a href="#ManageBadgeRecipients-Edit">edit</a> or <a href="#ManageBadgeRecipients-Delete">delete</a> existing ones.</p>
+				</div>
+			</div>
+
+			<h3 id="ManageBadgeRecipients-Create"><span class="slash">/</span>Manage badge recipients - Create</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img7" class="image"><img class="thumbnail" src="/images/guideissuers-img/07.png" /></a>
+						<a href="#_" class="lightbox" id="img7"><img src="/images/guideissuers-img/07.png"></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>Clicking the "Create Recipient" button will expand a form at the top of the page with the relevant fields for adding new recipients individually.</p>
+					<p>Full name and email address are mandatory fields. The unique ID field is not mandatory. This field is in case the issuer has an ID/reference number for the recipient that they wish to log against them.</p>
+					<p>Clicking "Save" will add the new recipient, whilst clicking "Cancel" will collapse the form.</p>
+				</div>
+			</div>
+
+			<h3 id="ManageBadgeRecipients-BulkCreate"><span class="slash">/</span>Manage badge recipients - Bulk create</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img8" class="image"><img class="thumbnail" src="/images/guideissuers-img/08.png" /></a>
+						<a href="#_" class="lightbox" id="img8"><img src="/images/guideissuers-img/08.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>Clicking the "Import Bulk Recipient" button will expand a form at the top of the page with instructions on what is required to bulk import recipients, rather than adding them individually.</p>
+					<p>As per the instructions, a .csv file with the details should be uploaded.</p>
+					<p>Clicking "Import" will add the recipients from the bulk import, whilst clicking "Cancel" will collapse the form.</p>
+					<p><strong>Note:</strong> The issuer will be informed if any recipients in the import file were unable to be added and why.</p>
+				</div>
+			</div>
+
+			<h3 id="ManageBadgeRecipients-Edit"><span class="slash">/</span>Manage badge recipients - Edit</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img9" class="image"><img class="thumbnail" src="/images/guideissuers-img/09.png" /></a>
+						<a href="#_" class="lightbox" id="img9"><img src="/images/guideissuers-img/09.png"></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>Clicking the <img src="/images/guideissuers-img/edit.png" alt="edit"> button will expand a form above the table with the same fields that were available when adding an individual recipient. However, rather than the fields being blank, they will show the information held for the recipient that is being edited.</p>
+					<p>Clicking "Update" will update the record with the new information, whilst clicking "Cancel" will collapse the form.</p>
+					<p><strong>Note:</strong> once a badge has been issued to a recipient the details of that recipient cannot be edited as they have been used in the issuing process. A new recipient entry would need to be added if details, like about a recipient changed over time.</p>
+				</div>
+			</div>
+
+			<h3 id="ManageBadgeRecipients-Delete"><span class="slash">/</span>Manage badge recipients - Delete</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img10" class="image"><img class="thumbnail" src="/images/guideissuers-img/10.png" /></a>
+						<a href="#_" class="lightbox" id="img10"><img src="/images/guideissuers-img/10.png"></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>Clicking the <img src="/images/guideissuers-img/delete.png" alt="delete" /> button will display a pop up. This will be for the issuer to confirm they are wanting to delete the selected recipient.</p>
+					<p>Clicking "OK" will remove them, whilst clicking "Cancel" will close the pop up with no further action taken.</p>
+					<p><strong>Note:</strong> once a badge has been issued to a recipient the details of that recipient cannot be deleted as they have been used in the issuing process.</p>
+				</div>
+			</div>
+
+			<h3 id="ManageBadgeRecipients-CreateAccount"><span class="slash">/</span>Manage badge recipients - Create account</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img11" class="image"><img class="thumbnail" src="/images/guideissuers-img/11.png" /></a>
+						<a href="#_" class="lightbox" id="img11"><img src="/images/guideissuers-img/11.png"></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>Although a recipient may exist in the table, they may not yet have a user account active against them.</p>
+					<p>If they do not have an active user account in the <strong>User Account</strong> column there will be a red circle with a "Create Account" button.</p>
+					<p>The issuer will need to click "Create Account" against the recipient. A pop up will appear asking the issuer to confirm that they want to create an account.</p>
+					<p>Clicking "OK" will send an email to the recipient, asking them to log in and set a new password. Clicking "Cancel" will close the pop up with no further action taken.</p>
+					<p>If the issuer has completed the above already, but the recipient has yet to set up their user account then in the <strong>User Account</strong> column it will show a yellow circle with a button to "Resend Email" if the recipient for some reason can't find the original account setup email and wants to complete registration.</p>
+					<p>If the user has set up their user account, then in the <strong>User Account</strong> column it will show a green circle with the status of "Registered".</p>
+					<p>If badges are being auto issued through badging stations at events, for example, recipients can be issued badges without having registered accounts on the system. In this situation, when recipients receive badging emails they will have a link to request an account on the system. If this happens, the issuer will be emailed to say a request has come through, and the "Account Request" column of the table will indicate which users have requested accounts. The issuer can then click the "Create Account" button as usual.</p>
+				</div>
+			</div>
+
+			<hr />
+
+			<h2 id="ManageBadgeIssuing"><span class="brace">&lt;</span><span class="slash">/</span>Manage badge issuing<span class="brace">&gt;</span></h2>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img12" class="image"><img class="thumbnail" src="/images/guideissuers-img/12.png" /></a>
+						<a href="#_" class="lightbox" id="img12"><img src="/images/guideissuers-img/12.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>From this screen the issuer will be able to initialise a badge issuance to a recipient, add evidence to a badge issuance, and then issue a badge. They will also be able to revoke badges that have already been issued.</p>
+					<p>The information will be displayed in 3 different tables: <a href="#ManageBadgeIssuing-Pending">Pending</a>, <a href="#ManageBadgeIssuing-Issued">Issued</a> and <a href="#ManageBadgeIssuing-Revoked">Revoked</a>.</p>
+					<p>On initial load of the page, a form at the top of the page will show for "Create a Badge Issuance". The issuer will be required to select a recipient name and then the badge they wish to issue to the recipient.</p>
+					<p>A dropdown at the top of the form will allow the issuer to select a group, which will filter the recipient name list to only show recipients within that group; narrowing down the list rather than having to scroll through the recipients.</p>
+					<p>Only recipients with accounts, and therefore verified email addresses, will appear in the recipient name dropdown list.</p>
+					<p>Clicking "Save" will add this record to the <strong>Pending Badge Issuances</strong> table.</p>
+					<p>Only one of each badge can be issued to a recipient. Therefore, if the badge has been issued already, or revoked, they cannot re-issued that badge to the same recipient.</p>
+				</div>
+			</div>
+
+			<h3 id="ManageBadgeIssuing-Pending"><span class="slash">/</span>Manage badge issuing - Pending</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#pending" class="image"><img class="thumbnail" src="/images/guideissuers-img/pending.png" /></a>
+						<a href="#_" class="lightbox" id="pending"><img src="/images/guideissuers-img/pending.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>This section on the <a href="#ManageBadgeIssuing">Manage badge issuing</a> page displays all the badge issuances that the issuer has initialised through the "Create a Badge Issuance" form.</p>
+					<p>Actions available in this section are <a href="#ManageBadgeIssuing-Pending-Edit">edit</a>, <a href="#ManageBadgeIssuing-Pending-ManageEvidence">manage evidence</a>, <a href="#ManageBadgeIssuing-Pending-Issue">issue</a> and <a href="#ManageBadgeIssuing-Pending-Delete">delete</a>.</p>
+				</div>
+			</div>
+
+			<h3 id="ManageBadgeIssuing-Pending-Edit"><span class="slash">/</span>Manage badge issuing - Pending - Edit</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img13" class="image"><img class="thumbnail" src="/images/guideissuers-img/13.png" /></a>
+						<a href="#_" class="lightbox" id="img13"><img src="/images/guideissuers-img/13.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>A pending issuance can be edited by clicking the edit button <img src="/images/guideissuers-img/edit.png" alt="edit" />. This will change the form at the top of the page to be the edit form. From here the issuer can change the recipient name or the badge that has been issued.</p>
+					<p>A dropdown at the top of the form will allow the issuer to select a group, which will filter the recipient name list to only show recipients within that group; narrowing down the list rather than having to scroll through all the active recipients.</p>
+					<p>Clicking "Update" will update the record, whilst clicking "Cancel" will close the form.</p>
+				</div>
+			</div>
+
+			<h3 id="ManageBadgeIssuing-Pending-ManageEvidence"><span class="slash">/</span>Manage badge issuing - Pending - Manage evidence</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img14" class="image"><img class="thumbnail" src="/images/guideissuers-img/14.png" /></a>
+						<a href="#_" class="lightbox" id="img14"><img src="/images/guideissuers-img/14.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>Evidence can be added to a pending badge issuance by clicking the evidence button <img src="/images/guideissuers-img/evidence.png" alt="evidence" />, which will bring the issuer to this page.</p>
+					<p>From here the issuer can <a href="#ManageBadgeIssuing-Pending-ManageEvidence-Create">upload new evidence</a>, or <a href="#ManageBadgeIssuing-Pending-ManageEvidence-View">view</a>, <a href="#ManageBadgeIssuing-Pending-ManageEvidence-Edit">edit</a> or <a href="#ManageBadgeIssuing-Pending-ManageEvidence-Delete">delete</a> existing evidence.</p>
+				</div>
+			</div>
+
+			<h3 id="ManageBadgeIssuing-Pending-ManageEvidence-Create"><span class="slash">/</span>Manage badge issuing - Pending - Manage evidence - Create</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img15" class="image"><img class="thumbnail" src="/images/guideissuers-img/15.png" /></a>
+						<a href="#_" class="lightbox" id="img15"><img src="/images/guideissuers-img/15.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>Clicking "Create evidence item" will expand a form above the table for the issuer to complete with the relevant information required for the evidence to be created.</p>
+					<p>A name and a URL for the evidence are mandatory. The URL must start with <strong>http://</strong> or <strong>https://</strong> to be valid.</p>
+					<p>Clicking "Add Evidence" will add a record against the pending issued badge. "Cancel" will close the form.</p>
+				</div>
+			</div>
+
+			<h3 id="ManageBadgeIssuing-Pending-ManageEvidence-View"><span class="slash">/</span>Manage badge issuing - Pending - Manage evidence - View</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img16" class="image"><img class="thumbnail" src="/images/guideissuers-img/16.png" /></a>
+						<a href="#_" class="lightbox" id="img16"><img src="/images/guideissuers-img/16.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>Once a piece of evidence has been created, this will appear in the table on the <a href="#ManageBadgeIssuing-Pending-ManageEvidence">Manage Evidence</a> page.</p>
+					<p>Clicking the view button <img src="/images/guideissuers-img/view.png" alt="view" /> will open a form at the top with the completed fields of the evidence that had been selected. The fields within this form are read only.</p>
+					<p>Clicking "Close" will close the form.</p>
+				</div>
+			</div>
+
+			<h3 id="ManageBadgeIssuing-Pending-ManageEvidence-Edit"><span class="slash">/</span>Manage badge issuing - Pending - Manage evidence - Edit</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img17" class="image"><img class="thumbnail" src="/images/guideissuers-img/17.png" /></a>
+						<a href="#_" class="lightbox" id="img17"><img src="/images/guideissuers-img/17.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>Once a piece of evidence has been created, this will appear in the table on the <a href="#ManageBadgeIssuing-Pending-ManageEvidence">Manage Evidence</a> page.</p>
+					<p>Clicking the edit button <img src="/images/guideissuers-img/edit.png" alt="edit" /> will open a form at the top with the completed fields of the evidence that had been selected.</p>
+					<p>Clicking "Update Evidence" will update the record against the pending issued badge. "Cancel" will close the form.</p>
+				</div>
+			</div>
+
+			<h3 id="ManageBadgeIssuing-Pending-ManageEvidence-Delete"><span class="slash">/</span>Manage badge issuing - Pending - Manage evidence - Delete</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img18" class="image"><img class="thumbnail" src="/images/guideissuers-img/18.png" /></a>
+						<a href="#_" class="lightbox" id="img18"><img src="/images/guideissuers-img/18.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>Once a piece of evidence has been created, this will appear in the table on the <a href="#ManageBadgeIssuing-Pending-ManageEvidence">Manage Evidence</a> page.</p>
+					<p>Clicking the delete button <img src="/images/guideissuers-img/delete.png" alt="delete" /> will open pop up, asking the issuer to confirm if they want to delete the selected evidence.</p>
+					<p>Clicking "OK" will delete the evidence selected. "Cancel" will close the dialogue.</p>
+				</div>
+			</div>
+
+			<h3 id="ManageBadgeIssuing-Pending-Issue"><span class="slash">/</span>Manage badge issuing - Pending - Issue</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img19" class="image"><img class="thumbnail" src="/images/guideissuers-img/19.png" /></a>
+						<a href="#_" class="lightbox" id="img19"><img src="/images/guideissuers-img/19.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>Clicking the issue button <img src="/images/guideissuers-img/issue.png" alt="issue" /> against a pending item on the <a href="#ManageBadgeIssuing">Manage Badge Issuing</a> will open a pop up to confirm issuing a badge to the recipient.</p>
+					<p>Clicking "OK" will issue the badge, clicking "Cancel" will close the pop up with no further action.</p>
+					<p>In the background this will be writing data to the blockchain, as well as sending an email to the recipient so this may take up to 30 seconds to complete the action.</p>
+				</div>
+			</div>
+
+			<h3 id="ManageBadgeIssuing-Pending-Delete"><span class="slash">/</span>Manage badge issuing - Pending - Delete</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img20" class="image"><img class="thumbnail" src="/images/guideissuers-img/20.png" /></a>
+						<a href="#_" class="lightbox" id="img20"><img src="/images/guideissuers-img/20.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>Clicking the delete button <img src="/images/guideissuers-img/delete.png" alt="delete" /> against a pending item on the <a href="#ManageBadgeIssuing">Manage Badge Issuing</a> will open a pop up to confirm deleting a badge for the selected recipient.</p>
+					<p>Clicking "OK" will delete the badge, clicking "Cancel" will close the pop up with no further action.</p>
+					<p>The badge can be reissued if needed.</p>
+				</div>
+			</div>
+
+			<h3 id="ManageBadgeIssuing-Issued"><span class="slash">/</span>Manage badge issuing - Issued</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#issued" class="image"><img class="thumbnail" src="/images/guideissuers-img/issued.png" /></a>
+						<a href="#_" class="lightbox" id="issued"><img src="/images/guideissuers-img/issued.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>This section on the <a href="#ManageBadgeIssuing">Manage badge issuing</a> page displays all the badges that have been issued.</p>
+					<p>Actions available in this section are <a href="#ManageBadgeIssuing-Issued-View">view</a> and <a href="#ManageBadgeIssuing-Issued-Revoke">revoke</a>.</p>
+				</div>
+			</div>
+
+			<h3 id="ManageBadgeIssuing-Issued-View"><span class="slash">/</span>Manage badge issuing - Issued - View</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img21" class="image"><img class="thumbnail" src="/images/guideissuers-img/21.png" /></a>
+						<a href="#_" class="lightbox" id="img21"><img src="/images/guideissuers-img/21.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>Clicking the view button <img src="/images/guideissuers-img/view.png" alt="view" /> against an issued item on the <a href="#ManageBadgeIssuing">Manage Badge Issuing</a> will load a page with the details of the badge that has been issued.</p>
+					<p>There is also a section at the bottom of the page with the raw JSON data from the badge .png file. The content above is a friendly format of that information, displayed in tables.</p>
+				</div>
+			</div>
+
+			<h3 id="ManageBadgeIssuing-Issued-Revoke"><span class="slash">/</span>Manage badge issuing - Issued - Revoke</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img22" class="image"><img class="thumbnail" src="/images/guideissuers-img/22.png" /></a>
+						<a href="#_" class="lightbox" id="img22"><img src="/images/guideissuers-img/22.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>Clicking the revoke button <img src="/images/guideissuers-img/revoke.png" alt="revoke" /> against an issued item on the <a href="#ManageBadgeIssuing">Manage Badge Issuing</a> will load a pop up. Which will ask the user to confirm that they wish to revoke the badge for that recipient.</p>
+					<p>Clicking "OK" will take them to the next step where the issuer is required to <a href="#ManageBadgeIssuing-Issued-Revoke-Reason">provide a reason</a> for revoking the badge, clicking "Cancel" will close the pop up with no further action.</p>
+					<p><strong>Note:</strong> Revoking the badge will mean the recipient, while they will still have the badge file they were emailed, they or anyone else they share it with, will no longer be able to verify the badge through the verification process/interface. The blockchain verification of that badge will have been revoked. In addition, the recipient cannot be reissued the same badge again. A new version of the badge would need to be entered onto the system to be issued to them. So, revoking a badge should not be done lightly.</p>
+				</div>
+			</div>
+
+			<h3 id="ManageBadgeIssuing-Issued-Revoke-Reason"><span class="slash">/</span>Manage badge issuing - Issued - Revoke reason</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img23" class="image"><img class="thumbnail" src="/images/guideissuers-img/23.png" /></a>
+						<a href="#_" class="lightbox" id="img23"><img src="/images/guideissuers-img/23.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>The pop up will ask for the issuer to provide a reason for revoking the badge. This will not be visible to the recipient, but instead will be stored against the badge for future reference.</p>
+				</div>
+			</div>
+
+			<h3 id="ManageBadgeIssuing-Revoke"><span class="slash">/</span>Manage badge issuing - Revoked</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#revoked" class="image"><img class="thumbnail" src="/images/guideissuers-img/revoked.png" /></a>
+						<a href="#_" class="lightbox" id="revoked"><img src="/images/guideissuers-img/revoked.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>This section on the <a href="#ManageBadgeIssuing">Manage badge issuing</a> page displays all the badges that have been revoked.</p>
+					<p>The only action available in this table is to <a href="#ManageBadgeIssuing-Revoke-Edit">edit</a> a reason against a badge that has been revoked.</p>
+				</div>
+			</div>
+
+			<h3 id="ManageBadgeIssuing-Revoke-Edit"><span class="slash">/</span>Manage badge issuing - Revoke - Edit</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img24" class="image"><img class="thumbnail" src="/images/guideissuers-img/24.png" /></a>
+						<a href="#_" class="lightbox" id="img24"><img src="/images/guideissuers-img/24.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>When a badge has been revoked it is possible to amend the revoke reason for it.</p>
+					<p>To do this the issuer needs to click the edit button <img src="/images/guideissuers-img/edit.png" alt="edit" /> against a revoked badge. Which will then open a pop up, with a field to amend the reason.</p>
+					<p>Clicking "OK" will update the reason, clicking "Cancel" will close the pop up with no further action.</p>
+				</div>
+			</div>
+
+			<hr />
+
+			<h2 id="RecipientEventPermissions"><span class="brace">&lt;</span><span class="slash">/</span>Recipient event permissions<span class="brace">&gt;</span></h2>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img25" class="image"><img class="thumbnail" src="/images/guideissuers-img/25.png" /></a>
+						<a href="#_" class="lightbox" id="img25"><img src="/images/guideissuers-img/25.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>This screen is to manage the visibility of a recipient on the leaderboard screen. Due to GDPR regulations this allows the delegates to allow or disallow their name being displayed on the leaderboard, which may be visible at an event when collecting badges.</p>
+					<p>These permissions are configured per event. Therefore, if a recipient had been to a previous event and are attending a new one, they will need to confirm if they are happy to display their name at the new event even if they had agreed for the previous event.</p>
+					<p>From this screen the issuer can <a href="#RecipientEventPermissions-Create">add</a>, <a href="#RecipientEventPermissions-Edit">edit</a> or <a href="#RecipientEventPermissions-Delete">delete</a> recipient event permissions.</p>
+				</div>
+			</div>
+
+			<h3 id="RecipientEventPermissions-Create"><span class="slash">/</span>Recipient event permissions - Create</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img26" class="image"><img class="thumbnail" src="/images/guideissuers-img/26.png" /></a>
+						<a href="#_" class="lightbox" id="img26"><img src="/images/guideissuers-img/26.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>Clicking the "Create Recipient Event Permission" button will expand a form at the top of the page with the relevant fields for adding recipient permissions per event individually.</p>
+					<p>All fields are mandatory, and the issuer will be required to select the recipient name from a dropdown list as well as the event they are attending from the dropdown list. There are then two options to select from, "yes" or "no", based on whether the recipient wishes to display their name or not on the leaderboard.</p>
+					<p>Clicking "Save" will add the permission record, whilst clicking "Cancel" will collapse the form.</p>
+				</div>
+			</div>
+
+			<h3 id="RecipientEventPermissions-BulkCreate"><span class="slash">/</span>Recipient event permissions - Bulk create</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img27" class="image"><img class="thumbnail" src="/images/guideissuers-img/27.png" /></a>
+						<a href="#_" class="lightbox" id="img27"><img src="/images/guideissuers-img/27.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>Clicking the "Import Bulk Recipient Event" button will expand a form at the top of the page with instructions on what is required to bulk import recipient permissions, rather than adding them individually.</p>
+					<p>As per the instructions, a .csv file with the details should be uploaded.</p>
+					<p>Clicking "Import" will add the recipient permissions from the bulk import, whilst clicking "Cancel" will collapse the form.</p>
+					<p><strong>Note:</strong> Recipients will need to have been entered onto the system through the Recipient Management area before any bulk upload or recipient permissions is done. The Issuer will be told of any recipient permissions that could not be added.</p>
+				</div>
+			</div>
+
+			<h3 id="RecipientEventPermissions-Edit"><span class="slash">/</span>Recipient event permissions - Edit</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img28" class="image"><img class="thumbnail" src="/images/guideissuers-img/28.png" /></a>
+						<a href="#_" class="lightbox" id="img28"><img src="/images/guideissuers-img/28.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>Clicking the <img src="/images/guideissuers-img/edit.png" alt="edit"> button will expand a form above the table with the same fields that were available when adding an individual recipient event permission. However, rather than the fields being blank, they will show the information held for the recipient that is being edited.</p>
+					<p>Clicking "Update" will update the record with the new information, whilst clicking "Cancel" will collapse the form.</p>
+				</div>
+			</div>
+
+			<h3 id="RecipientEventPermissions-Delete"><span class="slash">/</span>Recipient event permissions - Delete</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img29" class="image"><img class="thumbnail" src="/images/guideissuers-img/29.png" /></a>
+						<a href="#_" class="lightbox" id="img29"><img src="/images/guideissuers-img/29.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>Clicking the <img src="/images/guideissuers-img/delete.png" alt="delete" /> button will display a pop up. This will be for the issuer to confirm they are wanting to delete the permission for the selected recipient.</p>
+					<p>Clicking "OK" will remove it, whilst clicking "Cancel" will close the pop up with no further action taken.</p>
+				</div>
+			</div>
+
+			<hr />
+
+			<h2 id="RecipientGroups"><span class="brace">&lt;</span><span class="slash">/</span>Recipient groups<span class="brace">&gt;</span></h2>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img30" class="image"><img class="thumbnail" src="/images/guideissuers-img/30.png" /></a>
+						<a href="#_" class="lightbox" id="img30"><img src="/images/guideissuers-img/30.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>From this page the issuer will be able to manage the groups that recipients can be assigned to.</p>
+					<p>The issuer will be able to <a href="#RecipientGroups-Create">add new groups</a> and <a href="#RecipientGroups-Edit">edit</a> or <a href="#RecipientGroups-Delete">delete</a> existing ones.</p>
+				</div>
+			</div>
+
+			<h3 id="RecipientGroups-Create"><span class="slash">/</span>Recipient groups - Create</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img31" class="image"><img class="thumbnail" src="/images/guideissuers-img/31.png" /></a>
+						<a href="#_" class="lightbox" id="img31"><img src="/images/guideissuers-img/31.png"></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>Clicking the "Create group" button will expand a form at the top of the page with the relevant fields for adding a new group.</p>
+					<p>Group name is mandatory, as is the status of the group. Active groups will be visible in other sections of the website, inactive ones are only visible on this page.</p>
+					<p>Clicking "Save" will add the new group, whilst clicking "Cancel" will collapse the form.</p>
+				</div>
+			</div>
+
+			<h3 id="RecipientGroups-Edit"><span class="slash">/</span>Recipient groups - Edit</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img32" class="image"><img class="thumbnail" src="/images/guideissuers-img/32.png" /></a>
+						<a href="#_" class="lightbox" id="img32"><img src="/images/guideissuers-img/32.png"></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>Clicking the <img src="/images/guideissuers-img/edit.png" alt="edit"> button will expand a form above the table with the same fields that were available when creating a new group. However, rather than the fields being blank, they will show the information held for the group that is being edited.</p>
+					<p>Clicking "Update" will update the record with the new information, whilst clicking "Cancel" will collapse the form.</p>
+				</div>
+			</div>
+
+			<h3 id="RecipientGroups-Delete"><span class="slash">/</span>Recipient groups - Delete</h3>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img33" class="image"><img class="thumbnail" src="/images/guideissuers-img/33.png" /></a>
+						<a href="#_" class="lightbox" id="img33"><img src="/images/guideissuers-img/33.png"></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>Clicking the <img src="/images/guideissuers-img/delete.png" alt="delete" /> button will display a pop up. This will be for the issuer to confirm they are wanting to delete the selected group.</p>
+					<p>Clicking "OK" will remove the group, whilst clicking "Cancel" will close the pop up with no further action taken.</p>
+				</div>
+			</div>
+
+			<hr />
+
+			<h2 id="RecipientGroupings"><span class="brace">&lt;</span><span class="slash">/</span>Recipient groupings<span class="brace">&gt;</span></h2>
+			<div class="row">
+				<div class="col-3">
+					<div class="thumbnailWrap" title="click to view">
+						<a href="#img34" class="image"><img class="thumbnail" src="/images/guideissuers-img/34.png" /></a>
+						<a href="#_" class="lightbox" id="img34"><img src="/images/guideissuers-img/34.png" /></a>
+					</div>
+				</div>
+				<div class="col">
+					<p>From this page the issuer will be able to add or remove recipients from groups. Recipients can be in a multiple of groups.</p>
+					<p>The left hand table holds all the recipients that are linked to the issuer account that is logged into view this page. The right hand table will appear empty on page load.</p>
+					<p>Once a group has been selected the left hand table will update to show recipients who have not yet been added to the selected group. The other table will show all recipients that have been added to that group previously.</p>
+					<p>The status against the recipients is based on whether they have a user account. This is a traffic light system which will reflect the status of the account in the <a href="#ManageBadgeRecipients">Manage badge recipients</a> page.</p>
+				</div>
+			</div>
+
+			<h3 id="RecipientGroupings-Add"><span class="slash">/</span>Recipient groupings - Add</h3>
+			<div class="row">
+				<div class="col">
+					<p>Select recipients from the left hand table, by clicking on the rows. Holding CTRL and clicking will allow for multiple recipients to be selected. Alternatively the "Select all" or "Deselect all" buttons at the top of the tables can be used. The selected rows will show with a blue background.</p>
+					<p>Once the recipients have been selected click the "Add &gt;" button to move them into the group, that is selected in the dropdown.</p>
+					<p>The recipients will now show up in the right hand table, and will no longer be selectable in the left hand table for that group.</p>
+				</div>
+			</div>
+
+			<h3 id="RecipientGroupings-Remove"><span class="slash">/</span>Recipient groupings - Remove</h3>
+			<div class="row">
+				<div class="col">
+					<p>Select recipients from the right hand table, by clicking on the rows. Holding CTRL and clicking will allow for multiple recipients to be selected. Alternatively the "Select all" or "Deselect all" buttons at the top of the tables can be used. The selected rows will show with a blue background.</p>
+					<p>Once the recipients have been selected click the "&lt; Remove" button to remove them from the selected group.</p>
+					<p>The recipients will now show up in the left hand table, and will no longer be in the table for that group.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="javascripts/guideissuers.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>

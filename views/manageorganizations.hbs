@@ -1,0 +1,173 @@
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
+
+<script src="/javascripts/manageorganizations.js"></script>
+<script src="/javascripts/countries.js"></script>
+<script src="/lib/datetimepicker/datetimepicker_css.js"></script>
+
+<div class="container padbottom">
+	<div id="content">
+		<a style="padding:0px" href="/admin/">&lsaquo;&lsaquo; Back</a>
+
+		<div id="mainhead" style="margin-bottom:0;">{{title}}</div>
+		<hr class="headingunderline"><br>
+
+		<center><input id="createFormShowButton" type="button" value="Create Organization" onclick="showCreateForm();"></center>
+		
+		<!-- FORM TO CREATE A NEW ORG -->
+		<div id="createDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			Create new Organization<br>
+			<div class="boxy addform">
+				<form id="formRec" style="text-align:left;font-size:0.8em;padding-left:15px;">				
+					<div class="formsection">
+						<div class="formlabel"><label for="name">Name</label><span style="color:red">&#42;</span></div>
+						<div class="formfield"><input type="text" name="name" id="name" style="background-color:white;" placeholder="Enter the Organization Name"></input></div>
+					</div>
+					<div class="formsection">
+						<div class="formlabel"><label for="email">Email</label><span style="color:red">&#42;</span></div>
+						<div class="formfield"><input type="text" name="email" id="email" style="background-color:white;" placeholder="Enter the Organization Email address"></textarea></div>
+					</div>
+					<br>
+					<div class="formsection">
+						<div class="formlabel"><label for="pobox">PO Box Number</label></div>
+						<div class="formfield"><input type="text" name="pobox" id="pobox" style="background-color:white;" placeholder="Enter the post office box number for PO box addresses, if applicable"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel"><label for="streetaddress">Street Address</label></div>
+						<div class="formfield"><input type="text" name="streetaddress" id="streetaddress" style="background-color:white;" placeholder="Enter the street address. For example, 1600 Amphitheatre Pkwy"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel"><label for="locality">Town/City</label></div>
+						<div class="formfield"><input type="text" name="locality" id="locality" style="background-color:white;" placeholder="Enter the town or city"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel"><label for="region">County/Region</label></div>
+						<div class="formfield"><input type="text" name="region" id="region" style="background-color:white;" placeholder="Enter the county or region"></div>											
+					</div> 
+					<div class="formsection">
+						<div class="formlabel"><label for="postcode">Post Code</label></div>
+						<div class="formfield"><input type="text" name="postcode" id="postcode" style="background-color:white;" placeholder="Enter the postal code"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel"><label for="country">Country</label></div>
+						<select id="country" name="country">
+						<option value="" >Please Select a country</option>
+					    	</select>						
+					</div> 
+
+					<br>
+					<div style="clear:both;"></div>
+					<br>
+					<center><input type="button" value="Submit" onclick="createOrganization();"><span style="padding-left:30px"></span><input type="button" value="Cancel" onclick="cancelCreateForm();"></center>
+				</form>
+			</div>
+		</div>
+
+		<!-- FORM TO EDIT EXISTING ORG -->
+		<div id="editDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			Edit Organization <br>
+			<div class="boxy editform">
+				<form id="formRecEdit" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<input type="hidden" id="organizationid" name="organizationid" value="">
+				
+					<div class="formsection">
+						<div class="formlabel">Name<span style="color:red">&#42;</span></div>
+						<div class="formfield"><input type="text" name="name" id="name" style="background-color:white;" placeholder="Enter the Orgnaiztion Name"></input></div>
+					</div>
+					<div class="formsection">
+						<div class="formlabel"><label for="email">Email</label><span style="color:red">&#42;</span></div>
+						<div class="formfield"><input type="text" name="email" id="email" style="background-color:white;" placeholder="Enter the Orgnaiztion email (Optional)"></textarea></div>
+					</div class="formsection">
+					<div class="formsection">
+						<div class="formlabel"><label for="pobox">PO Box Number</label></div>
+						<div class="formfield"><input type="text" name="pobox" id="pobox" style="background-color:white;" placeholder="Enter the post office box number for PO box addresses, if applicable"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel"><label for="streetaddress">Street Address</label></div>
+						<div class="formfield"><input type="text" name="streetaddress" id="streetaddress" style="background-color:white;" placeholder="Enter the street address. For example, 1600 Amphitheatre Pkwy"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel"><label for="locality">Town/City</label></div>
+						<div class="formfield"><input type="text" name="locality" id="locality" style="background-color:white;" placeholder="Enter the town or city"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel"><label for="region">County/Region</label></div>
+						<div class="formfield"><input type="text" name="region" id="region" style="background-color:white;" placeholder="Enter the county or region"></div>											
+					</div> 
+					<div class="formsection">
+						<div class="formlabel"><label for="postcode">Post Code</label></div>
+						<div class="formfield"><input type="text" name="postcode" id="postcode" style="background-color:white;" placeholder="Enter the postal code"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel"><label for="country">Country</label></div>
+						<select id="country" name="country">
+						<option value="" >Please Select a country</option>
+					    	</select>						
+					</div> 
+
+					<br>
+					<div style="clear:both;"></div>
+					<br>
+					<center><input type="button" value="Update" onclick="updateOrganization();"><span style="padding-left:30px"></span><input type="button" value="Cancel" onclick="cancelEditForm();"></center>
+				</form>
+			</div>
+		</div>
+
+		<!-- FORM TO VIEW EXISTING ORG -->
+		<div id="viewDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			View Organization <br>
+			<div class="boxy viewform">
+				<form id="formRecView" style="text-align:left;font-size:0.8em;padding-left:15px;">				
+					<div class="formsection">
+						<div class="formlabel"><label for="name">Name</label><span style="color:red">&#42;</span></div>
+						<div class="formfield"><input readonly type="text" name="name" id="name"></input></div>
+					</div>
+					<div class="formsection">
+						<div class="formlabel"><label for="email">Email</label><span style="color:red">&#42;</span></div>
+						<div class="formfield"><input readonly type="text" name="email" id="email"></textarea></div>
+					</div>
+					<div class="formsection">
+						<div class="formlabel"><label for="pobox">PO Box Number</label></div>
+						<div class="formfield"><input readonly type="text" name="pobox" id="pobox" placeholder="Enter the post office box number for PO box addresses, if applicable"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel"><label for="streetaddress">Street Address</label></div>
+						<div class="formfield"><input readonly type="text" name="streetaddress" id="streetaddress" placeholder="Enter the street address. For example, 1600 Amphitheatre Pkwy"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel"><label for="locality">Town/City</label></div>
+						<div class="formfield"><input readonly type="text" name="locality" id="locality" placeholder="Enter the town or city"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel"><label for="region">County/Region</label></div>
+						<div class="formfield"><input readonly type="text" name="region" id="region" placeholder="Enter the county or region"></div>											
+					</div> 
+					<div class="formsection">
+						<div class="formlabel"><label for="postcode">Post Code</label></div>
+						<div class="formfield"><input readonly type="text" name="postcode" id="postcode" placeholder="Enter the postal code"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel"><label for="country">Country</label></div>
+						<select disabled id="location_country" name="country">
+						<option value="" >Please Select a country</option>
+					    	</select>						
+					</div> 
+					
+					<br>
+					<div style="clear:both;"></div>
+					<br>
+					<center><input type="button" value="Close" onclick="closeViewForm();"></center>
+				</form>
+			</div>
+		</div>
+
+	<br>
+	</div>
+	
+	<div style="clear:both;"></div>
+	<div style="padding-top:20px;padding-bottom:20px;">
+		<center><table id="storedList" class='manageTables' width="100%"></table></center>
+	</div>
+</div>

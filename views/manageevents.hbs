@@ -1,0 +1,281 @@
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
+
+<script src="/lib/dateformat.js"></script>
+<script src="/javascripts/manageevents.js"></script>
+<script src="/javascripts/countries.js"></script>
+<script src="/lib/datetimepicker/datetimepicker_css.js"></script>
+
+<div class="container padbottom">
+	<div id="content">
+		<a style="padding:0px" href="/admin/">&lsaquo;&lsaquo; Back</a>
+
+		<div id="mainhead" style="margin-bottom:0;">{{title}}</div>
+		<hr class="headingunderline"><br>
+
+		<center><input id="createFormShowButton" type="button" value="Create Event" onclick="showCreateForm();"></center>
+		
+		<!-- FORM TO CREATE A NEW EVENT -->
+		<div id="createDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			Create new Event<br>
+			<div class="boxy addform">
+				<form id="formRec" style="text-align:left;font-size:0.8em;padding-left:15px;">				
+					<div class="formsection">
+						<div class="formlabel"><label for="name">Name</label><span style="color:red">&#42;</span></div>
+						<div class="formfield"><input type="text" name="name" id="name" style="background-color:white;" placeholder="Enter the Event Name"></input></div>
+					</div>
+					<div class="formsection">
+						<div class="formlabel"><label for="description">Description</label></div>
+						<div class="formfield"><textarea rows="3" cols="74" name="description" id="description" style="background-color:white;" placeholder="Enter the Event Description (Optional)"></textarea></div>
+					</div>
+					<br>
+					<div class="formsection">
+						<div class="formlabel"><label for="formRec-startdate">Start Date/Time</label><span style="color:red">&#42;</span></div>
+						<div class="formfield">
+							<input readonly style="width: 300px;" onchange="checkDateChange('formRec')" type="text" name="formRec-startdate" id="formRec-startdate" placeholder="Enter the Event Start Date/Time">
+							<img id="formRec-startdatecalendar" src="/lib/datetimepicker/images2/cal.gif" onclick="showCalendar('formRec-startdatecalendar', '/lib/datetimepicker/images2/','formRec-startdate','DDMMMYYYY','dropdown',true,'24')" style="cursor:pointer;"/>
+						</div>
+					</div>
+					<div class="formsection">
+						<div class="formlabel"><label for="formRec-enddate">End Date/Time</label><span class="dateinput" style="color:red">&#42;</span></div>
+						<div class="formfield">
+							<input readonly style="width: 300px;"  onchange="checkDateChange('formRec')" type="text" name="formRec-enddate" id="formRec-enddate" placeholder="Enter the Event End Date/Time">
+							<img id="formRec-enddatecalendar" src="/lib/datetimepicker/images2/cal.gif" onclick="showCalendar('formRec-enddatecalendar', '/lib/datetimepicker/images2/','formRec-enddate','DDMMMYYYY','dropdown',true,'24')" style="cursor:pointer;"/>
+						</div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel"><label for="duration">Duration</label></div>
+						<div class="formfield"><input readonly type="text" name="duration" id="duration"></div>
+					</div> 
+					<div class="formsectiontop"><h4>Location</h4></div>
+					<div style="clear:both;">
+						<div class="formlabel"><label for="location_name">Location Name</label></label></div>
+						<div class="formfield"><input type="text" name="location_name" id="location_name" style="background-color:white;" placeholder="Enter the name of the location for the Event"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel">PO Box Number</div>
+						<div class="formfield"><input type="text" name="location_pobox" id="location_pobox" style="background-color:white;" placeholder="Enter the post office box number for PO box addresses, if applicable"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel">Street Address</div>
+						<div class="formfield"><input type="text" name="location_streetaddress" id="location_streetaddress" style="background-color:white;" placeholder="Enter the street address. For example, 1600 Amphitheatre Pkwy"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel">Town/City</div>
+						<div class="formfield"><input type="text" name="location_locality" id="location_locality" style="background-color:white;" placeholder="Enter the town or city"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel">County/Region</div>
+						<div class="formfield"><input type="text" name="location_region" id="location_region" style="background-color:white;" placeholder="Enter the county or region"></div>											
+					</div> 
+					<div class="formsection">
+						<div class="formlabel">Post Code</div>
+						<div class="formfield"><input type="text" name="location_postcode" id="location_postcode" style="background-color:white;" placeholder="Enter the postal code"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel">Country</div>
+						<select id="location_country" name="location_country">
+						<option value="" >Please Select a country</option>
+					    	</select>						
+					</div> 
+
+					<div class="formsectiontop"><h4>Organizers and Sponsors</h4></div>
+
+					<div style="clear:both;">
+						<div class="formlabel">Organizer(s)</div>
+						<div class="formfield" id="organizerlist"></div>
+					</div>
+
+					<div style="clear:both">
+						<div class="formlabel">Sponsor(s)</div>
+						<div class="formfield" id="sponsorlist"></div>
+					</div>
+
+					<br>
+					<div style="clear:both;"></div>
+					<br>
+					<center><input type="button" value="Submit" onclick="createBadgeEvent();"><span style="padding-left:30px"></span><input type="button" value="Cancel" onclick="cancelCreateForm();"></center>
+				</form>
+			</div>
+		</div>
+
+		<!-- FORM TO EDIT EXISTING EVENT -->
+		<div id="editDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			Edit Event <br>
+			<div class="boxy editform">
+				<form id="formRecEdit" style="text-align:left;font-size:0.8em;padding-left:15px;">
+					<input type="hidden" id="eventid" name="eventid" value="">
+				
+					<div class="formsection">
+						<div class="formlabel">Name<span style="color:red">&#42;</span></div>
+						<div class="formfield"><input type="text" name="name" id="name" style="background-color:white;" placeholder="Enter the Event Name"></input></div>
+					</div>
+					<div class="formsection">
+						<div class="formlabel">Description</div>
+						<div class="formfield"><textarea rows="3" cols="74" name="description" id="description" style="background-color:white;" placeholder="Enter the Event Description (Optional)"></textarea></div>
+					</div class="formsection">
+					<br>
+					<div class="formsection">
+						<div class="formlabel"><label for="formRecEdit-startdate">Start Date/Time</label><span style="color:red">&#42;</span></div>
+						<div class="formfield">
+							<input readonly style="width: 300px;" onchange="checkDateChange('formRecEdit')" type="text" name="formRecEdit-startdate" id="formRecEdit-startdate" placeholder="Enter the Event Start Date/Time">
+							<img id="formRecEdit-startdatecalendar" src="/lib/datetimepicker/images2/cal.gif" onclick="showCalendar('formRecEdit-startdatecalendar', '/lib/datetimepicker/images2/','formRecEdit-startdate','DDMMMYYYY','dropdown',true,'24')" style="cursor:pointer;"/>
+						</div>
+					</div>
+					<div class="formsection">
+						<div class="formlabel"><label for="formRecEdit-enddate">End Date/Time</label><span class="dateinput" style="color:red">&#42;</span></div>
+						<div class="formfield">
+							<input readonly style="width: 300px;"  onchange="checkDateChange('formRecEdit')" type="text" name="formRecEdit-enddate" id="formRecEdit-enddate" placeholder="Enter the Event End Date/Time">
+							<img id="formRecEdit-enddatecalendar" src="/lib/datetimepicker/images2/cal.gif" onclick="showCalendar('formRecEdit-enddatecalendar', '/lib/datetimepicker/images2/','formRecEdit-enddate','DDMMMYYYY','dropdown',true,'24')" style="cursor:pointer;"/>
+						</div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel"><label for="duration">Duration</label></div>
+						<div class="formfield"><input readonly type="text" name="duration" id="duration"></div>
+					</div> 
+
+					<div class="formsectiontop"><h4>Location</h4></div>
+					<div style="clear:both;">
+						<div class="formlabel"><label for="location_name">Location Name</label></label></div>
+						<div class="formfield"><input type="text" name="location_name" id="location_name" style="background-color:white;" placeholder="Enter the name of the location for the Event"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel">PO Box Number</div>
+						<div class="formfield"><input type="text" name="location_pobox" id="location_pobox" style="background-color:white;" placeholder="Enter the post office box number for PO box addresses, if applicable"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel">Street Address</div>
+						<div class="formfield"><input type="text" name="location_streetaddress" id="location_streetaddress" style="background-color:white;" placeholder="Enter the street address. For example, 1600 Amphitheatre Pkwy"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel">Town/City</div>
+						<div class="formfield"><input type="text" name="location_locality" id="location_locality" style="background-color:white;" placeholder="Enter the town or city"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel">County/Region</div>
+						<div class="formfield"><input type="text" name="location_region" id="location_region" style="background-color:white;" placeholder="Enter the county or region"></div>											
+					</div> 
+					<div class="formsection">
+						<div class="formlabel">Post Code</div>
+						<div class="formfield"><input type="text" name="location_postcode" id="location_postcode" style="background-color:white;" placeholder="Enter the postal code"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel">Country</div>
+						<select id="location_country" name="location_country">
+						<option value="" >Please Select a country</option>
+					    	</select>						
+					</div> 
+
+					<div class="formsectiontop"><h4>Organizers and Sponsors</h4></div>
+
+					<div style="clear:both;">
+						<div class="formlabel">Organizer(s)</div>
+						<div class="formfield" id="organizerlistedit"></div>
+					</div>
+
+					<div style="clear:both">
+						<div class="formlabel">Sponsor(s)</div>
+						<div class="formfield" id="sponsorlistedit"></div>
+					</div>
+					
+					<br>
+					<div style="clear:both;"></div>
+					<br>
+					<center><input type="button" value="Update" onclick="updateBadgeEvent();"><span style="padding-left:30px"></span><input type="button" value="Cancel" onclick="cancelEditForm();"></center>
+				</form>
+			</div>
+		</div>
+
+		<!-- FORM TO VIEW EXISTING EVENT -->
+		<div id="viewDiv" style="float:left;clear:both;margin-bottom:40px;width:100%;display:none">
+			View Event <br>
+			<div class="boxy viewform">
+				<form id="formRecView" style="text-align:left;font-size:0.8em;padding-left:15px;">				
+					<div class="formsection">
+						<div class="formlabel">Name<span style="color:red">&#42;</span></div>
+						<div class="formfield"><input readonly type="text" name="name" id="name"></input></div>
+					</div>
+					<div class="formsection">
+						<div class="formlabel">Description</div>
+						<div class="formfield"><textarea readonly rows="3" cols="74" name="description" id="description"></textarea></div>
+					</div>
+					<br>
+					<div class="formsection">
+						<div class="formlabel"><label for="startdate">Start Date/Time</label><span style="color:red">&#42;</span></div>
+						<div class="formfield">
+						<input readonly style="width: 300px;" type="text" name="formRecView-startdate" id="formRecView-startdate">
+						</div>
+					</div>
+					<div class="formsection">
+						<div class="formlabel"><label for="formRecView-enddate">End Date/Time</label><span class="dateinput" style="color:red">&#42;</span></div>
+						<div class="formfield">
+						<input readonly style="width: 300px;" type="text" name="formRecView-enddate" id="formRecView-enddate">
+						</div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel"><label for="duration">Duration</label></div>
+						<div class="formfield"><input readonly type="text" name="duration" id="duration"></div>
+					</div> 
+
+					<div class="formsectiontop"><h4>Location</h4></div>
+					<div style="clear:both;">
+						<div class="formlabel"><label for="location_name">Location Name</label></label></div>
+						<div class="formfield"><input readonly type="text" name="location_name" id="location_name"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel">PO Box Number</div>
+						<div class="formfield"><input readonly type="text" name="location_pobox" id="location_pobox"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel">Street Address</div>
+						<div class="formfield"><input readonly type="text" name="location_streetaddress" id="location_streetaddress"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel">Town/City</div>
+						<div class="formfield"><input readonly type="text" name="location_locality" id="location_locality"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel">County/Region</div>
+						<div class="formfield"><input readonly type="text" name="location_region" id="location_region"></div>											
+					</div> 
+					<div class="formsection">
+						<div class="formlabel">Post Code</div>
+						<div class="formfield"><input readonly type="text" name="location_postcode" id="location_postcode"></div>
+					</div> 
+					<div class="formsection">
+						<div class="formlabel">Country</div>
+						<select disabled id="location_country" name="location_country">
+						<option disabled value="" >Please Select a country</option>
+					    	</select>						
+					</div> 
+
+					<div class="formsectiontop"><h4>Organizers and Sponsors</h4></div>
+
+					<div style="clear:both;margin-top:20px;">
+						<div class="formlabel">Organizer(s)</div>
+						<div class="formfield" id="organizerlistview"></div>
+					</div>
+
+					<div style="clear:both">
+						<div class="formlabel">Sponsor(s)</div>
+						<div class="formfield" id="sponsorlistview"></div>
+					</div>
+
+					<br>
+					<div style="clear:both;"></div>
+					<br>
+					<center><input type="button" value="Close" onclick="closeViewForm();"></center>
+				</form>
+			</div>
+		</div>
+
+	<br>
+	</div>
+	
+	<div style="clear:both;"></div>
+	<div style="padding-top:20px;padding-bottom:20px;">
+		<center><table id="storedList" class='manageTables' width="100%"></table></center>
+	</div>
+</div>
