@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -25,7 +25,10 @@
 
 /** Author: Michelle Bachler, KMi, The Open University **/
 /** Author: Manoharan Ramachandran, KMi, The Open University **/
+/** Author: Samantha Colclough, KMi, The Open University **/															
 /** Author: Kevin Quick, KMi, The Open University **/
+
+/** merged file */
 
 var express = require('express');
 var cors = require('cors');
@@ -35,10 +38,11 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var hbs = require('express-handlebars');
+require('console-stamp')(console, { pattern: 'dd/mm/yyyy HH:MM:ss.l' });
+var cfg = require('./config.js');
 
-const fileUpload = require('express-fileupload');
+var fileUpload = require('express-fileupload');
 
-var index = require('./routes/index');
 var badges = require('./routes/badges');
 var issuers = require('./routes/issuers');
 var endorsers = require('./routes/endorsers');
@@ -47,13 +51,20 @@ var alignments = require('./routes/alignments');
 var evidence = require('./routes/evidence');
 var assertions = require('./routes/assertions');
 var users = require('./routes/users');
+var keys = require('./routes/keys');									
 var admin = require('./routes/admin');
 var maintenance = require('./routes/maintenance');
-var ipfs = require('./routes/ipfs');
+var pdf = require('./routes/pdf');
+var organizations = require('./routes/organizations');
+var events = require('./routes/events');
+var qualifying = require('./routes/qualifying');
+var endorsements = require('./routes/endorsements');
+var cfg = require('./config.js');
+
+//Qualichain Specific
+var index = require('./routes/index');
 var merkle = require('./routes/merkle');
 var util = require('./routes/util');
-
-//var pods = require('./routes/badges/pods');
 
 var app = express();
 
@@ -79,7 +90,8 @@ app.options('*', cors()) // include before other routes
 app.use(fileUpload({
 	limits: { fileSize: 20971520}, //20MB,  5MB=5242880 //
 	safeFileNames: true,
-	abortOnLimit: true
+	abortOnLimit: true,
+	responseOnLimit: true	  
 }));
 
 app.engine('hbs', hbs({extname: 'hbs', defaultLayout: 'layout', layoutsDir: __dirname + '/views/layouts', partialsDir: __dirname + '/views/layouts/partials'}));
@@ -87,10 +99,14 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
 app.use(logger('dev'));
-app.use(bodyParser.json());
+//app.use(bodyParser.json());
+// added for creating badge images as JSON includes image base 64 which can make it big
+app.use(bodyParser.json({limit:'50mb', type:'application/json'}));
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
 
 // comment out section below for maintenace mode
 
@@ -102,9 +118,17 @@ app.use('/evidence', evidence);
 app.use('/assertions', assertions);
 app.use('/users', users);
 app.use('/admin', admin);
+app.use('/pdf', pdf);
+app.use('/organizations', organizations);
+app.use('/events', events);
+app.use('/qualifying', qualifying);
+app.use('/endorsements', endorsements);
+app.use('/keys', keys);
+
+
 app.use('/merkle', merkle);
-app.use('/ipfs', ipfs);
 app.use('/util', util);
+
 // needs to be last
 app.use('/badges', badges);
 app.use('/', index);
@@ -121,8 +145,11 @@ app.use('/alignments/images', express.static(__dirname + '/public/images'));
 app.use('/evidence/images', express.static(__dirname + '/public/images'));
 app.use('/assertions/images', express.static(__dirname + '/public/images'));
 app.use('/users/images', express.static(__dirname + '/public/images'));
+app.use('/organizations/images', express.static(__dirname + '/public/images'));
+app.use('/events/images', express.static(__dirname + '/public/images'));
 app.use('/merkle/images', express.static(__dirname + '/public/images'));
-app.use('/ipfs/images', express.static(__dirname + '/public/images'));
+app.use('/endorsements/images', express.static(__dirname + '/public/images'));
+
 
 app.use('/javascripts', express.static(__dirname + '/public/javascripts'));
 app.use('/badges/javascripts', express.static(__dirname + '/public/javascripts'));
@@ -136,8 +163,10 @@ app.use('/alignments/javascripts', express.static(__dirname + '/public/javascrip
 app.use('/evidence/javascripts', express.static(__dirname + '/public/javascripts'));
 app.use('/assertions/javascripts', express.static(__dirname + '/public/javascripts'));
 app.use('/users/javascripts', express.static(__dirname + '/public/javascripts'));
+app.use('/organizations/javascripts', express.static(__dirname + '/public/javascripts'));
+app.use('/events/javascripts', express.static(__dirname + '/public/javascripts'));
 app.use('/merkle/javascripts', express.static(__dirname + '/public/javascripts'));
-app.use('/ipfs/javascripts', express.static(__dirname + '/public/javascripts'));
+app.use('/endorsements/javascripts', express.static(__dirname + '/public/javascripts'));
 
 app.use('/stylesheets', express.static(__dirname + '/public/stylesheets'));
 app.use('/badges/stylesheets', express.static(__dirname + '/public/stylesheets'));
@@ -151,10 +180,14 @@ app.use('/alignments/stylesheets', express.static(__dirname + '/public/styleshee
 app.use('/evidence/stylesheets', express.static(__dirname + '/public/stylesheets'));
 app.use('/assertions/stylesheets', express.static(__dirname + '/public/stylesheets'));
 app.use('/users/stylesheets', express.static(__dirname + '/public/stylesheets'));
+app.use('/organizations/stylesheets', express.static(__dirname + '/public/stylesheets'));
+app.use('/events/stylesheets', express.static(__dirname + '/public/stylesheets'));
 app.use('/merkle/stylesheets', express.static(__dirname + '/public/stylesheets'));
-app.use('/ipfs/stylesheets', express.static(__dirname + '/public/stylesheets'));
+app.use('/endorsements/stylesheets', express.static(__dirname + '/public/stylesheets'));
+
 
 app.use('/lib', express.static(__dirname + '/public/lib'));
+app.use('/ld', express.static(__dirname + '/public/ld'));
 
 // end comment out section for maintenace mode
 
@@ -168,7 +201,7 @@ app.use('/stylesheets', express.static(__dirname + '/public/stylesheets'));
 app.use(redirectUnmatched);
 
 function redirectUnmatched(req, res) {
-  res.redirect("https://blockchain21.kmi.open.ac.uk/qualichain");
+  res.redirect(cfg.maintenance_redirect);
 }
 */
 // end uncomment section mainteance mode
@@ -196,15 +229,16 @@ var db = require('./db')
 // Connect to MySQL on start
 db.connect(db.MODE_PRODUCTION, function(err) {
   if (err) {
-    console.log('Unable to connect to MySQL.')
-    process.exit(1)
+    console.log('Unable to connect to MySQL.');
+    process.exit(1);
   } else {
-    app.listen(8000, function() {
-		console.log('Listening on port 8000...')
-    });
     // =  6 minutes?
     app.timeout = 240000;
     //server.timeout = 120000;/ // =  default
+
+	app.listen(cfg.express_port, function() {
+		console.log('Listening on port ' + cfg.express_port + '...');
+	});
   }
 })
 

@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -24,12 +24,9 @@
 **********************************************************************************/
 
 /** Author: Michelle Bachler, KMi, The Open University **/
-/** Author: Manoharan Ramachandran, KMi, The Open University **/
 /** Author: Kevin Quick, KMi, The Open University **/
 
 var mysql = require('mysql');
-var async = require('async');
-
 var cfg = require('./config.js');
 
 var PRODUCTION_DB = cfg.db.database_production;
@@ -39,50 +36,46 @@ exports.MODE_TEST = 'mode_test';
 exports.MODE_PRODUCTION = 'mode_production';
 
 var state = {
-  pool: null,
-  mode: null,
+	pool: null,
+	mode: null,
 };
 
 exports.connect = function(mode, done) {
-  state.pool = mysql.createPool({
-    host: cfg.db.host,
-    user: cfg.db.user,
-    password: cfg.db.password,
-    database: mode === exports.MODE_PRODUCTION ? PRODUCTION_DB : TEST_DB
-  })
 
-  state.mode = mode;
-  done();
+	//https://github.com/mysqljs/mysql/issues/708
+	var options = {
+		host: cfg.db.host,
+		user: cfg.db.user,
+		password: cfg.db.password,
+		database: mode === exports.MODE_PRODUCTION ? PRODUCTION_DB : TEST_DB
+	}
+
+	try {
+		state.pool = mysql.createPool(options);
+		state.mode = mode;
+
+		state.pool.on('connection', function(connection) {
+			console.log('Connected to MySql db');
+		});
+
+		state.pool.on('error', function(err) {
+			console.log("MySql db error:");
+			console.log(err);
+			//console.error(new Date(), 'MySql db error', err);
+		});
+
+		done();
+	} catch(e) {
+		console.log("MySql db error catch:");
+		console.log(e);
+		done(e);
+	}
 };
 
 exports.get = function() {
-  return state.pool;
+	return state.pool;
 }
 
 exports.getMode = function() {
 	return state.mode;
 }
-
-exports.fixtures = function(data) {
-  var pool = state.pool
-  if (!pool) return done(new Error('Missing database connection.'))
-
-  var names = Object.keys(data.tables)
-  async.each(names, function(name, cb) {
-    async.each(data.tables[name], function(row, cb) {
-      var keys = Object.keys(row)
-        , values = keys.map(function(key) { return "'" + row[key] + "'" })
-
-      pool.query('INSERT INTO ' + name + ' (' + keys.join(',') + ') VALUES (' + values.join(',') + ')', cb)
-    }, cb)
-  }, done)
-};
-
-exports.drop = function(tables, done) {
-  var pool = state.pool
-  if (!pool) return done(new Error('Missing database connection.'))
-
-  async.each(tables, function(name, cb) {
-    pool.query('DELETE * FROM ' + name, cb)
-  }, done)
-};

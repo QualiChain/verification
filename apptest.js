@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -35,6 +35,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var hbs = require('express-handlebars');
+require('console-stamp')(console, { pattern: 'dd/mm/yyyy HH:MM:ss.l' });
 
 var badges = require('./routes/badges');
 var issuers = require('./routes/issuers');
@@ -70,8 +71,6 @@ app.use('/admin', admin);
 
 // needs to be last
 app.use('/', badges);
-
-// if it is not covered by the above paths, it gets to here - so for images in pages etc...
 
 app.use('/images', express.static(__dirname + '/public/images'));
 app.use('/view/images', express.static(__dirname + '/public/images'));

@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -39,9 +39,10 @@ var web3 = new Web3(new Web3.providers.WebsocketProvider(cfg.parity_ipc_path));
  * Calls the return handler, with new data properties: data.frombalance (before transfer), data.tobalance (before transfer),
  * data.tx (the funds transfer transaction number) and/or res.locals.errormsg is set to a message if somethig went wrong.
  */
-exports.transferFunds = function(req, res, callback, data, handler) {
+exports.transferFunds = function(req, res, callback, data, returnhandler) {
 
 	data.wei = web3.utils.toWei(data.amount.toString());
+
 	//console.log(data.wei);
 	//console.log(data.from);
 	//console.log(data.to);
@@ -71,7 +72,7 @@ exports.transferFunds = function(req, res, callback, data, handler) {
 								res.locals.errormsg = "Funds transfer transaction failed";
 							} else {
 								data.tx = receipt.transactionHash;
-								handler(req, res, callback, data);
+								returnhandler(req, res, callback, data);
 							}
 						})
 						.on('error', function(error3) {
@@ -79,12 +80,12 @@ exports.transferFunds = function(req, res, callback, data, handler) {
 							res.locals.errormsg = "Transfer error: " + error3;
 						});
 					}).catch((error2) => {
-						console.log("getTransactionReceipt error: "+error2);
+						console.log("get to account balance error: "+error2);
 						res.locals.errormsg = error2;
 					});
 			}
 		}).catch((error) => {
-			console.log("getTransactionReceipt error: "+error);
+			console.log("get from account balance error: "+error);
 			res.locals.errormsg = error;
 		});
 }
@@ -120,7 +121,10 @@ exports.createAccount = function(req, res, callback, data, handler) {
 					data.account = web3.utils.toChecksumAddress(newaccount); // Parity account creation does not return checksummed accounts yet - 10/10/2019
 					//console.log(data.account);
 
-					var command3 = 'curl --data \'{"method":"parity_setAccountName","params":["'+data.account+'","'+data.accountname+'"],"id":1,"jsonrpc":"2.0"}\' -H "Content-Type: application/json" -X POST '+cfg.rpcapi+':'+cfg.rpcport;
+					// single speach marks upset parity or curl
+					var accountname = data.accountname.replace(/\'/g, ' ');
+
+					var command3 = 'curl --data \'{"method":"parity_setAccountName","params":["'+data.account+'","'+accountname+'"],"id":1,"jsonrpc":"2.0"}\' -H "Content-Type: application/json" -X POST '+cfg.rpcapi+':'+cfg.rpcport;
 					child3 = exec(command3, function(e3, stdout3, stderr3){
 						if(e3 !== null) {
 							//console.log('stderr3: ' + stderr3);
@@ -129,7 +133,7 @@ exports.createAccount = function(req, res, callback, data, handler) {
 
 						} else {
 							data.message = JSON.parse(stdout3);
-							//console.log(stdout);
+							//console.log(stdout3);
 
 							handler(req, res, callback, data);
 						}
@@ -157,9 +161,9 @@ exports.topUpAccount = function(req, res, callback, data, handler, account){
 			var wei = parseInt(balance);
 
 			if (wei < minimumAccountBalanceWei) {
-				console.log("topUpAccount");
-				console.log(account);
-				console.log(balance);
+				//console.log("topUpAccount");
+				//console.log(account);
+				//console.log(balance);
 
 				req.topup = optimumAccountBalanceWei - wei;
 				console.log("Topping up account with an extra " + req.topup + " wei");
@@ -213,7 +217,6 @@ exports.unlockAccount = function(req, res, callback, data, returnhandler, accoun
 						return;
 					} else {
 						console.error("Error unlocking " + account + " = "+e);
-						console.log(e);
 						res.locals.errormsg = e;
 					}
 				};
@@ -307,7 +310,6 @@ exports.getCurrentBlockNumber = function(req, res, next) {
 		});
 };
 
-
 /**
  * Function to escape single speeach marks
  * Returns the original passed string with any single speech marks escaped.
@@ -320,7 +322,7 @@ exports.escape = function(thestring) {
  * Function to check that a contract address exists.
  * Call the handler and passes back true and an empty error string if it exists, false and any error message if it does not.
  */
-exports.contractExists = function(address, handler, req, res) {
+exports.contractExists = function(address, returnhandler, req, res) {
 
 	var exists = false;
 	var error = "";
@@ -331,10 +333,10 @@ exports.contractExists = function(address, handler, req, res) {
 			if (code != "0x") {
 				exists = true;
 			}
-			handler(exists, error);
+			returnhandler(exists, error);
 		}).catch((error) => {
 			console.log("contractExists error: "+error);
-			handler(exists, error);
+			returnhandler(exists, error);
 		});
 }
 
@@ -364,6 +366,14 @@ exports.createKey = function(keylength) {
 	return registration;
 }
 
+/**
+ * Taken From - http://stackoverflow.com/questions/46155/validate-email-address-in-javascript
+ */
+exports.isValidEmail = function(email) {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+}
+
 function rand(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -382,3 +392,46 @@ function base64_encode(file) {
     return new Buffer.from(bitmap).toString('base64');
 }
 
+// must match version in client side untilites for claiming to work
+exports.demicrosoftize = function(str) {
+
+    str = str.replace("\x82","'");
+    str = str.replace("\x83","f");
+    str = str.replace("\x84","\"");
+    str = str.replace("\x85","...");
+    str = str.replace("\x86","+");
+    str = str.replace("\x87","#");
+    str = str.replace("\x89","^");
+    str = str.replace("\x8a","\xa6");
+    str = str.replace("\x8b","<");
+    str = str.replace("\x8c","\xbc");
+    str = str.replace("\x8e","\xb4");
+    str = str.replace("\x91","'");
+    str = str.replace("\x92","'");
+    str = str.replace("\x93","\"");
+    str = str.replace("\x94","\"");
+    str = str.replace("\x95","*");
+    str = str.replace("\x96","-");
+    str = str.replace("\x97","--");
+    str = str.replace("\x98","~");
+    str = str.replace("\x99","(TM)");
+    str = str.replace("\x9a","\xa8");
+    str = str.replace("\x9b",">");
+    str = str.replace("\x9c","\xbd");
+    str = str.replace("\x9e","\xb8");
+    str = str.replace("\x9f","\xbe");
+
+	str = str.replace(/[\u2018|\u2019|\u201A]/g, "\'");
+	str = str.replace(/[\u201C|\u201D|\u201E]/g, "\"");
+	str = str.replace(/\u2026/g, "...");
+	str = str.replace(/[\u2013|\u2014]/g, "-");
+	str = str.replace(/\u02C6/g, "^");
+	str = str.replace(/\u2039/g, "");
+	//str = str.replace(/\u2039/g, "<");
+	str = str.replace(/\u203A/g, "");
+	//str = str.replace(/\u203A/g, ">");
+	str = str.replace(/[\u02DC|\u00A0]/g, " ");
+	str = str.replace(/[\u2022|\u00B7|\u2024|\u2219|\u25D8|\u25E6]/g, "-");
+
+	return str;
+}
