@@ -23,18 +23,60 @@
 *                                                                                *
 **********************************************************************************/
 
+const cfg = require('../config.js');
+
 const express = require('express');
-const path = require('path');
 const router = express.Router();
 
-const admin_controller = require('../controllers/adminController');
+const { check } = require('express-validator/check');
+const puppeteer = require('puppeteer');
 
-router.get('/docs', function (req, res, next) {
-	res.render('docsadmin');
+router.get('/issuers/information', function(req, res, next) {
+	(async () => {
+		const browser = await puppeteer.launch({
+			pipe: false,
+			args: ['--no-sandbox', '--disable-setuid-sandbox'],
+		});
+		//const browser = await puppeteer.launch({pipe: true, args: ['--no-sandbox', '--disable-setuid-sandbox']});
+		const page = await browser.newPage();-
+		await page.goto(cfg.uri_stub+'issuers/information/', {waitUntil: 'networkidle0'});
+		buffer = await page.pdf({printBackground: true, displayHeaderFooter:true, format: 'A4'});
+        res.type('application/pdf');
+        res.send(buffer);
+		await browser.close();
+	})();
 });
 
-router.get('/', function(req, res, next) {
-	admin_controller.getAdminPage(req, res, next);
+router.get('/issuers/guide', function(req, res, next) {
+	(async () => {
+		const browser = await puppeteer.launch({
+			pipe: false,
+			args: ['--no-sandbox', '--disable-setuid-sandbox'],
+		});
+		//const browser = await puppeteer.launch({pipe: true, args: ['--no-sandbox', '--disable-setuid-sandbox']});
+		const page = await browser.newPage();-
+		await page.goto(cfg.uri_stub+'issuers/guide/', {waitUntil: 'networkidle0'});
+		buffer = await page.pdf({printBackground: true, displayHeaderFooter:true, format: 'A4'});
+        res.type('application/pdf');
+        res.send(buffer);
+		await browser.close();
+	})();
+});
+
+router.get('/recipients/information', function(req, res, next) {
+	(async () => {
+		const browser = await puppeteer.launch({
+			pipe: false,
+			args: ['--no-sandbox', '--disable-setuid-sandbox'],
+		});
+		//const browser = await puppeteer.launch({pipe: true, args: ['--no-sandbox', '--disable-setuid-sandbox']});
+		const page = await browser.newPage();-
+		await page.goto(cfg.uri_stub+'recipients/information/', {waitUntil: 'networkidle0'});
+		buffer = await page.pdf({printBackground: true, displayHeaderFooter:true, format: 'A4'});
+        res.type('application/pdf');
+        res.send(buffer);
+		await browser.close();
+	})();
 });
 
 module.exports = router;

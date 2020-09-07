@@ -13,7 +13,7 @@ router.get('/privacy', function(req, res, next) {
 });
 
 router.get('/docindex', function(req, res, next) {
-	res.render('docindex', { title: 'Qualichain Badging Service API Documentation' });
+	res.render('docindex', { title: cfg.title_docindex, mailto: cfg.mailto, mailtosubject: cfg.mailtosubject });
 });
 
 router.get('/portfolio', function(req, res, next) {

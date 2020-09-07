@@ -23,18 +23,32 @@
 *                                                                                *
 **********************************************************************************/
 
+const cfg = require('../config.js');
+
 const express = require('express');
-const path = require('path');
 const router = express.Router();
 
-const admin_controller = require('../controllers/adminController');
+const keys_controller = require('../controllers/keysController');
 
-router.get('/docs', function (req, res, next) {
-	res.render('docsadmin');
+const { check } = require('express-validator/check');
+
+
+/**
+ * Get the key API documentation page.
+ * @return HTML Page of the Key API documentation
+ */
+router.get('/docs', function(req, res, next) {
+	res.render('docskeys', { title: 'Keys API Documentation' });
 });
 
-router.get('/', function(req, res, next) {
-	admin_controller.getAdminPage(req, res, next);
-});
+/**
+ * Get the Public Key for Signatures for Open Badges.
+ * @param id, Required. The identifier of the issuer of the public key you want to view.
+ * @return JSON object containg the public key used for signing badge assertions.
+ */
+router.get('/public/:id', [
+	check('id','You must include the issuer id of the public key you want to view').not().isEmpty(),
+], keys_controller.getPublicKey);
+
 
 module.exports = router;

@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -23,60 +23,98 @@
 *                                                                                *
 **********************************************************************************/
 
-/** Author: Michelle Bachler, KMi, The Open University **/
-/** Author: Manoharan Ramachandran, KMi, The Open University **/
-/** Author: Kevin Quick, KMi, The Open University **/
+const express = require('express');
+const router = express.Router();
 
-var express = require('express');
-var router = express.Router();
-
-var alignment_controller = require('../controllers/alignmentController');
+const alignment_controller = require('../controllers/alignmentController');
 const { check } = require('express-validator/check');
 
+/**
+ * Get the Alignment manage page.
+ * @param token, Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used.
+ * @return HTML Page or an error page with a error message
+ */
 router.get('/manage', [
 	check('token').optional(),
 ],	alignment_controller.getAlignmentManagementPage);
 
+/**
+ * Get the Alignment api doc page.
+ * @return HTML Page or an error page with a error message
+ */
 router.get('/docs', function(req, res, next) {
 	res.render('docsalignments');
 });
 
+/**
+ * Get an Alignment record by it's record identifier.
+ * @param token, Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used.
+ * @param id, the identifier of the Alignment record you wish to retrieve.
+ * @return JSON with Alignment data, or a JSON error object.
+ */
 router.get('/id/:id', [
 	check('token').optional(),
-	check('id').withMessage('You must the id of the alignment you want to get'),
+	check('id', 'You must include the id of the alignment you want to get').not().isEmpty(),
 ], alignment_controller.getAlignmentById);
 
+/**
+ * Get a list of all Alignment records for the currently logged in user.
+ * @param token, Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used.
+ * @return JSON with the data for all the Alignments records accessible by current user, or a JSON error object.
+ */
 router.get('/list', [
 	check('token').optional(),
 ], alignment_controller.listAlignments);
 
+/**
+ * Create a new Alignment record.
+ * @param token, Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used.
+ * @param url, Required. You must include a valid url for the new alignment item.
+ * @param name, Required. You must include the Name of the Alignment.
+ * @param description, Required. Description of the Alignment.
+ * @param code, Optional. You can include a code, that is a locally unique string identifier that identifies the Alignment within its framework.
+ * @param framework, Optional. You can include a Framework of the Alignment.
+ * @return JSON with the data for all the Alignments records accessible by current user (see Model level for full details), or a JSON error object.
+ */
 router.post('/create', [
 	check('token').optional(),
-
-	check('url').isURL({require_tld: false}).withMessage('You must include a valid url for the new alignment item'),
-	check('name').withMessage('You must include a name for the new alignment item'),
-	check('description').withMessage('You must include a description for the new alignment item'),
-
+	check('url', 'You must include a valid url for the new alignment item').isURL({require_tld: false}),
+	check('name', 'You must include a name for the new alignment item').not().isEmpty(),
+	check('description', 'You must include a description for the new alignment item').not().isEmpty(),
 	check('code').optional(),
 	check('framework').optional()
 ], alignment_controller.createAlignment);
 
+/**
+ * Update an existing Alignment record.
+ * @param token, Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used.
+ * @param id, Required. The record identifier of the Alignment you wish to update.
+ * @param url, Optional. You can include a valid url for the new alignment item, if you wish to update it.
+ * @param name, Optional. You can include the Name of the Alignment, if you wish to update it.
+ * @param description, Optional. You can include description of the Alignment, if you wish to update it.
+ * @param code, Optional. You can include a code, that is a locally unique string identifier that identifies the Alignment within its framework, if you wish to update it.
+ * @param framework, Optional. You can include a Framework of the Alignment, if you wish to update it.
+ * @return JSON with the data for all the Alignments records accessible by current user (see Model level for full details), or a JSON error object.
+ */
 router.post('/update', [
 	check('token').optional(),
-	check('id').withMessage('You must include the id of the alignment you want to update'),
-
-	check('url').optional().isURL({require_tld: false}).withMessage('Your alignment url must be a valid url'),
+	check('id', 'You must include the id of the alignment you want to update').not().isEmpty(),
+	check('url', 'Your alignment url must be a valid url').optional().isURL({require_tld: false}),
 	check('name').optional(),
 	check('description').optional(),
-
 	check('code').optional(),
 	check('framework').optional()
-
 ], alignment_controller.updateAlignment);
 
+/**
+ * Delete an Alignment record.
+ * @param token, Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used.
+ * @param id, Required. The record identifier of the Alignment you wish to delete.
+ * @return JSON with the id of the Alignment record that was deleted and a status property of -1, or a JSON error object.
+ */
 router.post('/delete', [
 	check('token').optional(),
-	check('id').withMessage('You must include the id of the alignment you want to delete'),
+	check('id', 'You must include the id of the alignment you want to delete').not().isEmpty(),
 ], alignment_controller.deleteAlignment);
 
 /** These need to be in this order at the bottom **/
@@ -87,6 +125,10 @@ router.get('/:id', [
 ], alignment_controller.getJSONById);
 */
 
+/**
+ * Get the Alignment API documentation page.
+ * @return HTML Page of the API Alignment documentation
+ */
 router.get('/', function(req, res, next) {
 	res.render('docsalignments');
 });
