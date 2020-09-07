@@ -14008,44 +14008,10 @@ if (function() {
 			i = {
 				id: "sendBoxLayout.twig",
 				allowInlineIncludes: !0,
-				data: [
-				{
-					type: "logic",
-					token: {
-						type: "Twig.logic.type.if",
-						stack: [{
-							type: "Twig.expression.type.variable",
-							value: "examplesPresent",
-							match: ["examplesPresent"]
-						}, {
-							type: "Twig.expression.type.bool",
-							value: true
-						}, {
-							type: "Twig.expression.type.operator.binary",
-							value: "==",
-							precidence: 9,
-							associativity: "leftToRight",
-							operator: "=="
-						}],
-						output: [
-							{
-								type: "raw",
-								value: '<div class="sendBox">\n\n</div>\n\n<br><h1>Examples:</h1>\n<div class="examples">\n\n</div>'
-							}
-						]
-					}
-				}, {
-					type: "logic",
-					token: {
-						type: "Twig.logic.type.else",
-						match: ["else"],
-						output: [{
-							type: "raw",
-							value: '<div class="sendBox">\n\n</div>\n\n<br>\n<div class="examples">\n\n</div>'
-						}]
-					}
-				}
-				],
+				data: [{
+					type: "raw",
+					value: '<div class="sendBox"></div><br><h1>Examples:</h1><div class="examples"></div>'
+				}],
 				precompiled: !0
 			};
 		n = r(i), Object.defineProperty(e, "__esModule", {
@@ -14186,8 +14152,7 @@ if (function() {
 				}, {
 					type: "raw",
 					value: '</table>\n</div>'
-				},
-				{
+				}, {
 					type: "logic",
 					token: {
 						type: "Twig.logic.type.if",
@@ -14205,68 +14170,10 @@ if (function() {
 							associativity: "leftToRight",
 							operator: "=="
 						}],
-						output: [
-							{
-								type: "raw",
-								value: 'Method: POST<br><br>\n\n'
-							},
-							{
-								type: "raw",
-								value: 'Permission roles allowed to make this API call: <strong>'
-							},
-							{
-								type: "output",
-								stack: [{
-									type: "Twig.expression.type.variable",
-									value: "permissions",
-									match: ["permissions"]
-								}]
-							}, {
-								type: "raw",
-								value: '</strong>\n<Br>\n\n'
-							},
-							{
-								type: "raw",
-								value: '\n<Br>Url:<input readonly title="url" class="form-control dt-url" value="'
-							},
-							{
-								type: "output",
-								stack: [{
-									type: "Twig.expression.type.variable",
-									value: "fullpath",
-									match: ["fullpath"]
-								}]
-							}, {
-								type: "raw",
-								value: '"/>\n<Br>\n\n'
-							},
-							{
-								type: "logic",
-								token: {
-									type: "Twig.logic.type.if",
-									stack: [{
-										type: "Twig.expression.type.variable",
-										value: "activeitem",
-										match: ["activeitem"]
-									}, {
-										type: "Twig.expression.type.bool",
-										value: true
-									}, {
-										type: "Twig.expression.type.operator.binary",
-										value: "==",
-										precidence: 9,
-										associativity: "leftToRight",
-										operator: "=="
-									}],
-									output: [
-									{
-										type: "raw",
-										value: '<table class="table">\n    <tbody>\n    <tr>\n        <td>Request</td>\n        <td>Response&nbsp;<span class="dt-status"></span></td>\n    </tr>\n    <tr>\n        <td style="width: 50%"><textarea style="resize: none; height: 300px" title="input" class="dt-input form-control"> </textarea></td>\n        <td style="width: 50%"><textarea style="resize: none; height: 300px" title="output" class="dt-output form-control"> </textarea></td>\n    </tr>\n    </tbody>\n</table>\n<button class="btn dt-send">send</button>'
-									}
-								]
-							}
-						},
-						]
+						output: [{
+							type: "raw",
+							value: 'Method: <input title="method" class="dt-method" type="radio" name="methods"\n value="POST" checked> POST<Br>'
+						}]
 					}
 				}, {
 					type: "logic",
@@ -14288,40 +14195,54 @@ if (function() {
 						}],
 						output: [{
 							type: "raw",
-							value: 'Method: GET<br><br>'
-						},
-						{
-							type: "raw",
-							value: 'Permission roles allowed to make this API call: <strong>'
-						},
-						{
-							type: "output",
-							stack: [{
-								type: "Twig.expression.type.variable",
-								value: "permissions",
-								match: ["permissions"]
-							}]
-						}, {
-							type: "raw",
-							value: '</strong>\n<Br>\n\n'
-						},
-						{
-							type: "raw",
-							value: '<Br>\nUrl:<input readonly title="url" class="form-control dt-url" value="'
-						}, {
-							type: "output",
-							stack: [{
-								type: "Twig.expression.type.variable",
-								value: "fullpath",
-								match: ["fullpath"]
-							}]
-						}, {
-							type: "raw",
-							value: '"/><Br><table class="table" style="margin-bottom:5px;"><tbody>'
+							value: 'Method: <input title="method" class="dt-method" type="radio" name="methods" value="GET" checked> GET<Br>'
 						}]
 					}
+				}, {
+					type: "raw",
+					value: '<Br>\nUrl:<input readonly title="url" class="form-control dt-url" value="'
+				}, {
+					type: "output",
+					stack: [{
+						type: "Twig.expression.type.variable",
+						value: "fullpath",
+						match: ["fullpath"]
+					}]
+				}, {
+					type: "raw",
+					value: '"/><Br><table class="table" style="margin-bottom:5px;"><tbody>'
 				},
 				{
+					type: "logic",
+					token: {
+						type: "Twig.logic.type.if",
+						stack: [{
+							type: "Twig.expression.type.variable",
+							value: "method",
+							match: ["method"]
+						}, {
+							type: "Twig.expression.type.string",
+							value: "POST"
+						}, {
+							type: "Twig.expression.type.operator.binary",
+							value: "==",
+							precidence: 9,
+							associativity: "leftToRight",
+							operator: "=="
+						}],
+						output: [
+						{
+							type: "raw",
+							value: '<tr><td>Request JSON</td><td>Response&nbsp;<span class="dt-status"></span></td></tr>'
+						}, {
+							type: "raw",
+							value: '<tr><td style="width: 50%"><textarea style="resize: none; height: 300px; margin-bottom:5px;" title="input" class="dt-input form-control"> </textarea></td>\n        <td style="width: 50%"><textarea style="resize: none; height: 300px; margin-bottom:5px;" title="output" class="dt-output form-control"> </textarea></td>\n    </tr>'
+						}, {
+							type: "raw",
+							value: '</tbody></table><button class="btn dt-send">send</button>'
+						}]
+					}
+				}, {
 					type: "logic",
 					token: {
 						type: "Twig.logic.type.if",
@@ -14729,18 +14650,10 @@ if (function() {
 						g = n.substring(0,n.lastIndexOf("/:")+1);
 					}
 
-					var active = true;
-					if (this.model.get("activeitem") === false) {
-						active = false;
-					}
-
 					return "/" === l.default.last(e) && "/" === l.default.first(t) ? n = "" + e + t.slice(1) : "/" !== l.default.last(e) && "/" !== l.default.first(t) && (n = e + "/" + t), {
 						path: n,
 						fullpath: mainBaseURL+n,
 						getpath: g,
-						examplesPresent: this.model.get("examplesPresent"),
-						permissions: l.default.map(this.model.get("permissions")),
-						activeitem: active,
 						description: this.model.get("description"),
 						params: this.model.get("params"),
 						returns: this.model.get("returns"),
@@ -16195,7 +16108,7 @@ if (function() {
 				allowInlineIncludes: !0,
 				data: [{
 					type: "raw",
-					value: '<div class="header"><div class="panel panel-default text-center"><h2>'+maintitle+'</h2></div></div><label>Filter by url path</label><input title="filer" class="form-control dt-filter"/>\n<table class="table table-hover">\n<tr>\n<td>\nmethod</td><td>permissions</td><td>url</td><td>description</td><td>action</td></tr><tbody class="dt-routes-container"></tbody></table>'
+					value: '<div class="header"><div class="panel panel-default text-center"><h2>'+maintitle+'</h2></div></div><label>Filter by url path</label><input title="filer" class="form-control dt-filter"/>\n<table class="table table-hover">\n<tr>\n<td>\nmethod</td><td>url</td><td>description</td><td>action</td></tr><tbody class="dt-routes-container"></tbody></table>'
 				}],
 				precompiled: !0
 			};
@@ -16237,16 +16150,6 @@ if (function() {
 							value: "\n    "
 						}]
 					}
-				}, {
-					type: "raw",
-					value: "</td>\n<td>\n    "
-				}, {
-					type: "output",
-					stack: [{
-						type: "Twig.expression.type.variable",
-						value: "permissions",
-						match: ["permissions"]
-					}]
 				}, {
 					type: "raw",
 					value: "</td>\n<td>\n    "
@@ -16402,7 +16305,6 @@ if (function() {
 						examplesPresent: this.model.get("examplesPresent"),
 						model: this.model,
 						returntype: this.model.get("returntype"),
-						permissions: s.default.map(this.model.get("permissions")),
 						methods: s.default.map(this.model.get("methods"), function(e, t) {
 							return s.default.upperCase(t)
 						})

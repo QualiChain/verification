@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -23,16 +23,21 @@
 *                                                                                *
 **********************************************************************************/
 
-/** Author: Michelle Bachler, KMi, The Open University **/
-/** Author: Manoharan Ramachandran, KMi, The Open University **/
-/** Author: Kevin Quick, KMi, The Open University **/
-
 var DATE_FORMAT = 'd mmm yyyy';
 var TIME_FORMAT = 'd/m/yy - H:MM';
 var DATE_FORMAT_PHASE = 'd mmm yyyy H:MM';
 
 var badges = {};
+var tablePending = null;
+var tableIssued = null;
+var tableRevoked = null;
+
 var recipients = {};
+
+var recipientids = [];
+var currentrecipientaddids = [];
+var currentrecipienteditids = [];
+
 var assertions = {};
 var protocol = "";
 var domain = "";
@@ -118,9 +123,69 @@ function createAssertion() {
 	makeRequest("POST", cfg.proxy_path+"/assertions/create", send, handler);
 }
 
+function revokedAssertion(assertionid) {
+	var assertion = assertions[assertionid];
+
+	var message = "Are you sure you want to REVOKE the badge issuance entry for: \n\n"+badges[assertion.badgeid].title+"\n\ngiven to: \n\n";
+	message += recipients[assertion.recipientid].name+"\n\nThe badge recipient will be email to say their badge has been revoked.";
+
+	var reply = confirm(message);
+	if (reply == true) {
+		var reason = prompt("Please enter a reason for revoking this badge issuance - not seen by badge recipient", "");
+		if (reason != null) {
+			var handler = function(response) {
+				if (response.error) {
+					showError(response);
+				} else {
+					updateList();
+					//alert("The assertion record has been deleted");
+				}
+			}
+
+			var send = {};
+			send.id = assertionid;
+			send.revokedreason = reason;
+			makeRequest("POST", cfg.proxy_path+"/assertions/revoke", send, handler);
+		}
+	}
+}
+
+function editRevokedAssertion(assertionid) {
+	var assertion = assertions[assertionid];
+
+	var reason = prompt("Please enter a reason for revoking this badge issuance", assertion.revokedreason);
+	if (reason != null) {
+		var handler = function(response) {
+			if (response.error) {
+				showError(response);
+			} else {
+				updateList();
+			}
+		}
+
+		var send = {};
+		send.id = assertionid;
+		send.revokedreason = reason;
+		makeRequest("POST", cfg.proxy_path+"/assertions/updaterevocationreason", send, handler);
+	}
+}
+
 function manageEvidence(id) {
-	var evidencepageurl=protocol+"://"+domain+cfg.proxy_path+"/badges/evidence/?badgeissuedid="+id;
+	var evidencepageurl= protocol+"://"+domain+cfg.proxy_path+"/evidence/?badgeissuedid="+id;
 	location.href = evidencepageurl;
+}
+
+function getEvidence(badgeissuedid) {
+
+	var handler = function(response) {
+		var count = 0;
+		if (response && response.evidence && response.evidence.length > 0) {
+			count = response.evidence.length;
+			document.getElementById('evidencecount-'+badgeissuedid).innerHTML = count;
+		}
+	}
+
+	makeRequest("GET", cfg.proxy_path+"/evidence/list/"+badgeissuedid, {}, handler);
 }
 
 function viewFile(id) {
@@ -156,7 +221,7 @@ function updateAssertion() {
 function issueAssertion(assertionid) {
 	var assertion = assertions[assertionid];
 
-	var message = "Are you sure you want to issue the badge : "+badges[assertion.badgeid].title+" to: "+recipients[assertion.recipientid].name;
+	var message = "Are you sure you want to issue the badge:\n\n"+badges[assertion.badgeid].title+"\n\nto:\n\n"+recipients[assertion.recipientid].name;
 	var reply = confirm(message);
 	if (reply == true) {
 		document.body.style.cursor = 'wait';
@@ -181,7 +246,7 @@ function issueAssertion(assertionid) {
 function deleteAssertion(assertionid) {
 	var assertion = assertions[assertionid];
 
-	var message = "Are you sure you want to delete the pending badge issuance entry for: "+badges[assertion.badgeid].title+" to: "+recipients[assertion.recipientid].name;
+	var message = "Are you sure you want to delete the pending badge issuance entry for:\n\n"+badges[assertion.badgeid].title+"\n\nto:\n\n"+recipients[assertion.recipientid].name;
 	var reply = confirm(message);
 	if (reply == true) {
 
@@ -220,6 +285,7 @@ function loadBadgeData(){
 			if (response.length == 0) {
 				thediv.innerHTML = "Currently you are the issuer on no badge records";
 				theeditdiv.innerHTML = "Currently you are the issuer on no badge records";
+				loadRecipientGroupData();
 			} else {
 				// create list
 				var html = '<select name="badgerec" id="badgerec">';
@@ -230,8 +296,8 @@ function loadBadgeData(){
 
 				for (i = 0; i < response.badges.length; i++) {
 					badges[response.badges[i].id] = response.badges[i];
-					html += '<option value="'+ response.badges[i].id +'">'+ response.badges[i].title + '</option>';
-					html2 += '<option value="'+ response.badges[i].id +'">'+ response.badges[i].title + '</option>';
+					html += '<option value="'+ response.badges[i].id +'">'+ response.badges[i].title +" - v."+response.badges[i].version+ '</option>';
+					html2 += '<option value="'+ response.badges[i].id +'">'+ response.badges[i].title +" - v."+response.badges[i].version+ '</option>';
 				}
 
 				html += "</select>";
@@ -239,61 +305,170 @@ function loadBadgeData(){
 
 				html2 += "</select>";
 				theeditdiv.innerHTML = html2;
+
+				loadRecipientGroupData();
+			}
+		}
+	}
+
+	makeRequest("GET", cfg.proxy_path+cfg.badges_path+"/list", {}, handler);
+}
+
+function loadRecipientGroupData() {
+
+	var handler = function (response) {
+		if (response.error) {
+			showError(response);
+		} else {
+
+			var thediv = document.getElementById('groupselectlist');
+			var thediv2 = document.getElementById('groupselectlistedit');
+			if (response.length == 0) {
+				thediv.innerHTML = "Currently there are no active groups to select from";
+				thediv2.innerHTML = "Currently there are no active groups to select from";
+				loadRecipientData();
+			} else {
+				// create list
+				var html = '<select name="recipientgroups" id="recipientgroups" onchange="loadRecipientGroupList()">';
+				html += '<option value="" selected>Select a group to filter recipient list</option>'
+
+				var html2 = '<select name="recipientgroupsedit" id="recipientgroupsedit" onchange="loadRecipientGroupListEdit()">';
+				html2 += '<option value="" selected>Select a group to filter recipient list</option>'
+
+				for (i = 0; i < response.recipientgroups.length; i++) {
+					if (response.recipientgroups[i].status == 1) {
+						html += '<option value="' + response.recipientgroups[i].id + '">' + response.recipientgroups[i].name + '</option>';
+						html2 += '<option value="' + response.recipientgroups[i].id + '">' + response.recipientgroups[i].name + '</option>';
+					}
+				}
+
+				html += "</select>";
+				thediv.innerHTML = html;
+
+				html2 += "</select>";
+				thediv2.innerHTML = html2;
 
 				loadRecipientData();
 			}
 		}
 	}
 
-	makeRequest("GET", cfg.proxy_path+"/badges/list", {}, handler);
+	makeRequest("GET", cfg.proxy_path + "/recipients/groups/list", {}, handler);
 }
 
 function loadRecipientData(){
-
-	//console.log("IN loadRecipientData");
 
 	var handler = function(response) {
 		if (response.error) {
 			showError(response);
 		} else {
 			recipients = {};
-
-			var theeditdiv =document.getElementById('recipientlistedit');
-			var thediv =document.getElementById('recipientlist');
-
-			if (response.length == 0) {
-				thediv.innerHTML = "Currently you have no stored recipient records";
-				theeditdiv.innerHTML = "Currently you have no stored recipient records";
-			} else {
-
-				var html = '<select name="recipientid" id="recipientid">';
-				html += '<option value="" disabled selected>Select a Recipient</option>'
-
-				var html2 = '<select name="recipientidedit" id="recipientidedit">';
-				html2 += '<option value="" disabled selected>Select a Recipient</option>'
-
-				for (i = 0; i < response.recipients.length; i++) {
-
-					if (response.recipients[i].status == 1) {
-						recipients[response.recipients[i].id] = response.recipients[i];
-
-						html += '<option value="'+ response.recipients[i].id +'">'+ response.recipients[i].name + '</option>';
-						html2 += '<option value="'+ response.recipients[i].id +'">'+ response.recipients[i].name + '</option>';
-					}
-				}
-				html += "</select>";
-				thediv.innerHTML = html;
-
-				html2 += "</select>";
-				theeditdiv.innerHTML = html2;
-
-				updateList();
+			for (i = 0; i < response.recipients.length; i++) {
+				recipients[response.recipients[i].id] = response.recipients[i];
+				recipientids.push(response.recipients[i].id);
 			}
+
+			currentrecipientaddids = [].concat(recipientids);
+			currentrecipienteditids = [].concat(recipientids);
+
+			drawRecipientLists();
+
+			updateList();
 		}
 	}
 
 	makeRequest("GET", cfg.proxy_path+"/recipients/list", {}, handler);
 }
+
+function loadRecipientGroupList() {
+	let recipientgroups = document.getElementById('recipientgroups');
+	let groupid = recipientgroups.options[recipientgroups.selectedIndex].value;
+
+	if (groupid == "") {
+		currentrecipientaddids = [].concat(recipientids);
+		drawRecipientLists();
+	} else {
+		currentrecipientaddids = [];
+		var innerhandler = function (response) {
+			if (response.error) {
+				showError(response);
+			} else {
+				if (response && response.recipients && response.recipients.length > 0) {
+					for (i = 0; i < response.recipients.length; i++) {
+						currentrecipientaddids.push(response.recipients[i].id);
+					}
+				}
+			}
+			drawRecipientLists();
+		}
+		makeRequest("GET", cfg.proxy_path + "/recipients/groups/listrecipients/" + groupid, {}, innerhandler);
+	}
+}
+
+function loadRecipientGroupListEdit() {
+	let recipientgroupsedit = document.getElementById('recipientgroupsedit');
+	let groupid = recipientgroupsedit.options[recipientgroupsedit.selectedIndex].value;
+
+	if (groupid == "") {
+		currentrecipientaddids = [].concat(recipientids);
+		drawRecipientLists();
+	} else {
+		currentrecipienteditids = [];
+
+		var innerhandler = function (response) {
+			if (response.error) {
+				showError(response);
+			} else {
+				if (response && response.recipients && response.recipients.length > 0) {
+					for (i = 0; i < response.recipients.length; i++) {
+						currentrecipienteditids.push(response.recipients[i].id);
+					}
+				}
+			}
+			drawRecipientLists();
+		}
+
+		makeRequest("GET", cfg.proxy_path + "/recipients/groups/listrecipients/" + groupid, {}, innerhandler);
+	}
+}
+
+function drawRecipientLists(){
+
+	var thediv =document.getElementById('recipientlist');
+	var theeditdiv =document.getElementById('recipientlistedit');
+
+	thediv.innerHTML = "";
+	theeditdiv.innerHTML = "";
+
+	if (currentrecipientaddids.length == 0) {
+		thediv.innerHTML = "No recipients";
+	} else if (currentrecipienteditids.length == 0) {
+		theeditdiv.innerHTML = "No recipients";
+	} else {
+		var html = '<select name="recipientid" id="recipientid">';
+		html += '<option value="" disabled selected>Select a Recipient</option>'
+		var html2 = '<select name="recipientidedit" id="recipientidedit">';
+		html2 += '<option value="" disabled selected>Select a Recipient</option>'
+
+		for (i = 0; i < currentrecipientaddids.length; i++) {
+			if (recipients[currentrecipientaddids[i]].status == 1) {
+				html += '<option value="'+ recipients[currentrecipientaddids[i]].id +'">'+ recipients[currentrecipientaddids[i]].name +'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;('+ recipients[currentrecipientaddids[i]].email+ ')</option>';
+			}
+		}
+		for (i = 0; i < currentrecipienteditids.length; i++) {
+			if (recipients[currentrecipienteditids[i]].status == 1) {
+				html2 += '<option value="'+ recipients[currentrecipienteditids[i]].id +'">'+ recipients[currentrecipienteditids[i]].name +'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;('+ recipients[currentrecipienteditids[i]].email+ ')</option>';
+			}
+		}
+
+		html += "</select>";
+		thediv.innerHTML = html;
+
+		html2 += "</select>";
+		theeditdiv.innerHTML = html2;
+	}
+}
+
 
 function updateList(){
 
@@ -301,123 +476,142 @@ function updateList(){
 
 	var handler = function(response) {
 
-		//code to do if successful here
-		var thediv =document.getElementById('storedList');
-		var thediv2 =document.getElementById('storedList2');
-		//var thediv3 = document.getElementById('storedList3');
-
-		thediv.innerHTML = "";
-		thediv2.innerHTML = "";
-		//thediv3.innerHTML = "";
-
 		assertions = {};
 
-		//console.log(response.items);
-		//console.log(response.items.length);
+		var dataPending = [];
+		var dataIssued = [];
+		var dataRevoked = [];
 
-		if ( !response || !response.items || (response.items && response.items.length == 0) ) {
-			thediv.innerHTML = "Currently you have no pending Badge Issuance records";
-			thediv2.innerHTML = "Currently you have no issued Badge Issuance records";
-			//thediv3.innerHTML = "Currently you have no revoked Badge Issuance records";
-		} else {
+		var countPending = 0;
+		var countIssued = 0;
+		var countRevoked = 0;
 
-			var html = "<center><table style='background-color:#efefef; width:100%;line-height:120%;font-size: 14px;'>";
-			html += "<tr>";
-			html += "<th style='background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;'>Recipient Name</th>";
-			html += "<th style='background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;'>Badge Name</th>";
+		//console.log(response);
 
-			html += "<th style='background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;'>Edit</th>";
-
-			//html += "<th style='background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;'>Add Evidence</th>";
-			html += "<th style='background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;'>Manage Evidence</th>";
-
-			html += "<th style='background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;'>Issue</th>";
-
-			html += "<th style='background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;'>Delete</th>";
-
-			html += "</tr>";
-
-			var html2 = "<center><table style='width:100%;line-height:120%;font-size: 14px;'>";
-			html2 += "<tr>";
-			html2 += "<th style='background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;'>Recipient Name</th>";
-			html2 += "<th style='background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;'>Badge Name</th>";
-			html2 += "<th style='background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;'>Issued on</th>";
-			html2 += "<th style='background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;'>View Issued Badge</th>";
-			html2 += "</tr>";
-
+		if ( response && response.items && response.items.length > 0 ) {
 			for (i = 0; i < response.items.length; i++) {
 
 				var item = response.items[i];
-
 				assertions[item.id] = item;
 
 				if (item.status=="pending") {
-					html += "<tr style='background-color:#fff;'>";
-					html += "<td style='padding: 6px; border: 1px solid grey;'>";
-					html += recipients[item.recipientid].name;
-					html += "</td>";
 
-					html += "<td style='padding: 6px; border: 1px solid grey;'>";
-					html += badges[item.badgeid].title;
-					html += "</td>";
+					dataPending[countPending] = {};
+					dataPending[countPending].id = response.items[i].id;
 
-					html += '<td style="padding: 6px; border: 1px solid grey;">';
-					html += '<center><button class="sbut" title="Edit" onclick="editAssertion(\''+item.id+'\');"><img src="'+cfg.proxy_path+'/badges/images/issuing_buttons/edit.png" /></button></center>';
-					html += '</td>';
+					if (recipients[item.recipientid]) {
+						dataPending[countPending].recipientname = recipients[item.recipientid].name;
+					} else {
+						dataPending[countPending].recipientname = "Unknown";
+					}
 
-					html += '<td style="padding: 6px; border: 1px solid grey;">';
-					html += '<center><button class="sbut" title="Manage Evidence" onclick="manageEvidence(\''+item.id+'\');"><img src="'+cfg.proxy_path+'/badges/images/issuing_buttons/evidence.png" /></button></center>';
-					html += '</td>';
+					dataPending[countPending].badgename = badges[item.badgeid].title;
+					dataPending[countPending].version = badges[item.badgeid].version;
 
-					html += '<td style="padding: 6px; border: 1px solid grey;">';
-					html += '<center><button class="sbut" title="Issue" onclick="issueAssertion(\''+item.id+'\');"><img src="'+cfg.proxy_path+'/badges/images/issuing_buttons/issue.png" /></button></center>';
-					html += '</td>';
+					dataPending[countPending].edit = '<center><button class="sbut" title="Edit" onclick="editAssertion(\''+item.id+'\');"><img src="'+cfg.proxy_path+'/images/issuing_buttons/edit.png" /></button></center>';
 
-					html += '<td style="padding: 6px; border: 1px solid grey;">';
-					html += '<center><button class="sbut" title="Delete" onclick="deleteAssertion(\''+item.id+'\');"><img src="'+cfg.proxy_path+'/badges/images/issuing_buttons/delete.png" /></button></center>';
-					html += '</td>';
+					dataPending[countPending].manageevidence = '<div style="float:left;margin-left:20px; margin-top:5px;"><span>Items: </span><span style="padding-right:20px;font-weight:bold" id="evidencecount-'+item.id+'">0</span></div>';
+					dataPending[countPending].manageevidence += '<button class="sbut" title="Manage Evidence" onclick="manageEvidence(\''+item.id+'\');"><img src="'+cfg.proxy_path+'/images/issuing_buttons/evidence.png" /></button>';
 
-					html += "</tr>";
+					dataPending[countPending].issue = '<center><button class="sbut" title="Issue" onclick="issueAssertion(\''+item.id+'\');"><img src="'+cfg.proxy_path+'/images/issuing_buttons/issue.png" /></button></center>';
+					dataPending[countPending].delete = '<center><button class="sbut" title="Delete" onclick="deleteAssertion(\''+item.id+'\');"><img src="'+cfg.proxy_path+'/images/issuing_buttons/delete.png" /></button></center>';
 
-					html += "<tr>";
-					html += '<td colspan="7" id="evidencerow'+item.id+'" style="display:none; padding: 6px; border: 1px solid grey; background-color: #fafafa">';
-					html += '<div id="evidenceList'+ item.id + '"';
-					html += 'style="margin-left:auto;margin-right:auto;width:100%;"></div>';
-					html += '</td>';
-					html += "</tr>";
-
+					countPending++;
 				} else if (item.status=="issued") {
-					html2 += "<tr>";
 
-					html2 += "<td style='padding: 6px; border: 1px solid grey;'>";
-					html2 += recipients[item.recipientid].name;
-					html2 += "</td>";
-
-					html2 += "<td style='padding: 6px; border: 1px solid grey;'>";
-					html2 += badges[item.badgeid].title;
-					html2 += "</td>";
-
-					html2 += "<td style='padding: 6px; border: 1px solid grey;'>";
+					dataIssued[countIssued] = {};
+					dataIssued[countIssued].id = response.items[i].id;
+					if (recipients[item.recipientid]) {
+						dataIssued[countIssued].recipientname = recipients[item.recipientid].name;
+					} else {
+						dataIssued[countIssued].recipientname = "Unknown";
+					}
+					dataIssued[countIssued].badgename = badges[item.badgeid].title;
+					dataIssued[countIssued].version = badges[item.badgeid].version;
 
 					var cDate = new Date(item.issuedon*1000);
 					var nicedate = cDate.format(DATE_FORMAT);
 
-					html2 += nicedate;
-					html2 += "</td>";
+					dataIssued[countIssued].issuedon = nicedate;
+					dataIssued[countIssued].view = '<center><button class="sbut" title="View Issued Badge" onclick="viewFile(\''+item.id+'\');"><img src="'+cfg.proxy_path+'/images/issuing_buttons/view.png" /></button></center>';
+					dataIssued[countIssued].revoke = '<center><button class="sbut" title="Revoke Issued Badge - The recipient will be notified by email." onclick="revokedAssertion(\''+item.id+'\');"><img src="'+cfg.proxy_path+'/images/issuing_buttons/revoke.png" /></button></center>';
 
-					html2 += "<td style='padding: 6px; border: 1px solid grey;'>";
-					html2 += '<center><button class="sbut" title="View Issued Badge" onclick="viewFile(\''+item.id+'\');"><img src="'+cfg.proxy_path+'/badges/images/issuing_buttons/view.png" /></button></center>';
-					html2 += "</td>";
+					countIssued++;
+				} else if (item.status=="revoked") {
+					dataRevoked[countRevoked] = {};
+					dataRevoked[countRevoked].id = response.items[i].id;
+					dataRevoked[countRevoked].recipientname = recipients[item.recipientid].name;
+					dataRevoked[countRevoked].badgename = badges[item.badgeid].title;
+					dataRevoked[countRevoked].version = badges[item.badgeid].version;
+					dataRevoked[countRevoked].revokereason = item.revokedreason;
+					dataRevoked[countRevoked].editreason = '<button class="sbut" title="Edit revocation reason" onclick="editRevokedAssertion(\''+item.id+'\');"><img src="'+cfg.proxy_path+'/images/issuing_buttons/edit.png" /></button>';
 
-					html2 += "</tr>";
+					countRevoked++;
 				}
 			}
-			html += "</table><center><br> <br>";
-			thediv.innerHTML = html;
-
-			html2 += "</table><center><br> <br>";
-			thediv2.innerHTML = html2;
 		}
+
+		if (tablePending != null) tablePending.destroy();
+
+		tablePending = $('#storedListPending').DataTable({
+			"data": dataPending,
+			"stateSave": true,
+			"columns": [
+				{ "data": "id", "title": "ID", "width": "5%" },
+				{ "data": "recipientname", "title": "Recipient Name", "width": "20%" },
+				{ "data": "badgename", "title": "Badge Name", "width": "20%" },
+				{ "data": "version", "title": "Version", "width": "10%" },
+				{ "data": "edit" , "title": "Edit", "width": "10%", "orderable": false },
+				{ "data": "manageevidence" , "title": "Manage Evidence", "width": "15%", "orderable": false },
+				{ "data": "issue" , "title": "Issue", "width": "10%", "orderable": false },
+				{ "data": "delete", "title": "Delete", "width": "10%", "orderable": false }
+			],
+			"order": [[ 0, "desc" ]]
+		});
+
+		if (tableIssued != null) tableIssued.destroy();
+
+		tableIssued = $('#storedListIssued').DataTable({
+			"data": dataIssued,
+			"stateSave": true,
+			"columns": [
+				{ "data": "id", "title": "ID", "width": "5%" },
+				{ "data": "recipientname", "title": "Recipient Name", "width": "25%" },
+				{ "data": "badgename", "title": "Badge Name", "width": "30%" },
+				{ "data": "version", "title": "Version", "width": "10%" },
+				{ "data": "issuedon", "title": "Issued On", "width": "10%" },
+				{ "data": "view" , "title": "View", "width": "10%", "orderable": false },
+				{ "data": "revoke" , "title": "Revoke", "width": "10%", "orderable": false }
+			],
+			"order": [[ 0, "desc" ]]
+		});
+
+		if (tableRevoked != null) tableRevoked.destroy();
+
+		tableRevoked = $('#storedListRevoked').DataTable({
+			"data": dataRevoked,
+			"stateSave": true,
+			"columns": [
+				{ "data": "id", "title": "ID", "width": "5%" },
+				{ "data": "recipientname", "title": "Recipient Name", "width": "25%" },
+				{ "data": "badgename", "title": "Badge Name", "width": "30%" },
+				{ "data": "version", "title": "Version", "width": "5%" },
+				{ "data": "revokereason", "title": "Revocation Reason", "width": "30%" },
+				{ "data": "editreason", "title": "Edit", "width": "5%" }
+			],
+			"order": [[ 0, "desc" ]]
+		});
+
+		// get the evidence counts for pending badges
+		if ( response && response.items && response.items.length > 0 ) {
+			for (i = 0; i < response.items.length; i++) {
+				var item = response.items[i];
+				if (item.status=="pending") {
+					getEvidence(item.id);
+				}
+			}
+		}
+
 	}
 
 	makeRequest("GET", cfg.proxy_path+"/assertions/list", {}, handler);

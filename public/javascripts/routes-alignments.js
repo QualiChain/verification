@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -23,171 +23,145 @@
 *                                                                                *
 **********************************************************************************/
 
-/** Author: Michelle Bachler, KMi, The Open University **/
-/** Author: Manoharan Ramachandran, KMi, The Open University **/
-/** Author: Kevin Quick, KMi, The Open University **/
-
 var maintitle = "Web Service API - Alignments";
 var routes = [
 	{
-		"path": "/",
-		"description": "Draws the Alignment API Documentation page",
-		"params": [],
-		"returns" : [],
-		"methods": {
-			"get": true
-		},
-		"prefixRegexp": "/^\\/alignments\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/alignments",
-		"id": "90",
-		"regexp": "/\\/(?:\\?.*)?$/",
-		"examplesPresent": false
-	},
-	{
-		"path": "/manage",
-		"description": "Draws the Manage Alignments page - if logged in and user has permissions",
-		"params": [
-			{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"}
-		],
-		"returns" : [],
-		"methods": {
-			"get": true
-		},
-		"prefixRegexp": "/^\\/alignments\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/alignments",
-		"id": "91",
-		"regexp": "/\\/manage(?:\\?.*)?$/",
-		"examplesPresent": false
-	},
-	{
-		"path": "/docs",
-		"description": "Draws the Alignment API Documentation page",
-		"params": [],
-		"returns" : [],
-		"methods": {
-			"get": true
-		},
-		"prefixRegexp": "/^\\/alignments\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/alignments",
-		"id": "92",
-		"regexp": "/\\/docs(?:\\?.*)?$/",
-		"examplesPresent": false
-	},
-	{
-		"path": "/id",
+		"path": "/id/:id",
 		"description": "Get an Alignment by it's record identifier.",
 		"params": [
-			{"name":"id", "description":"Requires the identifier of the Issuer record you wish to retrieve."},
+			{"name":"id", "description":"Requires the identifier of the Alignment record you wish to retrieve."},
 			{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"}
 		],
 		"returns" : [
-			{"name":"id", "description":"ID of the Badge"},
-			{"name":"timecreated", "description":"Time at which the Alignment was created"},
-			{"name":"targetid", "description":"URL of the Alignment"},
-			{"name":"targetname", "description":"Name of the Alignment"},
-			{"name":"targetdescription", "description":"Description of the Alignment"},
-			{"name":"targetcode", "description":"Code of the Alignment"},
-			{"name":"targetframework", "description":"Framework of the Alignment"},
-
+			{"name":"id", "description":"Record identifier of the Alignment"},
+			{"name":"timecreated", "description":"Time at which the Alignment record was created"},
+			{"name":"uniqueid", "description":"Unique Alignment hash number used in the uri for the JSONLD version of the alignment data"},
+			{"name":"targetid", "description": "URL linking to the official description of the alignment target, for example an individual standard within an educational framework."},
+			{"name":"targetname", "description":"Name of the alignment."},
+			{"name":"targetdescription", "description":"Short description of the alignment target."},
+			{"name":"targetcode", "description":"If applicable, a locally unique string identifier that identifies the alignment target within its framework and/or targetUrl."},
+			{"name":"targetframework", "description":"The framework to which the resource being described is aligned."}
 		],
 		"methods": {
-			"post": true
+			"get": true
 		},
-		"prefixRegexp": "/^\\/alignments\\/?(?=\\/|$)/i",
+		"permissions": ["super", "admin", "issuer"],
+		"prefixRegexp": "/^\\"+cfg.proxy_path+"\\/alignments\\/?(?=\\/|$)/i",
 		"prefix": cfg.proxy_path+"/alignments/",
-		"id": "93",
+		"id": "23",
 		"regexp": "/\\/id(?:\\?.*)?$/",
 		"examplesPresent": false
 	},
 	{
 		"path": "/list",
-		"description": "Get a list of all issuer records. Only administrators will be allowed to retrieve Issuer records.",
+		"description": "Get a list of all alignment records for the currently logged in user",
 		"params": [
 			{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"}
 		],
 		"returns" : [
-			{"name":"id", "description":"ID of the Badge"},
-			{"name":"timecreated", "description":"Time at which the Alignment was created"},
-			{"name":"targetid", "description":"URL of the Alignment"},
-			{"name":"targetname", "description":"Name of the Alignment"},
-			{"name":"targetdescription", "description":"Description of the Alignment"},
-			{"name":"targetcode", "description":"Code of the Alignment"},
-			{"name":"targetframework", "description":"Framework of the Alignment"},
-
+			{"name":"id", "description":"Record identifier of the Alignment"},
+			{"name":"timecreated", "description":"Time at which the Alignment record was created"},
+			{"name":"uniqueid", "description":"Unique Alignment hash number used in the uri for the JSONLD version of the alignment data"},
+			{"name":"targetid", "description": "URL linking to the official description of the alignment, for example an individual standard within an educational framework."},
+			{"name":"targetname", "description":"Name of the alignment."},
+			{"name":"targetdescription", "description":"Short description of the alignment."},
+			{"name":"targetcode", "description":"If applicable, a locally unique string identifier that identifies the alignment within its framework and/or targetUrl."},
+			{"name":"targetframework", "description":"The framework to which the resource being described is aligned."}
 		],
 		"methods": {
-			"post": true
+			"get": true
 		},
-		"prefixRegexp": "/^\\/alignments\\/?(?=\\/|$)/i",
+		"permissions": ["super", "admin", "issuer"],
+		"prefixRegexp": "/^\\"+cfg.proxy_path+"\\/alignments\\/?(?=\\/|$)/i",
 		"prefix": cfg.proxy_path+"/alignments/",
-		"id": "94",
+		"id": "24",
 		"regexp": "/\\/list(?:\\?.*)?$/",
 		"examplesPresent": false
 	},
 	{
 		"path": "/create",
-		"description": "Create a new Alignment - creates a new login account if one does not already exists for the given login email address. Only administrators will be allowed to create new Issuers",
+		"description": "Create a new Alignment record",
 		"params": [
 			{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"},
-
-			{"name":"targetid", "description":"Required. You include enter the URL of the Alignment"},
-			{"name":"targetname", "description":"Required. You must include the Name of the Alignment"},
-			{"name":"targetdescription", "description":"Description of the Alignment"},
-			{"name":"targetcode", "description":"Required. You must include the Code of the Alignment"},
-			{"name":"targetframework", "description":"Optional You can include a Framework of the Alignment"},
+			{"name":"url", "description": "Required. You must include a valid url for the new alignment item" },
+			{"name":"name", "description": "Required. You must include the Name of the Alignment" },
+			{"name":"description", "description": "Required. Description of the Alignment" },
+			{"name":"code", "description": "Optional. You can include a code, that is a locally unique string identifier that identifies the alignment within its framework" },
+			{"name":"framework", "description": "Optional. You can include a Framework of the Alignment" }
 		],
-		"returns" : [{"name":"id", "description":"ID of the Badge"},
-		{"name":"timecreated", "description":"Time at which the Alignment was created"},
-		{"name":"targetid", "description":"URL of the Alignment"},
-		{"name":"targetname", "description":"Name of the Alignment"},
-		{"name":"targetdescription", "description":"Description of the Alignment"},
-		{"name":"targetcode", "description":"Code of the Alignment"},
-		{"name":"targetframework", "description":"Framework of the Alignment"},],
+		"returns": [
+			{"name":"id", "description":"Record identifier of the Alignment"},
+			{"name":"timecreated", "description":"Time at which the Alignment record was created"},
+			{"name":"uniqueid", "description":"Unique Alignment hash number used in the uri for the JSONLD version of the alignment data"},
+			{"name":"targetid", "description": "URL linking to the official description of the alignment, for example an individual standard within an educational framework."},
+			{"name":"targetname", "description":"Name of the alignment."},
+			{"name":"targetdescription", "description":"Short description of the alignment."},
+			{"name":"targetcode", "description":"If applicable, a locally unique string identifier that identifies the alignment within its framework and/or targetUrl."},
+			{"name":"targetframework", "description":"The framework to which the resource being described is aligned."},
+			{"name":"usedinissuance", "description": "true of false as to whether this alignment has been used against an issued badge, and therefore can't be edited or deleted." }
+		],
 		"methods": {
 			"post": true
 		},
-		"prefixRegexp": "/^\\/alignments\\/?(?=\\/|$)/i",
+		"permissions": ["super", "admin", "issuer"],
+		"prefixRegexp": "/^\\"+cfg.proxy_path+"\\/alignments\\/?(?=\\/|$)/i",
 		"prefix": cfg.proxy_path+"/alignments/",
-		"id": "95",
+		"id": "25",
 		"regexp": "/\\/create(?:\\?.*)?$/",
 		"examplesPresent": false
 	},
 	{
 		"path": "/update",
-		"description": "Update an existing Alignment record only if it has not been used on an issued badge",
+		"description": "Update an existing Alignment, record only if it has not been used on an issued badge",
 		"params": [
 			{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"},
-			{"name":"id", "description":"Requires the identifier of the Issuer record you wish to retrieve."},
-
-	],
-		"returns" : [{"name":"id", "description":"ID of the Badge"},
-		{"name":"timecreated", "description":"Time at which the Alignment was created"},
-		{"name":"targetid", "description":"URL of the Alignment"},
-		{"name":"targetname", "description":"Name of the Alignment"},
-		{"name":"targetdescription", "description":"Description of the Alignment"},
-		{"name":"targetcode", "description":"Code of the Alignment"},
-		{"name":"targetframework", "description":"Framework of the Alignment"},],
+			{"name":"id", "description": "Required. You must include the id for the alignment you wish to update" },
+			{"name":"url", "description": "Optional. You can include a valid url for the new alignment item, if you wish to update it" },
+			{"name":"name", "description": "Optional. You can include the Name of the Alignment, if you wish to update it" },
+			{"name":"description", "description": "Optional. You can include the description of the Alignment, if you wish to update it" },
+			{"name":"code", "description": "Optional. You can include a code, that is a locally unique string identifier that identifies the alignment within its framework, if you wish to update it" },
+			{"name":"framework", "description": "Optional. You can include a Framework of the Alignment, if you wish to update it" }
+		],
+		"returns": [
+			{"name":"id", "description":"Record identifier of the Alignment"},
+			{"name":"timecreated", "description":"Time at which the Alignment record was created"},
+			{"name":"uniqueid", "description":"Unique Alignment hash number used in the uri for the JSONLD version of the alignment data"},
+			{"name":"targetid", "description": "URL linking to the official description of the alignment, for example an individual standard within an educational framework."},
+			{"name":"targetname", "description":"Name of the alignment."},
+			{"name":"targetdescription", "description":"Short description of the alignment."},
+			{"name":"targetcode", "description":"If applicable, a locally unique string identifier that identifies the alignment within its framework and/or targetUrl."},
+			{"name":"targetframework", "description":"The framework to which the resource being described is aligned."},
+			{"name":"usedinissuance", "description": "true of false as to whether this alignment has been used against an issued badge, and therefore can't be edited or deleted." }
+		],
 		"methods": {
 			"post": true
 		},
-		"prefixRegexp": "/^\\/alignments\\/?(?=\\/|$)/i",
+		"permissions": ["super", "admin", "issuer"],
+		"prefixRegexp": "/^\\"+cfg.proxy_path+"\\/alignments\\/?(?=\\/|$)/i",
 		"prefix": cfg.proxy_path+"/alignments/",
-		"id": "96",
+		"id": "26",
 		"regexp": "/\\/update(?:\\?.*)?$/",
 		"examplesPresent": false
 	},
 	{
 		"path": "/delete",
-		"description": "Delete an existing Alignment record only if it has not been used on an issued badge",
-		"params": [{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"},
-		{"name":"id", "description":"Requires the identifier of the Issuer record you wish to retrieve."},],
-		"returns" : [{"name":"ID", "description":"returns ID of the deleted Alignment"}],
+		"description": "Delete an existing Alignment record, only if it has not been used on an issued badge",
+		"params": [
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "id", "description": "Required. The record identifier of the Alignment you wish to delete." }
+		],
+		"returns": [
+			{ "name": "id", "description": "the record identifier of the deleted Alignment" },
+			{ "name": "status", "description": "a status of -1 to indicated that the record has been deleted" }
+		],
 		"methods": {
 			"post": true
 		},
-		"prefixRegexp": "/^\\/badges\\/alignments\\/?(?=\\/|$)/i",
+		"permissions": ["super", "admin", "issuer"],
+		"prefixRegexp": "/^\\"+cfg.proxy_path+"\\/alignments\\/?(?=\\/|$)/i",
 		"prefix": cfg.proxy_path+"/alignments/",
-		"id": "97",
+		"id": "27",
 		"regexp": "/\\/delete(?:\\?.*)?$/",
 		"examplesPresent": false
-	},];
+	}
+];

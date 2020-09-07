@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -23,16 +23,16 @@
 *                                                                                *
 **********************************************************************************/
 
-/** Author: Michelle Bachler, KMi, The Open University **/
-/** Author: Manoharan Ramachandran, KMi, The Open University **/
-/** Author: Kevin Quick, KMi, The Open University **/
+var badges = {};
+var table = null;
 
 var badgesArray = [];
-var badges = {};
 var badgealignments = {}
+var badgecriteriaevents = {}
 
 var issuers = {}
 var alignments = {}
+var events = {}
 
 document.addEventListener('DOMContentLoaded', function() {
     initializePage();
@@ -88,13 +88,26 @@ function createBadge() {
 	document.body.style.cursor = 'wait';
 
 	var send = {};
-
 	send.title = demicrosoftize(form.title.value);
 	send.description = demicrosoftize(form.description.value);
 	send.imageurl = url;
 	send.version = demicrosoftize(form.version.value);
 	send.issuerid = form.issuerid.value;
 	send.criterianarrative = demicrosoftize(form.criterianarrative.value);
+	send.parentbadgeid = form.parentbadgeid.value;
+
+	var alignmentobj = 	document.getElementById('selectAlignment');
+	var alignmentselection = getSelectValues(alignmentobj);
+	if (alignmentselection.length > 0) {
+		send.alignmentids = alignmentselection.join();
+	}
+
+	var eventobj = document.getElementById('selectEvent');
+	eventselection = getSelectValues(eventobj);
+	if (eventselection.length > 0) {
+		send.eventids = eventselection.join();
+	}
+
 	send.tags = demicrosoftize(form.tags.value);
 
 	var handler = function(response) {
@@ -102,18 +115,14 @@ function createBadge() {
 			showError(response);
 		} else {
 			var badgeid = response.id;
-			var alignmentobj = 	document.getElementById('selectAlignment');
-			alignres = getSelectValues(alignmentobj);
-			addAlignments(badgeid,alignres);
 
-			cancelCreateForm();
+			clearCreateForm();
 			updateList();
-
 			document.body.style.cursor = 'default';
 		}
 	}
 
-	makeRequest("POST", cfg.proxy_path+"/badges/create", send, handler);
+	makeRequest("POST", cfg.proxy_path+cfg.badges_path+"/create", send, handler);
 }
 
 function clearCreateForm() {
@@ -123,10 +132,20 @@ function clearCreateForm() {
 	form.description.value = "";
 	form.imageurl.value = "";
 	form.version.value = "";
-	form.issuerid.value = "";
+
+	// will not exist if not loaded - no issuers or no badges yet.
+	if (form.issuerid) {
+		form.issuerid.value = "";
+	}
+
+	if (form.parentbadgeid) {
+		form.parentbadgeid.value = "0";
+	}
+
 	form.criterianarrative.value = "";
 	form.tags.value = "";
 	clearSelected("selectAlignment");
+	clearSelected("selectEvent");
 }
 
 function showCreateForm() {
@@ -159,8 +178,29 @@ function editBadge(badgeid) {
 	form.imagepath.value = badge.imagepath;
 	form.version.value = badge.version;
 	form.issueridedit.value = badge.issuerid;
+
+	form.parentbadgeidedit.value = badge.parentbadgeid;
 	form.criterianarrative.value = badge.criterianarrative;
 	form.tags.value = badge.tags;
+
+	// set event choices.
+	if (badgecriteriaevents[badgeid]) {
+		var events = badgecriteriaevents[badgeid];
+		var eventids = [];
+		for (var i=0; i<events.length; i++) {
+			eventids.push(parseInt(events[i].id));
+		}
+
+		var selectitem = document.getElementById('selectEventEdit');
+		selectitem.value = null; // Reset pre-selected options (just in case)
+
+		var count = selectitem.options.length;
+		for (var i = 0; i < count; i++) {
+			if (eventids.indexOf(parseInt(selectitem.options[i].value)) > -1) {
+				selectitem.options[i].selected = true;
+			}
+		}
+	}
 
 	// set alignment choices.
 	if (badgealignments[badgeid]) {
@@ -196,10 +236,19 @@ function cancelEditForm() {
 	form.description.value = "";
 	form.imageurl.value = "";
 	form.version.value = "";
-	form.issueridedit.value = "";
+
+	// will not exist if not loaded - no issuers or no badges yet.
+	if (form.issueridedit) {
+		form.issueridedit.value = "";
+	}
+	if (form.parentbadgeidedit) {
+		form.parentbadgeidedit.value = "0";
+	}
+
 	form.criterianarrative.value = "";
 	form.tags.value = "";
 	clearSelected("selectAlignmentEdit");
+	clearSelected("selectEventEdit");
 
 	document.getElementById('viewDiv').style.display = "none";
 	document.getElementById('editDiv').style.display = "none";
@@ -224,24 +273,14 @@ function updateBadge() {
 
 	document.body.style.cursor = 'wait';
 
-	var handler = function(response) {
-		if (response.error) {
-			showError(response);
-		} else {
-			var badgeid = response.id;
-			var alignmentobj = 	document.getElementById('selectAlignmentEdit');
-			alignres = getSelectValues(alignmentobj);
-			updateAlignments(badgeid,alignres);
-
-			cancelEditForm();
-			updateList();
-
-			document.body.style.cursor = 'default';
-		}
-	}
-
 	var send = {};
 	send.id = form.badgeid.value;
+	send.parentbadgeid = form.parentbadgeidedit.value;
+
+	if (send.id == send.parentbadgeid) {
+		alert("You cannot set yourself as the parent badge");
+		return;
+	}
 
 	send.title = demicrosoftize(form.title.value);
 	send.description = demicrosoftize(form.description.value);
@@ -251,12 +290,36 @@ function updateBadge() {
 	send.criterianarrative = demicrosoftize(form.criterianarrative.value);
 	send.tags = demicrosoftize(form.tags.value);
 
-	makeRequest("POST", cfg.proxy_path+"/badges/update", send, handler);
+	var alignmentobj = 	document.getElementById('selectAlignmentEdit');
+	var alignmentselection = getSelectValues(alignmentobj);
+	if (alignmentselection.length > 0) {
+		send.alignmentids = alignmentselection.join();
+	}
+
+	var eventobj = document.getElementById('selectEventEdit');
+	eventselection = getSelectValues(eventobj);
+	if (eventselection.length > 0) {
+		send.eventids = eventselection.join();
+	}
+
+	var handler = function(response) {
+		if (response.error) {
+			showError(response);
+		} else {
+			cancelEditForm();
+			updateList();
+			document.body.style.cursor = 'default';
+		}
+	}
+
+	makeRequest("POST", cfg.proxy_path+cfg.badges_path+"/update", send, handler);
 }
 
 function viewBadge(badgeid) {
 	var badge = badges[badgeid];
 	var form = document.getElementById('formRecView');
+
+	form.badgeid.value = badgeid;
 
 	form.title.value = badge.title;
 	form.description.value = badge.description;
@@ -264,8 +327,34 @@ function viewBadge(badgeid) {
 	form.imagepath.value = badge.imagepath;
 	form.version.value = badge.version;
 	form.issueridview.value = issuers[badge.issuerid].name;
+
+	if (badge.parentbadgeid && badges[badge.parentbadgeid]) {
+		form.parentbadgeidview.value = badges[badge.parentbadgeid].title;
+	} else {
+		form.parentbadgeidview.value = "No Parent";
+	}
+
 	form.criterianarrative.value = badge.criterianarrative;
 	form.tags.value = badge.tags;
+
+	// set event choices.
+	if (badgecriteriaevents[badgeid]) {
+		var events = badgecriteriaevents[badgeid];
+		var eventids = [];
+		for (var i=0; i<events.length; i++) {
+			eventids.push(parseInt(events[i].id));
+		}
+
+		var selectitem = document.getElementById('selectEventView');
+		selectitem.value = null; // Reset pre-selected options (just in case)
+
+		var count = selectitem.options.length;
+		for (var i = 0; i < count; i++) {
+			if (eventids.indexOf(parseInt(selectitem.options[i].value)) > -1) {
+				selectitem.options[i].selected = true;
+			}
+		}
+	}
 
 	// set alignment choices.
 	if (badgealignments[badgeid]) {
@@ -300,9 +389,11 @@ function closeViewForm() {
 	form.imageurl.value = "";
 	form.version.value = "";
 	form.issueridview.value = "";
+	form.parentbadgeidview.value = "0";
 	form.criterianarrative.value = "";
 	form.tags.value = "";
 	clearSelected("selectAlignmentView");
+	clearSelected("selectEventView");
 
 	document.getElementById('viewDiv').style.display = "none";
 	document.getElementById('editDiv').style.display = "none";
@@ -313,7 +404,7 @@ function closeViewForm() {
 function deleteBadge(badgeid) {
 	var badge = badges[badgeid];
 
-	var message = "Are you sure you want to delete the badge: "+badge.title;
+	var message = "Are you sure you want to delete the badge titled:\n\n"+badge.title+"\n";
 	var reply = confirm(message);
 	if (reply == true) {
 
@@ -324,132 +415,15 @@ function deleteBadge(badgeid) {
 				clearCreateForm(); // in case it was open
 				cancelEditForm(); // in case it was open
 				updateList();
-				alert("The badge record has been deleted");
 			}
 		}
 
 		var send = {};
 		send.id = badgeid;
-		makeRequest("POST", cfg.proxy_path+"/badges/delete", send, handler);
+		makeRequest("POST", cfg.proxy_path+cfg.badges_path+"/delete", send, handler);
 	} else {
 	  // do nothing
 	}
-}
-
-function addAlignments(badgeid,alignres) {
-	for(i=0; i<alignres.length; i++) {
-
-		var handler = function(response) {
-			if (response.error) {
-				showError(response);
-			} else {
-				loadBadgeAlignment(badgeid);
-			}
-		}
-
-		var send = {};
-		send.id = badgeid;
-		send.alignmentid = alignres[i];
-
-		makeRequest("POST", cfg.proxy_path+"/badges/addalignment", send, handler);
-	}
-	return false;
-}
-
-function updateAlignments(badgeid,alignres) {
-
-	var alignments = badgealignments[badgeid];
-	if (!alignments) {
-		alignments = [];
-	}
-	if (!alignres) {
-		alignres = [];
-	}
-
-	if (alignres.length == 0 && alignments.length == 0) {
-		cancelEditForm();
-		updateList();
-		return;
-	}
-
-	var alignmentids = [];
-
-	var flags = {};
-	var finished = false;
-	var errors = "";
-
-	// remove alignments that have been removed in the edit
-	for (var i=0; i<alignments.length; i++) {
-		alignmentids.push(alignments[i].id);
-		if (alignres.indexOf(alignments[i].id) == -1) {
-
-			flags = {};
-			finished = false;
-			errors = "";
-
-			var handler = function(response) {
-				if (response.error) {
-					errors = response;
-				} else {
-					finished = true;
-				}
-			}
-
-			var send = {};
-			send.id = badgeid;
-			send.alignmentid = alignments[i].id;
-			makeRequest("POST", cfg.proxy_path+"/badges/removealignment", send, handler);
-
-			flags = setInterval(function() {
-				if (finished) {
-					clearInterval(flags);
-				} else if (errors) {
-					clearInterval(flags);
-					showError(errors);
-				}
-			}, 100); // interval set at 100 milliseconds
-		}
-	}
-
-	// add new alignments that have been added
-	for(i=0; i<alignres.length; i++) {
-
-		if (alignments.indexOf(alignres[i].id) == -1) {
-
-			flags = {};
-			finished = false;
-			errors = "";
-
-			var alignmentid = alignres[i];
-			var handler = function(response) {
-				if (response.error) {
-					errors = response;
-				} else {
-					finished = true;
-				}
-			}
-
-			var send = {};
-			send.id = badgeid;
-			send.alignmentid = alignres[i];
-
-			makeRequest("POST", cfg.proxy_path+"/badges/addalignment", send, handler);
-
-			flags = setInterval(function() {
-				if (finished) {
-					clearInterval(flags);
-				} else if (errors != "") {
-					clearInterval(flags);
-					showError(errors);
-				}
-			}, 100); // interval set at 100 milliseconds
-		}
-	}
-
-	loadBadgeAlignment(badgeid);
-
-	cancelEditForm();
-	updateList();
 }
 
 function loadIssuerData(){
@@ -466,6 +440,7 @@ function loadIssuerData(){
 			if ( !response || !response.issuers || (response.issuers && response.issuers.length == 0) ) {
 				thediv.innerHTML = "Currently you have no stored Issuer records";
 				theeditdiv.innerHTML = "Currently you have no stored Issuer records";
+				loadEventData();
 			} else {
 				// create list
 				var html = '<select name="issuerid" id="issuerid">';
@@ -474,26 +449,19 @@ function loadIssuerData(){
 				var html2 = '<select name="issueridedit" id="issueridedit">';
 				html2 += '<option value="" disabled selected>Select an Issuer ID</option>'
 
-				var categoriesselect = document.getElementById("categories");
-				var option = document.createElement("option");
-				option.textContent = "All";
-				option.value = "all";
-				categoriesselect.appendChild(option);
-
 				for (i = 0; i < response.issuers.length; i++) {
 					// only if they have a user account can they be put against a badge
 					// as they need a blockchain account number from the user table for permissions
 					if (response.issuers[i].login && response.issuers[i].login != "") {
 						issuers[response.issuers[i].id] = response.issuers[i];
 
-						html += '<option value="'+ response.issuers[i].id +'">'+ response.issuers[i].name + '</option>';
-						html2 += '<option value="'+ response.issuers[i].id +'">'+ response.issuers[i].name + '</option>';
+						var loginemail="Unregistered)";
+						if (response.issuers[i].login) {
+							loginemail=response.issuers[i].login
+						}
 
-						// filter list
-						var option = document.createElement("option");
-						option.textContent = response.issuers[i].name;
-						option.value = response.issuers[i].id;
-						categoriesselect.appendChild(option);
+						html += '<option value="'+ response.issuers[i].id +'">'+ response.issuers[i].name + "&nbsp;&nbsp;&nbsp;&nbsp;("+loginemail+")"+ '</option>';
+						html2 += '<option value="'+ response.issuers[i].id +'">'+ response.issuers[i].name + "&nbsp;&nbsp;&nbsp;&nbsp;("+loginemail+")"+ '</option>';
 					}
 				}
 
@@ -503,12 +471,96 @@ function loadIssuerData(){
 				html2 += "</select>";
 				theeditdiv.innerHTML = html2;
 
-				loadAlignmentData();
+				loadEventData();
 			}
 		}
 	}
 
 	makeRequest("GET", cfg.proxy_path+"/issuers/list", {}, handler);
+}
+
+function loadEventData(){
+
+	var handler = function(response) {
+		if (response.error) {
+			showError(response);
+		} else {
+			var thediv = document.getElementById('eventlist');
+			var theviewdiv = document.getElementById('eventlistview');
+			var theeditdiv = document.getElementById('eventlistedit');
+
+			thediv.innerHTML = "";
+			theviewdiv.innerHTML = "";
+			theeditdiv.innerHTML = "";
+
+			events = {};
+
+			if ( !response || !response.events || (response.events && response.events.length == 0) ) {
+
+				// create event list
+				var html = '<select class="selectmultiple" name="selectEvent" id="selectEvent" multiple="multiple">';
+
+				html += "</select>";
+				html += "<span style=\"color:#555;font-size:0.8em;\"><br>Currently you have no stored event records</span>";
+				thediv.innerHTML = html;
+
+				// edit event list
+				var html2 = '<select class="selectmultiple" name="selectEventEdit" id="selectEventEdit" multiple="multiple">';
+
+				html2 += "</select>";
+				html2 += "<span style=\"color:#555;font-size:0.8em;\"><br>Currently you have no stored event records</span>";
+				theeditdiv.innerHTML = html2;
+
+				// view event list
+				var html3 = '<select readonly class="selectmultiple" name="selectEventView" id="selectEventView" multiple="multiple">';
+				html3 += "</select>";
+				theviewdiv.innerHTML = html3;
+
+				html3 += "</select>";
+				html3 += "<span style=\"color:#555;font-size:0.8em;\"><br>Currently you have no stored event records</span>";
+				theviewdiv.innerHTML = html3;
+
+				loadAlignmentData();
+
+			} else {
+
+				console.log("Creating Event lists");
+
+				// create event list
+				var html = '<select class="selectmultiple" name="selectEvent" id="selectEvent" multiple="multiple">';
+				for (i = 0; i < response.events.length; i++) {
+					events[response.events[i].id] = response.events[i];
+					html += '<option value="'+ response.events[i].id +'">'+ response.events[i].name + '</option>';
+				}
+
+				html += "</select>";
+				thediv.innerHTML = html;
+
+				// edit event list
+				var html2 = '<select class="selectmultiple" name="selectEventEdit" id="selectEventEdit" multiple="multiple">';
+				for (i = 0; i < response.events.length; i++) {
+					events[response.events[i]] = response.events[i];
+					html2 += '<option value="'+ response.events[i].id +'">'+ response.events[i].name + '</option>';
+				}
+
+				html2 += "</select>";
+				theeditdiv.innerHTML = html2;
+
+				// view event list
+				var html3 = '<select readonly class="selectmultiple" name="selectEventView" id="selectEventView" multiple="multiple">';
+				for (i = 0; i < response.events.length; i++) {
+					events[response.events[i]] = response.events[i];
+					html3 += '<option disabled value="'+ response.events[i].id +'">'+ response.events[i].name + '</option>';
+				}
+				html3 += "</select>";
+				theviewdiv.innerHTML = html3;
+
+				loadAlignmentData();
+			}
+		}
+	}
+
+	makeRequest("GET", cfg.proxy_path+"/events/list", {}, handler);
 }
 
 function loadAlignmentData(){
@@ -517,15 +569,17 @@ function loadAlignmentData(){
 		if (response.error) {
 			showError(response);
 		} else {
-			var thediv =document.getElementById('allignmentlist');
-			var theviewdiv = document.getElementById('allignmentlistview');
-			var theeditdiv = document.getElementById('allignmentlistedit');
+			var thediv =document.getElementById('alignmentlist');
+			var theviewdiv = document.getElementById('alignmentlistview');
+			var theeditdiv = document.getElementById('alignmentlistedit');
 
 			thediv.innerHTML = "";
 			theviewdiv.innerHTML = "";
 			theeditdiv.innerHTML = "";
 
 			alignments = {};
+
+			console.log(response);
 
 			if ( !response || !response.alignments || (response.alignments && response.alignments.length == 0) ) {
 
@@ -565,7 +619,6 @@ function loadAlignmentData(){
 				}
 
 				html += "</select>";
-				html += "<span style=\"color:#555;font-size:0.8em;\"><br>Select Alignments (Shift for multiple choice, Ctrl/Cmd to select/unselect individual choice).</span>";
 				thediv.innerHTML = html;
 
 				// edit alignmentlist
@@ -576,7 +629,6 @@ function loadAlignmentData(){
 				}
 
 				html2 += "</select>";
-				html2 += "<span style=\"color:#555;font-size:0.8em;\"><br>Select Alignments (Shift for multiple choice, Ctrl/Cmd to select/unselect individual choice).</span>";
 				theeditdiv.innerHTML = html2;
 
 				// view alignmentlist
@@ -596,99 +648,149 @@ function loadAlignmentData(){
 	makeRequest("GET", cfg.proxy_path+"/alignments/list", {}, handler);
 }
 
-function redrawBadgeList() {
-	var categoriesselect = document.getElementById('categories');
-	var category = categoriesselect.value;
 
-	drawList(category);
+function getQualifyingCount(badgeid) {
+
+	var handler = function(response) {
+		var count = 0;
+		if (response && response.badges && response.badges.length > 0) {
+			count = response.badges.length;
+			document.getElementById('qualifyingcount-'+badgeid).innerHTML = count;
+		}
+	}
+
+	makeRequest("GET", cfg.proxy_path + "/qualifying/listall/" + badgeid, {}, handler);
 }
 
-function drawList(filtercategory){
+function redrawBadgeList() {
+
+	var data = new Array();
+	var count = 0
+
+	var thediv = document.getElementById('parentbadgeidlist');
+	var theeditdiv = document.getElementById('parentbadgeidlistedit');
+
+	thediv.innerHTML = "";
+	theeditdiv.innerHTML = "";
+
+	var html = '<select name="parentbadgeid" id="parentbadgeid">';
+	html += '<option value="0" selected>Select a Parent Badge</option>'
+
+	var html2 = '<select name="parentbadgeidedit" id="parentbadgeidedit">';
+	html2 += '<option value="0" selected>Select a Parent Badge</option>'
 
 	if (badgesArray && badgesArray.length > 0) {
-
-		var thediv =document.getElementById('storedList');
-		thediv.innerHTML = "";
-		document.getElementById('itemcount').innerHTML = 0;
-
-		var html = "<center><table style='width:100%;line-height:120%;font-size: 14px;'>";
-		html += "<tr>";
-		html += "<th style='background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;'>ID</th>";
-		html += "<th style='background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;'>Image</th>";
-		html += "<th style='background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;'>Title</th>";
-		html += "<th style='background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;'>Issuer</th>";
-		html += "<th style='background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;'>View</th>";
-		html += "<th style='background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;'>Edit</th>";
-		html += "<th style='background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;'>Delete</th>";
-		html += "</tr>";
 		var temp=0;
-		var count = 0
 
 		for (i = 0; i < badgesArray.length; i++) {
+			data[count] = {};
 
-			if (filtercategory == "all" || filtercategory == badgesArray[i].issuerid) {
-				count ++;
+			data[count].id = badgesArray[i].id;
 
-				html += "<tr>";
-
-				html += "<td style='padding: 6px; border: 1px solid grey;'>";
-				html += badgesArray[i].id;
-				html += "</td>";
-
-				html += '<td style="padding: 6px; border: 1px solid grey;">';
-				if (badgesArray[i].imageurl) {
-					html += '<img height="50"; src="'+badgesArray[i].imageurl+'"/>';
-				} else {
-					html += '&nbsp;';
-				}
-				html += '</td>';
-
-				html += "<td style='padding: 6px; border: 1px solid grey;'>";
-				html += badgesArray[i].title;
-				html += "</td>";
-
-				html += "<td style='padding: 6px; border: 1px solid grey;'>";
-
-				var issuername = "Unknown";
-				if (issuers[badgesArray[i].issuerid] && issuers[badgesArray[i].issuerid].name) {
-					issuername = issuers[badgesArray[i].issuerid].name;
-				}
-
-				console.log(issuers[badgesArray[i].issuerid]);
-
-				html += issuername;
-				html += "</td>";
-
-				html += '<td style="padding: 6px; border: 1px solid grey;">';
-				html += '<center><button class="sbut" title="View" onclick="viewBadge(\''+badgesArray[i].id+'\');"><img src="'+cfg.proxy_path+'/badges/images/issuing_buttons/view.png" /></button></center>';
-				html += '</td>';
-
-				html += '<td style="padding: 6px; border: 1px solid grey;">';
-				if (badgesArray[i].usedInIssuance === false) {
-					html += '<center><button class="sbut" title="Edit" onclick="editBadge(\''+badgesArray[i].id+'\');"><img src="'+cfg.proxy_path+'/badges/images/issuing_buttons/edit.png" /></button></center>';
-				} else {
-					html += '<center>Used</center>';
-				}
-				html += '</td>';
-
-				html += '<td style="padding: 6px; border: 1px solid grey;">';
-				if (badgesArray[i].usedInIssuance === false) {
-					html += '<center><button class="sbut" title="Delete" onclick="deleteBadge(\''+badgesArray[i].id+'\');"><img src="'+cfg.proxy_path+'/badges/images/issuing_buttons/delete.png" /></button></center>';
-				} else {
-					html += '<center>Used</center>';
-				}
-				html += '</td>';
-
-				html += "</tr>";
+			if (badgesArray[i].imageurl) {
+				data[count].image = '<img height="50"; src="'+badgesArray[i].imageurl+'"/>';
+			} else {
+				data[count].image = '&nbsp;';
 			}
-			temp = i;
+
+			data[count].title = badgesArray[i].title;
+			data[count].version = badgesArray[i].version;
+
+			var loginemail="Unregistered)";
+			if (issuers[badgesArray[i].issuerid].login) {
+				loginemail=issuers[badgesArray[i].issuerid].login
+			}
+			data[count].issuer = issuers[badgesArray[i].issuerid].name + "&nbsp;&nbsp;&nbsp;&nbsp;("+loginemail+")";
+
+			data[count].qualifying = '<div style="float:left;margin-left:20px; margin-top:5px;"><span>Items: </span><span style="padding-right:20px;font-weight:bold" id="qualifyingcount-'+badgesArray[i].id+'">0</span></div>';
+			data[count].qualifying += '<button class="sbut" title="Manage Qualifying Badges" onclick="manageQualifyingBadgesTable(\''+badgesArray[i].id+'\');"><img src="'+cfg.proxy_path+'/images/issuing_buttons/qualifying.png" /></button>';
+
+			//action buttons
+			data[count].actions = '<center><div class="buttons-flex"><button class="sbut" style="align-self:center" title="View" onclick="viewBadge(\''+badgesArray[i].id+'\');"><img src="'+cfg.proxy_path+'/images/issuing_buttons/view.png" /></button>';
+
+			if (badgesArray[i].usedInIssuance === false) {
+			  data[count].actions += '<button class="sbut" style="align-self:center" title="Edit" onclick="editBadge(\''+badgesArray[i].id+'\');"><img src="'+cfg.proxy_path+'/images/issuing_buttons/edit.png" /></button>';
+			  data[count].actions += '<button class="sbut" style="align-self:center" title="Delete" onclick="deleteBadge(\''+badgesArray[i].id+'\');"><img src="'+cfg.proxy_path+'/images/issuing_buttons/delete.png" /></button>';
+			} else {
+			  data[count].actions += '<span style="align-self:center">Used</span>';
+			}
+		  	data[count].actions += '</div></center>';
+
+			// create parent lists
+			console.log("Creating parnet badge lists");
+
+			html += '<option value="'+ badgesArray[i].id +'">'+ badgesArray[i].title + '</option>';
+			html2 += '<option value="'+ badgesArray[i].id +'">'+ badgesArray[i].title + '</option>';
+
+			count ++;
 		}
 
-		document.getElementById('itemcount').style.paddingLeft = "5px";
-		document.getElementById('itemcount').innerHTML = count;
+		temp = i;
+	}
 
-		html += "</table></center> <br> <br>";
-		thediv.innerHTML = html;
+	html += "</select>";
+	thediv.innerHTML = html;
+
+	html2 += "</select>";
+	theeditdiv.innerHTML = html2;
+
+	var categoriesselect = document.getElementById("categories");
+	categoriesselect.innerHTML = "";
+	var option = document.createElement("option");
+	option.textContent = "All";
+	option.value = "";
+	categoriesselect.appendChild(option);
+
+	if (table != null) table.destroy();
+
+	table = $('#storedList').DataTable({
+		"data": data,
+		"stateSave": true,
+		"columns": [
+			{ "data": "id", "title": "ID", "width": "5%" },
+			{ "data": "image", "title": "Image", "width": "10%", "orderable": false },
+			{ "data": "title", "title": "Title", "width": "25%" },
+			{ "data": "version", "title": "Version", "width": "10%" },
+			{ "data": "issuer", "title": "Issuer", "width": "20%" },
+			{ "data": "qualifying" , "title": "Qualifying Badges", "width": "15%", "orderable": true },
+			{ "data": "actions" , "title": "Actions", "width": "15%", "orderable": true },
+		],
+		"order": [[ 0, "desc" ]],
+		initComplete: function () {
+			this.api().columns([4]).every( function () {
+				var column = this;
+
+				// When dropdown changes filter table
+				var select = $('#categories')
+					.on( 'change', function () {
+						var val = $.fn.dataTable.util.escapeRegex(
+							$(this).val()
+						);
+
+						column
+							.search( val ? '^'+val+'$' : '', true, false )
+							.draw();
+					} );
+
+				// Fill the select dropdown menu at the top from a unique list of the issuer column (column 4 above)
+				// Reset any save filter option.
+				column.data().unique().sort().each( function ( d, j ) {
+					if(column.search() === '^'+d+'$'){
+						select.append( '<option selected value="'+d+'">'+d+'</option>' )
+					} else {
+						select.append( '<option value="'+d+'">'+d+'</option>' )
+					}
+				} );
+			} );
+		}
+	});
+
+	// get the qualifying badge counts for badges
+	if ( badgesArray && badgesArray.length > 0 ) {
+		for (i = 0; i < badgesArray.length; i++) {
+			var item = badgesArray[i];
+			getQualifyingCount(item.id);
+		}
 	}
 }
 
@@ -704,24 +806,32 @@ function loadBadgeAlignment(badgeid){
 		}
 	}
 
-	var send = {};
-	send.id = badgeid;
+	makeRequest("GET", cfg.proxy_path+cfg.badges_path+"/listalignments/"+badgeid, {}, handler);
+}
 
-	makeRequest("POST", cfg.proxy_path+"/badges/listalignments/", send, handler);
+function loadCriteriaEvents(badgeid){
+
+	badgecriteriaevents[badgeid] = [];
+
+	var handler = function(response) {
+		if (response.error) {
+			showError(response);
+		} else {
+			badgecriteriaevents[badgeid] = response.events;
+		}
+	}
+
+	makeRequest("GET", cfg.proxy_path+cfg.badges_path+"/listcriteriaevents/"+badgeid, {}, handler);
 }
 
 function updateList(){
 
 	var handler = function(response) {
 
-		var thediv =document.getElementById('storedList');
-
 		badges = {};
 		badgealignments = {};
 
-		if ( !response || !response.badges || (response.badges && response.badges.length == 0) ) {
-			thediv.innerHTML = "You have not added any badges yet";
-		} else {
+		if ( response && response.badges) {
 
 			badgesArray = response.badges;
 
@@ -729,11 +839,27 @@ function updateList(){
 			for (i = 0; i < response.badges.length; i++) {
 				badges[response.badges[i].id] = response.badges[i];
 				loadBadgeAlignment(response.badges[i].id);
+				loadCriteriaEvents(response.badges[i].id);
 			}
 
 			redrawBadgeList();
 		}
 	}
 
-	makeRequest("GET", cfg.proxy_path+"/badges/listall", {}, handler);
+	makeRequest("GET", cfg.proxy_path+cfg.badges_path+"/listall", {}, handler);
+}
+
+
+function manageQualifyingBadges(badgeform) {
+	var form = document.getElementById('qualifyingform');
+	form.badgeid.value = badgeform.badgeid.value;
+	//console.log(form.badgeid.value);
+	form.submit();
+}
+
+function manageQualifyingBadgesTable(badgeid) {
+	var form = document.getElementById('qualifyingform');
+	form.badgeid.value = badgeid;
+	//console.log(form.badgeid.value);
+	form.submit();
 }

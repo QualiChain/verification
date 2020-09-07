@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -23,67 +23,65 @@
 *                                                                                *
 **********************************************************************************/
 
-/** Author: Michelle Bachler, KMi, The Open University **/
-/** Author: Manoharan Ramachandran, KMi, The Open University **/
-/** Author: Kevin Quick, KMi, The Open University **/
-
 var maintitle = "Web Service API - Users";
 var routes = [
 	{
 		"path": "/signin",
 		"description": "Sign in to the API and get an authorisation token",
-		"params": [{"name":"username", "description":"your username with this API"},{"name":"password", "description":"your password with this API"}],
-		"returns" : [{"name":"token", "description":"returns an API token that will expire in 5 hours, or error"}],
+		"params": [
+			{ "name": "username", "description": "Required. The username to sign in to this API with - an email address" },
+			{ "name": "password", "description": "Required. The pasword to sign in to this API with. Must be at least 8 characters long." }
+		],
+		"returns": [
+			{ "name": "token", "description": "An API token that will expire in 5 hours, or an error object" }
+		],
 		"methods": {
 			"post": true
 		},
-		"prefixRegexp": "/^\\/users\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/users/",
-		"id": "30",
+		"permissions": ["everyone"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/users\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/users/",
+		"id": "261",
 		"regexp": "/\\/signin(?:\\?.*)?$/",
 		"examplesPresent": true
-	}
-	/*, {
-		"path": "/account",
-		"description": "Request your blockchain account number",
-		"params": [{"name":"token", "description":"your authorisation token"}],
-		"returns" : [{"name":"account", "description":"returns the blockchain account number for the current user, or error"}],
+	},
+	{
+		"path": "/changepassword",
+		"description": "Change a password for the currently logged in account.",
+		"params": [
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "newpassword", "description": "Required. The new pasword to sign in to this API with. Must be at least 8 characters long." }
+		],
+		"returns": [
+			{ "name": "message", "description": "'Password successfully updated', or an error" }
+		],
 		"methods": {
 			"post": true
 		},
-		"prefixRegexp": "/^\\/users\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/users/",
-		"id": "31",
-		"regexp": "/\\/account(?:\\?.*)?$/",
+		"permissions": ["super","admin","issuer","recipient","endorser"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/users\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/users/",
+		"id": "262",
+		"regexp": "/\\/changepassword(?:\\?.*)?$/",
 		"examplesPresent": true
-	}, {
-		"path": "/balance",
-		"description": "Request the balance of your blockchain account (given in wei and ether)",
-		"params": [{"name":"token", "description":"your authorisation token"}],
-		"returns" : [
-					{"name":"balance-wei", "description":"returns the current balance of the blockchain account for the current user in wei, or error"},
-					{"name":"balance-ether", "description":"returns the current balance of the blockchain account for the current user in ether, or error"}
-					],
+	},
+	{
+		"path": "/forgotpassword",
+		"description": "Request a new password. Email sent out.",
+		"params": [
+			{ "name": "email", "description": "Required. The email address of the person that has forgotten their password." }
+		],
+		"returns": [
+			{ "name": "message", "description": "'Forgot Password completed. Email sent'" }
+		],
 		"methods": {
 			"post": true
 		},
-		"prefixRegexp": "/^\\/users\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/users/",
-		"id": "32",
-		"regexp": "/\\/balance(?:\\?.*)?$/",
+		"permissions": ["everyone"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/users\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/users/",
+		"id": "263",
+		"regexp": "/\\/forgotpassword(?:\\?.*)?$/",
 		"examplesPresent": true
-	}, {
-		"path": "/topupaccount",
-		"description": "Check to see if account for the logged in user is below 1 ether, if it is, top up the account to equal 5 ether.",
-		"params": [{"name":"token", "description":"your authorisation token"}],
-		"returns" : [{"name":"transaction", "description":"returns the transaction number of the transaction to top up the current user's account, or error"}],
-		"methods": {
-			"post": true
-		},
-		"prefixRegexp": "/^\\/rdf\\/users\\/?(?=\\/|$)/i",
-		"prefix": "/rdf/users/",
-		"id": "33",
-		"regexp": "/\\/topupaccount(?:\\?.*)?$/",
-		"examplesPresent": true
-	}*/
+	},
 ];

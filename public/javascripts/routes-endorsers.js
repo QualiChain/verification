@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -23,83 +23,37 @@
 *                                                                                *
 **********************************************************************************/
 
-/** Author: Michelle Bachler, KMi, The Open University **/
-/** Author: Manoharan Ramachandran, KMi, The Open University **/
-/** Author: Kevin Quick, KMi, The Open University **/
-
 var maintitle = "Web Service API - Endorsers";
 var routes = [
 	{
-		"path": "/",
-		"description": "Draws the Endorsers home page - if logged in and user has permissions",
+		"path": "/id/:id",
+		"description": "Get an Endorser record by it's record identifier.",
 		"params": [
-			{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"}
-		],
-		"returns" : [],
-		"methods": {
-			"get": true
-		},
-		"prefixRegexp": "/^\\/endorsers\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/endorsers",
-		"id": "20",
-		"regexp": "/\\/(?:\\?.*)?$/",
-		"examplesPresent": false
-	},
-	{
-		"path": "/manage",
-		"description": "Draws the Manage Endorser's page - if logged in and user has permissions",
-		"params": [
-			{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"}
-		],
-		"returns" : [],
-		"methods": {
-			"get": true
-		},
-		"prefixRegexp": "/^\\/endorsers\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/endorsers",
-		"id": "21",
-		"regexp": "/\\/manage(?:\\?.*)?$/",
-		"examplesPresent": false
-	},
-	{
-		"path": "/docs",
-		"description": "Draws the Endorser API Documentation page",
-		"params": [],
-		"returns" : [],
-		"methods": {
-			"get": true
-		},
-		"prefixRegexp": "/^\\/endorsers\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/endorsers",
-		"id": "22",
-		"regexp": "/\\/docs(?:\\?.*)?$/",
-		"examplesPresent": false
-	},
-	{
-		"path": "/id",
-		"description": "Get an Endorser by it's record identifier. Only administrators will be allowed to retrieve Endorser records.",
-		"params": [
-			{"name":"id", "description":"Requires the identifier of the Endorser record you wish to retrieve."},
-			{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"}
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "id", "description": "Required. The identifier of the Endorser record you wish to retrieve" }
 		],
 		"returns" : [
-			{"name":"id", "description":"ID of the Endorser"},
-			{"name":"timecreated", "description":"Time at which the user account was created"},
+			{"name":"id", "description":"The record identifier of the Endorser"},
+			{"name":"timecreated", "description":"Time at which the Endorser record was created"},
+			{"name":"uniqueid", "description":"Unique hash identification number used in JSONLD"},
 			{"name":"name", "description":"Name of the Endorser"},
 			{"name":"description", "description":"Description of the Endorser"},
 			{"name":"url", "description":"URL of the website of the Endorser"},
 			{"name":"email", "description":"Email of the Endorser"},
-			{"name":"telephone", "description":"Telephone of the Endorser"},
-			{"name":"imageurl", "description":"Image url of the Endorser"},
-			{"name":"status", "description":"Status of the Endorser"},
+			{"name":"telephone", "description":"Telephone number of the Endorser"},
+			{"name":"imageurl", "description":"URL pointing to a logo / image file for the Endorser"},
+			{"name":"status", "description":"Stauts of a Endorsers's associated user account"},
+			{"name":"loginemail", "description": "If an Endorser login account has been created, the email address used." },
+			{"name":"usedInIssuance", "description": "true/false as to whether this Endorser has been used against an issued badge." }
 		],
 		"methods": {
-			"post": true
+			"get": true
 		},
-		"prefixRegexp": "/^\\/endorsers\\/?(?=\\/|$)/i",
+		"permissions" : ["super","admin"],
+		"prefixRegexp": "/^\\"+cfg.proxy_path+"\\/endorsers\\/?(?=\\/|$)/i",
 		"prefix": cfg.proxy_path+"/endorsers",
-		"id": "23",
-		"regexp": "/\\/id(?:\\?.*)?$/",
+		"id": "103",
+		"regexp": "/\\/id/:id(?:\\?.*)?$/",
 		"examplesPresent": false
 	},
 	{
@@ -108,23 +62,16 @@ var routes = [
 		"params": [
 			{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"}
 		],
-		"returns" : [
-			{"name":"id", "description":"ID of the Endorser"},
-			{"name":"timecreated", "description":"Time at which the user account was created"},
-			{"name":"name", "description":"Name of the Endorser"},
-			{"name":"description", "description":"Description of the Endorser"},
-			{"name":"url", "description":"URL of the website of the Endorser"},
-			{"name":"email", "description":"Email of the Endorser"},
-			{"name":"telephone", "description":"Telephone of the Endorser"},
-			{"name":"imageurl", "description":"Image url of the Endorser"},
-			{"name":"status", "description":"Status of the Endorser"},
+		"returns": [
+			{ "name": "endorsers", "description": "An array of Endorser records (see route '" + cfg.proxy_path + "/endorsers/id:id' for full details of the record structure)" }
 		],
 		"methods": {
-			"post": true
+			"get": true
 		},
-		"prefixRegexp": "/^\\/endorsers\\/?(?=\\/|$)/i",
+		"permissions" : ["super","admin"],
+		"prefixRegexp": "/^\\"+cfg.proxy_path+"\\/endorsers\\/?(?=\\/|$)/i",
 		"prefix": cfg.proxy_path+"/endorsers/",
-		"id": "24",
+		"id": "104",
 		"regexp": "/\\/list(?:\\?.*)?$/",
 		"examplesPresent": false
 	},
@@ -132,83 +79,146 @@ var routes = [
 		"path": "/create",
 		"description": "Create a new Endorser - creates a new login account if one does not already exists for the given login email address. Only administrators will be allowed to create new Endorsers",
 		"params": [
-			{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"},
-			{"name":"name", "description":"Required. You must include a name for the new Endorser"},
-			{"name":"loginemail", "description":"Required. You must include an email address that can be used as the login for the new Endorser. A verification email will be sent to complete registration."},
-			{"name":"url", "description":"Required. You must include a website url for the new Endorser"},
-			{"name":"telephone", "description":"Optional. You can include a contact telephone number for the new Endorser"},
-			{"name":"email", "description":"Required. You must include an email address for the new Endorser"},
-			{"name":"description", "description":"Optional. You can include a description for the new Endorser"},
-			{"name":"imageurl", "description":"Optional. You can include an image url for the new Endorser"},
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "name", "description": "Required. A name for the Endorser." },
+			{ "name": "url", "description": "Required. A website url for the Endorser." },
+			{ "name": "email", "description": "Optional. An email address for the Endorser." },
+			{ "name": "telephone", "description": "Optional. A telephone Number for the Endorser." },
+			{ "name": "description", "description": "Optional. A textual description of the Endorser." },
+			{ "name": "imageurl", "description": "Optional. A URL pointing to a logo / image file for the Endorser." }
 		],
-		"returns" : [
-			{"name":"id", "description":"ID of the Endorser"},
-			{"name":"timecreated", "description":"Time at which the user account was created"},
+		"returns": [
+			{"name":"id", "description":"The record identifier of the Endorser"},
+			{"name":"timecreated", "description":"Time at which the Endorser record was created"},
+			{"name":"uniqueid", "description":"Unique hash identification number used in JSONLD"},
 			{"name":"name", "description":"Name of the Endorser"},
 			{"name":"description", "description":"Description of the Endorser"},
 			{"name":"url", "description":"URL of the website of the Endorser"},
 			{"name":"email", "description":"Email of the Endorser"},
-			{"name":"telephone", "description":"Telephone of the Endorser"},
-			{"name":"imageurl", "description":"Image url of the Endorser"},
-			{"name":"status", "description":"Status of the Endorser"},
+			{"name":"telephone", "description":"Telephone number of the Endorser"},
+			{"name":"imageurl", "description":"URL pointing to a logo / image file for the Endorser"},
+			{"name":"status", "description":"Stauts of a Endorsers's associated user account"},
+			{"name":"loginemail", "description": "If an Endorser login account has been created, the email address used." },
+			{"name":"usedInIssuance", "description": "true/false as to whether this Endorser has been used against an issued badge." }
 		],
 		"methods": {
 			"post": true
 		},
-		"prefixRegexp": "/^\\/endorsers\\/?(?=\\/|$)/i",
+		"permissions" : ["super","admin"],
+		"prefixRegexp": "/^\\"+cfg.proxy_path+"\\/endorsers\\/?(?=\\/|$)/i",
 		"prefix": cfg.proxy_path+"/endorsers/",
-		"id": "25",
+		"id": "105",
 		"regexp": "/\\/create(?:\\?.*)?$/",
 		"examplesPresent": false
 	},
 	{
-		"path": "/update",
-		"description": "Update an existing Endorser record only if it has not been used to issue a badge",
+		"path": "/createuseraccount",
+		"description": "Create a User record entry to allow an Endorser to login to the system.",
 		"params": [
-
-			{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"},
-			{"name":"id", "description":"Required. You must include an id to update an Endorser"},
-			{"name":"name", "description":"Optional. You can update the name of an Endorser"},
-			{"name":"url", "description":"Optional. You can update website url of an Endorser"},
-			{"name":"telephone", "description":"Optional. You can update contact telephone number of an Endorser"},
-			{"name":"email", "description":"Optional. You can update an email address of an Endorser"},
-			{"name":"description", "description":"Optional. You can update description of an Endorser"},
-			{"name":"imageurl", "description":"Optional. You can update imageurl of an Endorser"},
-
-	],
-		"returns" : [
-			{"name":"id", "description":"ID of the updated Endorser"},
-			{"name":"timecreated", "description":"Time at which the Endorser account was created"},
-			{"name":"name", "description":"Name of the Updated Endorser"},
-			{"name":"description", "description":"Description of the Updated Endorser"},
-			{"name":"url", "description":"URL of the website of the Updated Endorser"},
-			{"name":"email", "description":"Email of the Updated Endorser"},
-			{"name":"telephone", "description":"Telephone of the Updated Endorser"},
-			{"name":"imageurl", "description":"Image url of the Updated Endorser"},
-			{"name":"status", "description":"Status of the Updated Endorser"}
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "id", "description": "Required. The record identifier of the Endorser record you want to add a login account for." },
+			{ "name": "loginemail", "description": "Required. An email address to use the the Endorser login account." }
+		],
+		"returns": [
+			{ "name": "id", "description": "The record identifier of the Endorser record that this login account is for." },
+			{ "name": "timecreated", "description": "Time at which the user account was created." },
+			{ "name": "name", "description": "The name of the Endorser used on the Endorser login account record." },
+			{ "name": "email", "description": "The login email address used on the Endorser login account record." },
+			{ "name": "status", "description": "Status of the login account registration process. It will be '0' at this point." }
 		],
 		"methods": {
 			"post": true
 		},
-		"prefixRegexp": "/^\\/endorsers\\/?(?=\\/|$)/i",
+		"permissions" : ["super","admin"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/endorsers\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/endorsers/",
+		"id": "106",
+		"regexp": "/\\/createuseraccount(?:\\?.*)?$/",
+		"examplesPresent": false
+	},
+	{
+		"path": "/update",
+		"description": "Update an existing Endorser record only if it has not been used to issue a badge.",
+		"params": [
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "id", "description": "Required. You must include an id to update an Endorser" },
+			{ "name": "name", "description": "Optional. A name for the Endorser." },
+			{ "name": "url", "description": "Optional. A website url for the Endorser." },
+			{ "name": "email", "description": "Optional. An email address for the Endorser." },
+			{ "name": "telephone", "description": "Optional. A telephone Number for the Endorser." },
+			{ "name": "description", "description": "Optional. A textual description of the Endorser." },
+			{ "name": "imageurl", "description": "Optional. A URL pointing to a logo / image file for the Endorser." }
+		],
+		"returns": [
+			{"name":"id", "description":"The record identifier of the Endorser"},
+			{"name":"timecreated", "description":"Time at which the Endorser record was created"},
+			{"name":"uniqueid", "description":"Unique hash identification number used in JSONLD"},
+			{"name":"name", "description":"Name of the Endorser"},
+			{"name":"description", "description":"Description of the Endorser"},
+			{"name":"url", "description":"URL of the website of the Endorser"},
+			{"name":"email", "description":"Email of the Endorser"},
+			{"name":"telephone", "description":"Telephone number of the Endorser"},
+			{"name":"imageurl", "description":"URL pointing to a logo / image file for the Endorser"},
+			{"name":"status", "description":"Stauts of a Endorsers's associated user account"},
+			{"name":"loginemail", "description": "If an Endorser login account has been created, the email address used." },
+			{"name":"usedInIssuance", "description": "true/false as to whether this Endorser has been used against an issued badge." }
+		],
+		"methods": {
+			"post": true
+		},
+		"permissions" : ["super","admin"],
+		"prefixRegexp": "/^\\"+cfg.proxy_path+"\\/endorsers\\/?(?=\\/|$)/i",
 		"prefix": cfg.proxy_path+"/endorsers/",
-		"id": "26",
+		"id": "108",
 		"regexp": "/\\/update(?:\\?.*)?$/",
 		"examplesPresent": false
 	},
 	{
 		"path": "/delete",
-		"description": "Delete an existing Endorser record only if it has not been used to issue a badge",
-		"params": [{"name":"id", "description":"Required. You must enter an ID of an Endorser to delete them"}],
-		"returns" : [
-			{"name":"ID", "description":"returns ID of the deleted Endorser"}
+		"description": "Delete an existing Endorser record only if it has not been used to issue a badge.",
+		"params": [
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "id", "description": "Required. The record identifier of the Endorser you wish to delete." }
+		],
+		"returns": [
+			{ "name": "id", "description": "The record identifier of the Endorser record that was deleted" },
+			{ "name": "status", "description": "A status of -1 to show that the Endorser record was deleted" }
 		],
 		"methods": {
 			"post": true
 		},
-		"prefixRegexp": "/^\\/endorsers\\/?(?=\\/|$)/i",
+		"permissions" : ["super","admin"],
+		"prefixRegexp": "/^\\"+cfg.proxy_path+"\\/endorsers\\/?(?=\\/|$)/i",
 		"prefix": cfg.proxy_path+"/endorsers/",
-		"id": "27",
+		"id": "109",
 		"regexp": "/\\/delete(?:\\?.*)?$/",
 		"examplesPresent": false
-	},];
+	},
+	{
+		"path": "/hosted/:id",
+		"description": "Get the hosted Endorser Open Badge JSON from the given unique issuer identifier.",
+		"params": [
+			{ "name": "id", "description": "Required. the Endorser unique identifier." }
+		],
+		"returns": [
+			{"name":"@context", "description":"The open badge context url"},
+			{"name":"type", "description":"Issuer"},
+			{"name":"id", "description":"The uri/url representing this Endorser"},
+			{"name":"name", "description":"Name of the Endorser"},
+			{"name":"description", "description":"Optional. Description of the Endorser"},
+			{"name":"url", "description":"URL of the website of the Endorser"},
+			{"name":"email", "description":"Email of the Endorser"},
+			{"name":"telephone", "description":"Optional. Telephone number of the Endorser"},
+			{"name":"imageurl", "description":"URL pointing to a logo / image file for the Endorser"}
+		],
+		"permissions" : ["everyone"],
+		"methods": {
+			"get": true
+		},
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/endorsers\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/endorsers/",
+		"id": "110",
+		"regexp": "/\\/hosted\\/:id(?:\\?.*)?$/",
+		"examplesPresent": false
+	}
+];

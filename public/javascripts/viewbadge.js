@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -23,17 +23,86 @@
 *                                                                                *
 **********************************************************************************/
 
-/** Author: Michelle Bachler, KMi, The Open University **/
-/** Author: Manoharan Ramachandran, KMi, The Open University **/
-/** Author: Kevin Quick, KMi, The Open University **/
-
 var DATE_FORMAT_PROJECT = 'd mmm yyyy';
 
+
+function clearViewBadgeDetails() {
+
+	document.getElementById("bakedbadgeinfo").innerHTML = "";
+	document.getElementById("issuedon").innerHTML = "";
+
+	document.getElementById("evidenceitems").innerHTML = "";
+	document.getElementById("alignmentitems").innerHTML = "";
+
+	document.getElementById("recipient").innerHTML = "";
+	document.getElementById("recipienttype").innerHTML = "";
+	document.getElementById("recipienthashed").innerHTML = "";
+	document.getElementById("recipientsalt").innerHTML = "";
+
+	document.getElementById("databadgename").innerHTML = "";
+	document.getElementById("databadgedescription").innerHTML = "";
+	document.getElementById("databadgeimage").src = "";
+
+	document.getElementById("databadgename").innerHTML = "";
+	document.getElementById("databadgedescription").innerHTML = "";
+	document.getElementById("databadgeimage").src = "";
+
+	if (document.getElementById("verifytype")) {
+	  	document.getElementById("verifytype").innerHTML = "";
+	}
+
+	// from Utilities
+	// clear fields if they exist.
+	if (document.getElementById("databadgeissuerimage")) {
+		document.getElementById("databadgeissuerimage").src = "";
+	}
+	if (document.getElementById("dataissuername")) {
+		document.getElementById("dataissuername").innerHTML = "";
+	}
+	if (document.getElementById("dataissuerdesc")) {
+		document.getElementById("dataissuerdesc").innerHTML = "";
+	}
+	if (document.getElementById("dataissuerurl")) {
+		document.getElementById("dataissuerurl").innerHTML = "";
+	}
+	if (document.getElementById("dataissuertelephone")) {
+		document.getElementById("dataissuertelephone").innerHTML = "";
+	}
+	if (document.getElementById("dataissueremail")) {
+		document.getElementById("dataissueremail").innerHTML = "";
+	}
+
+	if (document.getElementById("badgetags")) {
+		document.getElementById("badgetags").innerHTML = "";
+	}
+
+	if (document.getElementById("datacriterianarrative")) {
+		document.getElementById("datacriterianarrative").innerHTML = "";
+	}
+
+	if (document.getElementById("endorsementitems")) {
+		document.getElementById("endorsementitems").innerHTML = "";
+	}
+	if (document.getElementById("alignmentitems")) {
+		document.getElementById("alignmentitems").innerHTML = "";
+	}
+
+	document.getElementById("endorsementsection").style.display = "none";
+	document.getElementById("alignmentsection").style.display = "none";
+	document.getElementById("evidencearea").style.display = "none";
+
+	document.getElementById('criteriaeventlistview').innerHTML = "";
+
+	// may not be neded as done by closeCriteriaEventFromJSON
+	document.getElementById('sponsorlistview').innerHTML = "";
+	document.getElementById('organizerlistview').innerHTML = "";
+
+	closeCriteriaEventFromJSON();
+}
 
 function processExtractedJSON(json) {
 
 	//console.log(json);
-
 	try {
 		var jsonstr = JSON.stringify(json, null, 2);
 		jsonstr = jsonstr.replace(/(?:\r\n|\r|\n)/g, '<br>');
@@ -66,12 +135,13 @@ function processExtractedJSON(json) {
 		document.getElementById("evidencearea").style.display = "block";
 
 		try {
-			evidence = [];
-			if (typeof json.evidence === "string") {
+			let evidence = [];
+			if (typeof json.evidence === "string") { // just a url therefore
 				evidence.push(json.evidence);
+			} else {
+				evidence = json.evidence;
 			}
 
-			var evidence = json.evidence;
 			var count = evidence.length;
 
 			var evidencelist = document.getElementById("evidenceitems");
@@ -80,7 +150,7 @@ function processExtractedJSON(json) {
 			for (var i=0; i<count;i++) {
 
 				html += '<tr>';
-				var evidenceitem = evidence[i];
+				let evidenceitem = evidence[i];
 
 				// if the item is just a string add it to the url and make all the rest blank
 				if (typeof evidenceitem === "string") {
@@ -92,7 +162,7 @@ function processExtractedJSON(json) {
 						html += '<td>&nbsp;</td>';
 				} else if (typeof evidenceitem === "object") {
 					if (evidenceitem.id) {
-						html += '<td>'+evidenceitem.id+'</td>';
+						html += '<td><a href="'+evidenceitem.id+'">'+evidenceitem.id+'</a></td>';
 					} else {
 						html += '<td>&nbsp;</td>';
 					}
@@ -128,7 +198,7 @@ function processExtractedJSON(json) {
 			evidencelist.innerHTML = html;
 		}
 		catch(e) {
-		   document.getElementById("alignmentitems").innerHTML = 'invalid alignment json';
+		   document.getElementById("evidenceitems").innerHTML = 'invalid evidence json';
 		}
 
 	}
@@ -148,6 +218,7 @@ function processExtractedJSON(json) {
 			document.getElementById("recipientsalt").innerHTML = recipient.salt;
 	   }
    }
+
    if (json.badge) {
 		try {
 			//document.getElementById("badgedata").innerHTML = JSON.stringify(json.badge);
@@ -155,188 +226,43 @@ function processExtractedJSON(json) {
 			   document.getElementById("databadgename").innerHTML = json.badge.name;
 			}
 			if (json.badge.description) {
-			   document.getElementById("databadgedescription").innerHTML = json.badge.description;
+			   document.getElementById("databadgedescription").innerHTML = nl2br(json.badge.description);
 			}
 			if (json.badge.image) {
 			   document.getElementById("databadgeimage").src = json.badge.image;
 			}
+
 			if (json.badge.criteria) {
-				if (json.badge.criteria.narrative) {
-					document.getElementById("criteriaurl").innerHTML = json.badge.criteria.narrative;
-				} else {
-					document.getElementById("criteriaurl").innerHTML = json.badge.criteria.id;
-				}
+				loadCriteriaFromJSON(json.badge.criteria);  // in utilities.js
 			}
+
+			if (json.badge.tags)  {
+				loadBadgeTagsFromJSON(json.badge.tags);  // in utilities.js
+			}
+
 			if (json.badge.issuer) {
-				try {
-					if (json.badge.issuer.image) {
-						if (json.badge.issuer.image.id) {
-							document.getElementById("databadgeissuerimage").src = json.badge.issuer.image.id;
-						} else {
-							document.getElementById("databadgeissuerimage").src = json.badge.issuer.image;
-						}
-					}
-					if (json.badge.issuer.name) {
-					   document.getElementById("dataissuername").innerHTML = json.badge.issuer.name;
-					}
-					if (json.badge.issuer.description) {
-					   document.getElementById("dataissuerdesc").innerHTML = json.badge.issuer.description;
-					}
-					if (json.badge.issuer.url) {
-					   document.getElementById("dataissuerurl").innerHTML = json.badge.issuer.url;
-					}
-					if (json.badge.issuer.email) {
-					   document.getElementById("dataissueremail").innerHTML = json.badge.issuer.email;
-					}
-					if (json.badge.issuer.telephone) {
-					   document.getElementById("dataissuertelephone").innerHTML = json.badge.issuer.telephone;
-					}
-				}
-				catch(e) {
-					alert(e);
-				   document.getElementById("issuerdata").innerHTML = 'invalid issuer json';
-				}
+				loadIssuerFromJSON(json.badge.issuer);  // in utilities.js
 			}
 
 			// add alignments
 			if (json.badge.alignment) {
 				document.getElementById("alignmentsection").style.display = "block";
-
-				try {
-					var alignments = json.badge.alignment;
-					var count = alignments.length;
-
-					var tableitems = document.getElementById("alignmentitems");
-
-					var html = "";
-					for (var i=0; i<count;i++) {
-
-						html += '<tr>';
-						var alignment = alignments[i];
-
-						if (alignment.targetName) {
-							html += '<td>'+alignment.targetName+'</td>';
-						} else {
-							html += '<td>&nbsp;</td>';
-						}
-						if (alignment.targetUrl) {
-							html += '<td>'+alignment.targetUrl+'</td>';
-						} else {
-							html += '<td>&nbsp;</td>';
-						}
-						if (alignment.targetDescription) {
-							html += '<td>'+alignment.targetDescription+'</td>';
-						} else {
-							html += '<td>&nbsp;</td>';
-						}
-						if (alignment.targetFramework) {
-							html += '<td>'+alignment.targetFramework+'</td>';
-						} else {
-							html += '<td>&nbsp;</td>';
-						}
-						if (alignment.targetCode) {
-							html += '<td>'+alignment.targetCode+'</td>';
-						} else {
-							html += '<td>&nbsp;</td>';
-						}
-
-						html += '</tr>';
-					}
-
-					tableitems.innerHTML = html;
-				}
-				catch(e) {
-				   document.getElementById("alignmentitems").innerHTML = 'invalid alignment json';
-				}
+				loadAlignmentsFromJSON(json.badge.alignment, "alignmentitems");  // in utilities.js
 			}
 
 			// add endorsements
 			if (json.badge.endorsement) {
+				// if single element add to an array for utility function to use in table creation.
+				let endorsement = [];
+				if (Array.isArray(json.badge.endorsement)) {
+					endorsement = json.badge.endorsement;
+				} else {
+					endorsement.push(json.badge.endorsement);
+				}
+
 				document.getElementById("endorsementsection").style.display = "block";
-				try {
-					var endorsements = json.badge.endorsement;
-					var count = endorsements.length;
-
-					var tableitems = document.getElementById("endorsementitems");
-
-					var html = "";
-					for (var i=0; i<count;i++) {
-
-						html += '<tr valign="top" style="line-height: 100%;">';
-						var endorsement = endorsements[i];
-
-						if (endorsement.claim.endorsementComment) {
-							html += '<td>'+endorsement.claim.endorsementComment+'</td>';
-						} else {
-							html += '<td>&nbsp;</td>';
-						}
-
-						if (endorsement.issuedon) {
-							var issuedOn = json.issuedon;
-							var issueDate = new Date(issuedOn);
-							if (issueDate) {
-								html += '<td>'+issueDate.format(DATE_FORMAT_PROJECT)+'</td>';
-							} else {
-								html += '<td>'+json.issuedon+'</td>';
-							}
-						} else {
-							// due to error in early badges where date was put into id field.
-							// Very first issuances of Exeter Summer School 2019 badges affected with this bug
-							if (endorsement.id) {
-								var issueDate2 = new Date(endorsement.id);
-								if (issueDate2) {
-									html += '<td>'+issueDate.format(DATE_FORMAT_PROJECT)+'</td>';
-								} else {
-									html += '<td>&nbsp;</td>';
-								}
-							} else {
-								html += '<td>&nbsp;</td>';
-							}
-						}
-
-						if (endorsement.issuer.name) {
-							html += '<td>'+endorsement.issuer.name+'</td>';
-						} else {
-							html += '<td>&nbsp;</td>';
-						}
-
-						if (endorsement.issuer.image.id) {
-						  html += '<td><img width="80" src="'+endorsement.issuer.image.id+'" /></td>';
-						} else {
-							html += '<td>&nbsp;</td>';
-						}
-
-						if (endorsement.issuer.description) {
-							html += '<td>'+endorsement.issuer.description+'</td>';
-						} else {
-							html += '<td>&nbsp;</td>';
-						}
-						if (endorsement.issuer.url) {
-							html += '<td>'+endorsement.issuer.url+'</td>';
-						} else {
-							html += '<td>&nbsp;</td>';
-						}
-						if (endorsement.issuer.email) {
-							html += '<td>'+endorsement.issuer.email+'</td>';
-						} else {
-							html += '<td>&nbsp;</td>';
-						}
-						if (endorsement.issuer.telephone) {
-							html += '<td>'+endorsement.issuer.telephone+'</td>';
-						} else {
-							html += '<td>&nbsp;</td>';
-						}
-
-						html += '</tr>';
-					}
-
-					tableitems.innerHTML = html;
-				}
-				catch(e) {
-				   document.getElementById("endorsementitems").innerHTML = 'invalid alignment json';
-				}
+				loadEndorsementsFromJSON(endorsement, "endorsementitems");  // in utilities.js
 			}
-
 		}
 		catch(e) {
 			if (document.getElementById("badgedata")) {

@@ -23,79 +23,105 @@
 *                                                                                *
 **********************************************************************************/
 
-var DATE_FORMAT_PROJECT = 'd mmm yyyy';
-var EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
+var currentleaderstart = 0;
 
-function viewbadgeinfo(badgeaddress) {
+function initializeEventStatsData(passedevent) {
 
-	//console.log(badgeaddress);
+	updateStatsData(passedevent.id);
 
-	if (badgeaddress != "") {
-
-		var url = cfg.proxy_path+cfg.badges_path+"/contract/"+badgeaddress;
-
-		var xmlhttp = new XMLHttpRequest();
-		xmlhttp.onreadystatechange = function() {
-			if (xmlhttp.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
-			   if (xmlhttp.status == 200) {
-					var i = void 0;
-					try {
-						i = JSON.parse(xmlhttp.responseText);
-					} catch (t) {
-						i = xmlhttp.responseText;
-					}
-				   loadBadge(i);
-			   }
-			   else if (xmlhttp.status == 400) {
-				  alert('There was an error 400');
-			   }
-			   else {
-				   console.log('something else other than 200 was returned:'+xmlhttp.status);
-					var t = void 0;
-					try {
-						t = JSON.parse(xmlhttp.responseText);
-					} catch (n) {
-						t = xmlhttp.responseText;
-					}
-					alert(t);
-			   }
-			}
-		};
-
-		xmlhttp.open("GET", url, true);
-		xmlhttp.send();
-	}
+	// start off a looped fetching of the data evey 10 seconds.
+	var loopInterval = setInterval(function() {
+		updateStatsData(passedevent.id);
+	}, 5000); // interval set at 10 seconds
 }
 
-function escapeHTML(escapedHTML) {
-  return escapedHTML.replace(/</g,'').replace(/>/g,'');
+function sortByCountAndOldestDates(a, b) {
+	/*
+	{
+		"name": "Kevin Quick",
+		"badgecount": 3,
+		"date": 1578670660
+	}
+	*/
+	// Most recent date at the top of the list
+	if (a.badgecount < b.badgecount) {
+		return 1;
+	}
+	if (a.badgecount > b.badgecount) {
+		return -1;
+	}
+	if (a.badgecount == b.badgecount && a.date > b.date) {
+		return 1;
+	}
+	if (a.badgecount == b.badgecount && b.date > a.date) {
+		return -1;
+	}
+
+	return 0;
 }
 
-function loadBadge(badgedata) {
+function sortByNewestDates(a, b) {
+	/*
+	{
+		"name": "Kevin Quick",
+		"badgecount": 3,
+		"date": 1578670660
+	}
+	*/
+	// Most recent date at the top of the list
+	if (a.date > b.date) {
+		return -1;
+	}
+	if (b.date > a.date) {
+		return 1;
+	}
 
-	if (badgedata) {
-		document.getElementById("badgeaddress").innerHTML = badgedata.address;
+	return 0;
+}
 
-		if (badgedata.owner) {
-			document.getElementById("badgeowner").innerHTML = badgedata.owner;
-		}
+function updateStatsData(eventid) {
 
-		if (badgedata.items) {
-			if (badgedata.items && badgedata.items.length > 0) {
-				var count = badgedata.items.length;
-				if (count > 0) {
-					var html="";
-					var next="";
-					for (var i=0; i<count; i++) {
-						next = badgedata.items[i];
-						html+='<tr>';
-						html+='<td class="tdborder wrapit" valign="top">'+escapeHTML(next[0])+'</td><td class="tdborder" valign="top">'+escapeHTML(next[1])+'</td><td class="tdborder wrapit" valign="top">'+escapeHTML(next[2])+'</td><td class="tdborder" valign="top">'+escapeHTML(next[3])+'</td>';
-						html+='</tr">';
-					}
+	var handler = function(response) {
+		if (response.error) {
+			showError(response);
+		} else {
+			// preprocess data
+			var data = response;
+			//console.log(data);
 
-					document.getElementById("storeitems").innerHTML = html;
-				}
+			var badgestats = [];
+			if (response.badgestats) {
+				badgestats = response.badgestats;
 			}
+			var peoplestats = [];
+			if (response.peoplestats) {
+				peoplestats = response.peoplestats;
+			}
+
+			var tempStr = JSON.stringify(peoplestats);
+			//console.log(tempStr);
+
+			var latestearners = JSON.parse(tempStr);
+			//console.log(latestearners);
+
+			latestearners.sort(sortByNewestDates);
+			peoplestats.sort(sortByCountAndOldestDates);
+
+			var attendeecount = 0;
+			if (response.attendeecount) {
+				attendeecount = parseInt(response.attendeecount);
+			}
+			//console.log(attendeecount);
+
+			data = {}
+			data.attendees = attendeecount;
+			data.badges = badgestats;
+			data.leaders = peoplestats;
+			data.latestearners = latestearners;
+
+			drawStats(data);
 		}
 	}
+
+	makeRequest("GET", cfg.proxy_path+"/events/stats/"+eventid, {}, handler);
 }

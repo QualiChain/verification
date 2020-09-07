@@ -27,4 +27,7 @@
 
 var cfg = {};
 cfg.proxy_path = "/qualichain";
+// If your proxy path is '/badges' then this property should be an empty string. Otherwise it should be '/badges'
+cfg.badges_path = "/badges";
+cfg.default_country = "GB";
 

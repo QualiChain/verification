@@ -35,37 +35,33 @@ function initializePage(){
 	var html = "";
 
 	var roles = [];
-	var rolesexist = false;
 	if (document.cookie.split(';').filter((item) => item.trim().startsWith('roles=')).length) {
-		rolesexist = true;
 		var result = document.cookie.split(';').filter((item) => item.trim().startsWith('roles='));
 		if (result != "") {
 			roles = (result[0].substr(7)).split(',');
 		}
 	}
+	if (roles.includes("admin")) {
+		html += '<a href="'+cfg.proxy_path+'/admin/"><div class="frontbut">Admin</div></a>';
+		html += '<a href="'+cfg.proxy_path+'/merkle/"><div class="frontbut">Verifiable RDF Data Sets</div></a>';
+	}
 
 	if (roles.includes("issuer")) {
-		html += '<a href="issuers/"><div class="frontbut"><div class="frontbutdiv"><p>Issuers</p></div></div></a>';
-		html += '<a href="merkle/"><div class="frontbut"><div class="frontbutdiv"><p>Verifiable RDF Data Sets</p></div></div></a>';
+		html += '<a href="'+cfg.proxy_path+cfg.badges_path+'/portfolio/"><div class="frontbut">Badge Portfolio</div></a>';
+	} else {
+		html += '<a href="'+cfg.proxy_path+'/badges/educators/"><div class="frontbut">Educators</div></a>';
 	}
 	if (roles.includes("recipient")) {
-		html += '<a href="badges/portfolio/"><div class="frontbut"><div class="frontbutdiv"><p>Badge Portfolios</p></div></div></a>';
-		//html += '<a href="merkle/"><div class="frontbut"><div class="frontbutdiv"><p>Verifiable RDF Data Sets</p></div></div></a>';
-	}
-	if (roles.includes("admin")) {
-		html += '<a href="admin/"><div class="frontbut"><div class="frontbutdiv"><p>Admin</p></div></div></a>';
-		html += '<a href="merkle/"><div class="frontbut"><div class="frontbutdiv"><p>Verifiable RDF Data Sets</p></div></div></a>';
+		html += '<a href="'+cfg.proxy_path+'/portfolio/"><div class="frontbut">Badge Portfolio</div></a>';
+	} else {
+		html += '<a href="'+cfg.proxy_path+'/recipients/information/"><div class="frontbut">Learners</div></a>';
 	}
 
-	html += '<a href="badges/validation/"><div class="frontbut"><div class="frontbutdiv"><p>Validate a Badge</p></div></div></a>';
-	html += '<a href="badges/issuedbadges/"><div class="frontbut"><div class="frontbutdiv"><p>Issued Badges</p></div></div></a>';
-	//html += '<a href="http://ioc.kmi.open.ac.uk/"><div class="frontbut"><div class="frontbutdiv"><p>SFIA</p></div></div></a>';
-	html += '<a href="docindex/"><div class="frontbut"><div class="frontbutdiv"><p>API Documentation</p></div></div></a>';
-
-	if (!rolesexist) {
-		html += '<div class="frontbutgray"><div class="frontbutdiv"><p>Issuers</p></div></div>';
-		html += '<div class="frontbutgray"><div class="frontbutdiv"><p>Badge Portfolio</p></div></div>';
-	}
+	html += '<a href="'+cfg.proxy_path+cfg.badges_path+'/validation/"><div class="frontbut">Validate a Badge</div></a>';
+	html += '<a href="'+cfg.proxy_path+cfg.badges_path+'/claims/"><div class="frontbut">Claim a Badge</div></a>';
+	html += '<a href="'+cfg.proxy_path+cfg.badges_path+'/badgetypespage/"><div class="frontbut">IoC Endorsed Badges</div></a>';
+	html += '<a href="'+cfg.proxy_path+cfg.badges_path+'/docindex/"><div class="frontbut">API Documentation</div></a>';
+	//html += '<a href="http://ioc.kmi.open.ac.uk/"><div class="frontbut">SFIA</div></a>';
 
 	document.getElementById("homebuttons").innerHTML = html;
 }

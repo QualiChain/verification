@@ -23,37 +23,35 @@
 *                                                                                *
 **********************************************************************************/
 
-var mainBaseURL = "";
-var routesBaseURL = "https:/ioc.kmi.open.ac.uk/";
+/** Author: Michelle Bachler, KMi, The Open University **/
+/** Author: Manoharan Ramachandran, KMi, The Open University **/
+/** Author: Kevin Quick, KMi, The Open University **/
 
-var config = {"path":"./public/docs.html","examples":"./public/examples.txt"}
-
-var examples = [
-{
-	"routeId": "30",
-	"rows": [{
-		"url": cfg.proxy_path+"/users/signin",
-		"method": "POST",
-		"request": "%7B%22username%22:%22&#60;your%20username&#62;%22,%22password%22:%22&#60;your%20password&#62;%22%7D",
-		"status": 201,
-		"type": "application/json",
-		"response": "%7B%22token%22:%22eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ8.eyJ1c2VyaWQiOjE3LCJ1c2VybmFtZSI6IlJERiBTdG9yZSBUZXN0Iiwi...%22%7D",
-		"id": "1"
-	},{
-		"url": cfg.proxy_path+"/users/signin",
-		"method": "POST",
-		"request": "%7B%22username%22:%22&#60;your%20username&#62;%22,%22password%22:%22&#60;your%20password&#62;%22%7D",
-		"status": 401,
-		"type": "application/json",
-		"response": "%7B%22error%22:%22The%20username%20or%20password%20don't%20match%22%7D",
-		"id": "2"
-	},{
-		"url": cfg.proxy_path+"/users/signin",
-		"method": "POST",
-		"request": "%7B%22username%22:%22&#60;your%20username&#62;%22,%22password%22:%22&#60;your%20password&#62;%22%7D",
-		"status": 404,
-		"type": "application/json",
-		"response": "%7B%22error%22:%22An%20different%20error%20or%20message%22%7D",
-		"id": "3"
-	}]
-}]
+var maintitle = "Web Service API - Endorsements";
+var routes = [
+	{
+		"path": "/hosted/:id",
+		"description": "Get a hosted verification Endorsement record in Open Badge JSONLD format by it's unique record identifier.",
+		"params": [
+			{ "name": "id", "description": "Required. The unique identifier of the Endorsement record you wish to retrieve." }
+		],
+		"returns": [
+			{"name":"@context", "description": "The open badges context url" },
+			{"name":"type", "description": "Endorsement" },
+			{"name":"id", "description": "The uri/url for this endorsement" },
+			{"name":"issuedOn", "description": "the date the endorsement was made - compatible with ISO 8601" },
+			{"name":"issuer", "description": "Object describing the endorsement issuer details - see Open Badge specification" },
+			{"name":"verification", "description": "Object describing the verification type - see Open Badge specification" },
+			{"name":"claim", "description":"Object describing the claim being made in this endorsement - see Open Badge specification"},
+		],
+		"methods": {
+			"get": true
+		},
+		"permissions": ["everyone"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/endorsements\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/endorsements",
+		"id": "250",
+		"regexp": "/\\/hosted\\/:id(?:\\?.*)?$/",
+		"examplesPresent": false
+	}
+]

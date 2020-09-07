@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -23,23 +23,43 @@
 *                                                                                *
 **********************************************************************************/
 
-/** Author: Michelle Bachler, KMi, The Open University **/
-/** Author: Manoharan Ramachandran, KMi, The Open University **/
-/** Author: Kevin Quick, KMi, The Open University **/
-
 var recipients = {};
+var table = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     initializePage();
 });
 
 function initializePage() {
-	updateList();
+	loadGroupData();
+	// updateList();
+}
+
+function resendRecipientAccountEmail(recipientid) {
+	var recipient = recipients[recipientid];
+	var message = "Are you sure you want to send another account registration email to the recipient: \n\n" + recipient.name + "\n\n Using email address:\n\n" + recipient.email;
+	var reply = confirm(message);
+	if (reply == true) {
+
+		var handler = function (response) {
+			if (response.error) {
+				showError(response);
+			} else {
+				updateList();
+			}
+		}
+
+		var send = {};
+		send.id = recipientid;
+		makeRequest("POST", cfg.proxy_path + "/recipients/resenduseraccountemail", send, handler);
+	} else {
+		// do nothing
+	}
 }
 
 function createRecipientAccount(recipientid) {
 	var recipient = recipients[recipientid];
-	var message = "Are you sure you want to verify the email address and create an account for recipient: "+recipient.name;
+	var message = "Are you sure you want to verify the email address and create an account for recipient: \n\n"+recipient.name+"\n\nUsing email address:\n\n"+recipient.email;
 	var reply = confirm(message);
 	if (reply == true) {
 
@@ -48,7 +68,6 @@ function createRecipientAccount(recipientid) {
 				showError(response);
 			} else {
 				updateList();
-				alert("The recipient account record has been created");
 			}
 		}
 
@@ -57,6 +76,57 @@ function createRecipientAccount(recipientid) {
 		makeRequest("POST", cfg.proxy_path+"/recipients/createuseraccount", send, handler);
 	} else {
 	  // do nothing
+	}
+}
+
+function importBulkRecipients() {
+	var form = document.getElementById('formRecBulk');
+
+	if (form.recipientdatafile.value == "") {
+		alert("Please select a file before trying to upload.");
+	} else if (form.recipientdatafile.value.indexOf(".csv") == -1) {
+		alert("Please select a csv file");
+	} else {
+		document.body.style.cursor = "wait";
+		document.getElementById("bulkrecipientimportbutton").disabled = true;
+
+		var message = "Are you sure you want to run a bulk recipient import\n";
+		var reply = confirm(message);
+		if (reply == true) {
+			var formdata = new FormData(form);
+			var handler = function(response) {
+				if (response.error) {
+					showError(response);
+				} else {
+					if (response.recipientsmissed.length > 0) {
+						var message = "The following entries could not be process due to missing or corrupt data:\n\n";
+						var count = response.recipientsmissed.length;
+						for (var i=0; i<count; i++) {
+							var item  = response.recipientsmissed[i];
+							message += "Name: "+item.name+", Email: "+item.email+", UniqueID: "+item.issueruniqueid+"\n";
+						}
+						alert(message);
+					}
+					if (response.recipientsduplicates.length > 0) {
+						var message = "The following entries already existed in the recipients table and where therefore not added through this import:\n\n";
+						var count = response.recipientsduplicates.length;
+						for (var i=0; i<count; i++) {
+							var item  = response.recipientsduplicates[i];
+							message += "Name: "+item.name+", Email: "+item.email+", UniqueID: "+item.issueruniqueid+"\n";
+						}
+						alert(message);
+					}
+
+					document.body.style.cursor = "default";
+					document.getElementById("bulkrecipientimportbutton").disabled = false;
+
+					clearCreateBulkForm();
+					updateList();
+				}
+			}
+
+			makeFileUploadRequest("POST", cfg.proxy_path+"/recipients/createbulk", formdata, handler);
+		}
 	}
 }
 
@@ -72,6 +142,7 @@ function createRecipient() {
 	send.name = demicrosoftize(form.name.value);
 	send.email = form.email.value;
 	send.issueruniqueid = demicrosoftize(form.uniqueid.value);
+	send.groupid = form.groupid.value;
 
 	var handler = function(response) {
 		if (response.error) {
@@ -113,20 +184,46 @@ function updateRecipient() {
 	makeRequest("POST", cfg.proxy_path+"/recipients/update", send, handler);
 }
 
+function clearCreateBulkForm() {
+	var form = document.getElementById('formRecBulk');
+	form.recipientdatafile.value = "";
+}
+
+function showCreateBulkForm() {
+	clearCreateBulkForm();
+
+	document.getElementById('createDiv').style.display = "none";
+	document.getElementById('editDiv').style.display = "none";
+	document.getElementById('createButtonsDiv').style.display = "none";
+
+	document.getElementById('createBulkDiv').style.display = "block";
+}
+
 function clearCreateForm() {
 	var form = document.getElementById('formRec');
 
 	form.name.value = "";
 	form.email.value = "";
 	form.uniqueid.value = "";
+	form.groupid.value = "";
 }
 
 function showCreateForm() {
-	clearCreateForm();
+	clearCreateBulkForm();
 
 	document.getElementById('editDiv').style.display = "none";
 	document.getElementById('createDiv').style.display = "block";
-	document.getElementById('createFormShowButton').style.display = "none";
+	document.getElementById('createBulkDiv').style.display = "none";
+	document.getElementById('createButtonsDiv').style.display = "none";
+}
+
+function cancelCreateBulkForm() {
+	clearCreateForm();
+
+	document.getElementById('editDiv').style.display = "none";
+	document.getElementById('createDiv').style.display = "none";
+	document.getElementById('createBulkDiv').style.display = "none";
+	document.getElementById('createButtonsDiv').style.display = "block";
 }
 
 function cancelCreateForm() {
@@ -134,7 +231,8 @@ function cancelCreateForm() {
 
 	document.getElementById('editDiv').style.display = "none";
 	document.getElementById('createDiv').style.display = "none";
-	document.getElementById('createFormShowButton').style.display = "block";
+	document.getElementById('createBulkDiv').style.display = "none";
+	document.getElementById('createButtonsDiv').style.display = "block";
 }
 
 function cancelEditForm() {
@@ -142,7 +240,9 @@ function cancelEditForm() {
 
 	document.getElementById('editDiv').style.display = "none";
 	document.getElementById('createDiv').style.display = "none";
-	document.getElementById('createFormShowButton').style.display = "block";
+	document.getElementById('createBulkDiv').style.display = "none";
+
+	document.getElementById('createButtonsDiv').style.display = "block";
 	document.getElementById('editemaildiv').style.display = "block";
 
 	editform.recipientid.value = "";
@@ -159,7 +259,7 @@ function editRecipient(recipientid) {
 	editform.recipientid.value = recipientid;
 	editform.name.value = recipient.name;
 	editform.email.value = recipient.email;
-	editform.uniqueid.value = recipient.uniqueid;
+	editform.uniqueid.value = recipient.issueruniqueid;
 
 	// if recipient account status != -1, you can't edit the email address
 	var status = parseInt(recipient.status);
@@ -169,13 +269,14 @@ function editRecipient(recipientid) {
 
 	document.getElementById('createDiv').style.display = "none";
 	document.getElementById('editDiv').style.display = "block";
-	document.getElementById('createFormShowButton').style.display = "none";
+	document.getElementById('createBulkDiv').style.display = "none";
+	document.getElementById('createButtonsDiv').style.display = "none";
 }
 
 function deleteRecipient(recipientid) {
 	var recipient = recipients[recipientid];
 
-	var message = "Are you sure you want to delete the recipient entry for: "+recipient.name;
+	var message = "Are you sure you want to delete the recipient entry for:\n\n"+recipient.name+"\n";
 	var reply = confirm(message);
 	if (reply == true) {
 
@@ -186,7 +287,6 @@ function deleteRecipient(recipientid) {
 				clearCreateForm(); // in case it was open
 				cancelEditForm(); // in case it was open
 				updateList();
-				alert("The recipient record has been deleted");
 			}
 		}
 
@@ -198,95 +298,131 @@ function deleteRecipient(recipientid) {
 	}
 }
 
+function loadGroupData() {
+
+	//console.log("IN loadGroupData");
+
+	var handler = function (response) {
+		if (response.error) {
+			showError(response);
+		} else {
+			groups = {};
+
+			var thediv = document.getElementById('grouplist');
+
+			//console.log(response.badges.length);
+
+			if (response.length == 0) {
+				thediv.innerHTML = "Currently there are no active groups to select";
+				updateList();
+			} else {
+				// create list
+				var html = '<select name="groupid" id="groupid" style="width: 95%;">';
+				html += '<option value="" disabled selected>Select a group</option>'
+
+				for (i = 0; i < response.recipientgroups.length; i++) {
+					if (response.recipientgroups[i].status == 1) {
+						groups[response.recipientgroups[i].id] = response.recipientgroups[i];
+						html += '<option value="' + response.recipientgroups[i].id + '">' + response.recipientgroups[i].name + '</option>';
+					}
+				}
+
+				html += "</select>";
+				thediv.innerHTML = html;
+
+				updateList();
+			}
+		}
+	}
+
+	makeRequest("GET", cfg.proxy_path + "/recipients/groups/list", {}, handler);
+}
+
 function updateList(){
 
 	var handler = function(response) {
 
 		recipients = {};
-		var thediv = document.getElementById('storedList');
-		thediv.innerHTML = "";
+		var data = new Array();
 
-		if ( !response || !response.recipients || (response.recipients && response.recipients.length == 0) ) {
-			thediv.innerHTML = "You have not added any recipients yet";
-		} else {
-			// clear global variable
-
-			var html = "<center><table style='width:100%;line-height:120%;font-size: 14px;'>";
-			html += '<tr>';
-			html += '<th width="5%" class="tableheader">ID</th>';
-			html += '<th width="30%" class="tableheader">Name</th>';
-			html += '<th width="20%" class="tableheader">Email</th>';
-			html += '<th width="10%" class="tableheader">Issuer Unique ID</th>';
-			html += '<th width="10%" class="tableheader">Edit</th>';
-			html += '<th width="10%" class="tableheader">Delete</th>';
-			html += '<th width="15%" class="tableheader">User Account</th>';
-			html += '</tr>';
-
+		if ( response && response.recipients && response.recipients.length > 0 ) {
 			for (i = 0; i < response.recipients.length; i++) {
 
 				// store to global list by id
-				recipients[response.recipients[i].id] = response.recipients[i]
+				recipients[response.recipients[i].id] = response.recipients[i];
+				//console.log(response.recipients[i]);
 
-				html += "<tr>";
+				data[i] = {};
 
-				html += "<td style='padding: 6px; border: 1px solid grey;'>";
-				html += response.recipients[i].id;
-				html += "</td>";
+				data[i].id = response.recipients[i].id;
+				data[i].name = response.recipients[i].name;
+				data[i].email = response.recipients[i].email;
 
-				html += "<td style='padding: 6px; border: 1px solid grey;'>";
-				html += response.recipients[i].name;
-				html += "</td>";
-
-				html += "<td style='padding: 6px; border: 1px solid grey;'>";
-				html += response.recipients[i].email;
-				html += "</td>";
-
-				html += "<td style='padding: 6px; border: 1px solid grey;'>";
-				html += response.recipients[i].issueruniqueid;
-				html += "</td>";
-
-				html += '<td style="padding: 6px; border: 1px solid grey;">';
-				if (response.recipients[i].usedInIssuance === false) {
-					html += '<center><button class="sbut" title="Edit this Recipient record" onclick="editRecipient(\''+response.recipients[i].id+'\');"><img src="'+cfg.proxy_path+'/badges/images/issuing_buttons/edit.png" /></button></center>';
+				if (response.recipients[i].issueruniqueid && response.recipients[i].issueruniqueid != null) {
+					data[i].uniqueid = response.recipients[i].issueruniqueid;
 				} else {
-					html += '<center>Used</center>';
+					data[i].uniqueid = "";
 				}
-				html += '</td>';
+
+				//Edit
+				if (response.recipients[i].usedInIssuance === false) {
+					data[i].edit = '<center><button class="sbut" title="Edit this Recipient record" onclick="editRecipient(\''+response.recipients[i].id+'\');"><img src="'+cfg.proxy_path+'/images/issuing_buttons/edit.png" /></button></center>';
+				} else {
+					data[i].edit = '<center>Used</center>';
+				}
 
 				var status = parseInt(response.recipients[i].status);
 
-				html += '<td style="padding: 6px; border: 1px solid grey;">';
+				// Delete
 				if (response.recipients[i].usedInIssuance === true) {
-					html += '<center>Used</center>';
-				} else if (response.recipients[i].usedInIssuance === false && status == -1) {
-					html += '<center><button class="sbut" title="Delete this Recipient record" onclick="deleteRecipient(\''+response.recipients[i].id+'\');"><img src="'+cfg.proxy_path+'/badges/images/issuing_buttons/delete.png" /></center>';
+					data[i].delete = '<center>Used</center>';
+				} else if (response.recipients[i].usedInIssuance === false) { // && status == -1) {
+					// you could delete them and the person would still hae a login account but possible no recipient account.
+					data[i].delete = '<center><button class="sbut" title="Delete this Recipient record" onclick="deleteRecipient(\''+response.recipients[i].id+'\');"><img src="'+cfg.proxy_path+'/images/issuing_buttons/delete.png" /></center>';
 				} else if (response.recipients[i].usedInIssuance === false && status != -1) {
-					html += '<center>Account Exists</center>';
+					data[i].delete = '<center>Account Exists</center>';
 				} else {
-					html += "Unavailable";
+					data[i].delete = "Unavailable";
 				}
-				html += '</td>';
 
-				html += "<td style='padding: 6px; border: 1px solid grey;'>";
+				// User Account
 				if (status == -1) {
-					html += '<div class="accountstatus" title="Create an login Account for this Recipient. An email will be sent to complete registration"><img src="'+cfg.proxy_path+'/badges/images/red-light.png" width="16" /><button class="smallsubbut" onclick="createRecipientAccount(\''+response.recipients[i].id+'\');">Create Account</button></div>';
+					data[i].useraccount = '<div class="accountstatus" title="Create an login Account for this Recipient. An email will be sent to complete registration"><img src="' + cfg.proxy_path +'/images/red-light.png" width="16" /><span style="padding-left:10px;"><button class="smallsubbut" onclick="createRecipientAccount(\''+response.recipients[i].id+'\');">Create Account</button></span></div>';
 				} else if (status == 0) {
-					html += '<div class="accountstatus" title="Registration Pending"><img src="'+cfg.proxy_path+'/badges/images/yellow-light.png" width="16" /><span style="padding-left:10px;">Requested</span></div>';
+					data[i].useraccount = '<div class="accountstatus" title="Registration Pending"><img src="' + cfg.proxy_path + '/images/yellow-light.png" width="16" /><span style="padding-left:10px;"><button title="An account has been inistialised. Recipient has been email. Awaiting registration completion. Click to send them another registration email." class="smallsubbut" onclick="resendRecipientAccountEmail(\'' + response.recipients[i].id +'\');">Resend Email</button></span></div>';
 				} else if (status == 1) {
-					html += '<div class="accountstatus" title="Registration Complete"><img src="'+cfg.proxy_path+'/badges/images/green-light.png" width="16" /><span style="padding-left:10px;">Registered</span></div>';
+					data[i].useraccount = '<div class="accountstatus" title="Registration Complete"><img src="'+cfg.proxy_path+'/images/green-light.png" width="16" /><span style="padding-left:10px;">Registered</span></div>';
 				} else {
-					html += "Unknown";
+					data[i].useraccount = "Unknown";
 				}
-				html += "</td>";
 
-				html += "</tr>";
-
+				// Account Requested
+				if (status == -1 && response.recipients[i].requestedaccount === true) {
+					data[i].accountrequest = 'User Requested Account';
+				} else {
+					data[i].accountrequest = " ";
+				}
 			}
-			html += "</table></center> <br> <br>";
-			thediv.innerHTML = html;
 		}
-    }
 
+		if (table != null) table.destroy();
+
+		table = $('#storedList').DataTable({
+			"data": data,
+			"stateSave": true,
+			"columns": [
+				{ "data": "id", "title": "ID", "width": "5%" },
+				{ "data": "name", "title": "Name", "width": "25%" },
+				{ "data": "email" , "title": "Email", "width": "20%" },
+				{ "data": "uniqueid" , "title": "Issuer Unique ID", "width": "10%" },
+				{ "data": "edit" , "title": "Edit", "width": "5%", "orderable": true },
+				{ "data": "delete" , "title": "Delete", "width": "5%", "orderable": true },
+				{ "data": "useraccount" , "title": "User Account", "width": "15%" },
+				{ "data": "accountrequest" , "title": "Account Request", "width": "15%" }
+			],
+			"order": [[ 0, "desc" ]]
+		});
+    }
 
 	makeRequest("GET", cfg.proxy_path+"/recipients/list", {}, handler)
 }

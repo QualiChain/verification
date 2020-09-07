@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2016 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -27,7 +27,7 @@ var DATE_FORMAT_PROJECT = 'd mmm yyyy';
 var EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 function viewbadgeinfo(badgeId) {
-	var url = cfg.proxy_path+"/badges/"+badgeId;
+	var url = cfg.proxy_path+cfg.badges_path+"/"+badgeId;
 
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
@@ -61,237 +61,47 @@ function viewbadgeinfo(badgeId) {
 	xmlhttp.send();
 }
 
-function clearbadgeinfo() {
-
-	// BADGE
-	document.getElementById("badgecontext").innerHTML = "";
-	document.getElementById("badgetype").innerHTML = "";
-	document.getElementById("badgeid").innerHTML = "";
-	document.getElementById("badgename").innerHTML = "";
-	document.getElementById("badgedescription").innerHTML = "";
-	document.getElementById("badgeimage").src = "";
-	document.getElementById("badgetags").innerHTML = "";
-
-	// ISSUER
-	document.getElementById("issuertype").innerHTML = "";
-	document.getElementById("issuerid").innerHTML = "";
-	document.getElementById("issuername").innerHTML = "";
-	document.getElementById("issuerdescription").innerHTML = "";
-	document.getElementById("issuerimage").src = "";
-	document.getElementById("issuerimagecaption").innerHTML = "";
-	document.getElementById("issuerimageauthor").innerHTML = "";
-	document.getElementById("issuerurl").innerHTML = "";
-	document.getElementById("issuertel").innerHTML = "";
-	document.getElementById("issueremail").innerHTML = "";
-
-	// CRITERIA
-	document.getElementById("criteriatype").innerHTML = "";
-	document.getElementById("criteriaid").innerHTML = "";
-	document.getElementById("criterianarrative").innerHTML = "";
-
-	// ALIGNMENT
-	document.getElementById("alignmentitems").innerHTML = "";
-}
-
 function loadBadge(badgedata) {
+
+	document.getElementById("databadgename").innerHTML = "";
+	document.getElementById("databadgedescription").innerHTML = "";
+	document.getElementById("databadgeimage").src = "";
 
 	if (badgedata) {
 		if (badgedata.name) {
-			document.getElementById("badgename").innerHTML = badgedata.name;
+			document.getElementById("databadgename").innerHTML = badgedata.name;
 		}
 		if (badgedata.description) {
-			document.getElementById("badgedescription").innerHTML = badgedata.description;
+			document.getElementById("databadgedescription").innerHTML = nl2br(badgedata.description);
 		}
 		if (badgedata.image) {
-			document.getElementById("badgeimage").src = badgedata.image;
+			document.getElementById("databadgeimage").src = badgedata.image;
 		}
 
-		document.getElementById("badgetags").innerHTML = "";
-
 		if (badgedata.tags)  {
-			var count = badgedata.tags.length;
-			var list = document.getElementById("badgetags");
-			for (var i=0; i<count; i++) {
-				var next = document.createElement("li");
-				next.innerHTML = badgedata.tags[i];
-				list.appendChild(next);
-			}
+			loadBadgeTagsFromJSON(badgedata.tags);  // in utilities.js
 		}
 
 		if (badgedata.issuer) {
-			loadIssuer(badgedata.issuer);
+			loadIssuerFromJSON(badgedata.issuer);  // in utilities.js
 		}
 
 		if (badgedata.criteria) {
-			loadCriteria(badgedata.criteria)
+			loadCriteriaFromJSON(badgedata.criteria);  // in utilities.js
 		}
 
 		if (badgedata.alignment) {
 			document.getElementById("alignmentsection").style.display = "block";
-			loadAlignments(badgedata.alignment)
+			loadAlignmentsFromJSON(badgedata.alignment, "alignmentitems");  // in utilities.js
 		} else {
 			document.getElementById("alignmentsection").style.display = "none";
 		}
 
 		if (badgedata.endorsement) {
 			document.getElementById("endorsementsection").style.display = "block";
-			loadEndorsements(badgedata.endorsement)
+			loadEndorsementsFromJSON(badgedata.endorsement, "endorsementitems");  // in utilities.js
 		} else {
 			document.getElementById("endorsementsection").style.display = "none";
 		}
 	}
-}
-
-function loadIssuer(issuerdata) {
-
-	if (issuerdata) {
-		if (issuerdata.name) {
-			document.getElementById("issuername").innerHTML = issuerdata.name;
-		}
-		if (issuerdata.description) {
-			document.getElementById("issuerdescription").innerHTML = issuerdata.description;
-		}
-
-		if (issuerdata.image) {
-			document.getElementById("issuerimage").src = issuerdata.image.id;
-	    }
-
-		if (issuerdata.url) {
-			document.getElementById("issuerurl").innerHTML = issuerdata.url;
-		}
-		if (issuerdata.telephone) {
-			document.getElementById("issuertel").innerHTML = issuerdata.telephone;
-		}
-		if (issuerdata.email) {
-			document.getElementById("issueremail").innerHTML = issuerdata.email;
-		}
-	}
-}
-
-function loadCriteria(criteriadata) {
-
-	if (criteriadata) {
-		if (criteriadata.narrative) {
-			document.getElementById("criterianarrative").innerHTML = criteriadata.narrative;
-		}
-	}
-}
-
-function loadAlignments(alignmentdata) {
-
-	// add alignments
-	if (alignmentdata) {
-		try {
-			var alignments = alignmentdata;
-			var count = alignments.length;
-
-			var tableitems = document.getElementById("alignmentitems");
-
-			var html = "";
-			for (var i=0; i<count;i++) {
-
-				html += '<tr>';
-				var alignment = alignments[i];
-
-				if (alignment.targetName) {
-					html += '<td>'+alignment.targetName+'</td>';
-				} else {
-					html += '<td>&nbsp;</td>';
-				}
-				if (alignment.targetUrl) {
-					html += '<td>'+alignment.targetUrl+'</td>';
-				} else {
-					html += '<td>&nbsp;</td>';
-				}
-				if (alignment.targetDescription) {
-					html += '<td>'+alignment.targetDescription+'</td>';
-				} else {
-					html += '<td>&nbsp;</td>';
-				}
-				if (alignment.targetFramework) {
-					html += '<td>'+alignment.targetFramework+'</td>';
-				} else {
-					html += '<td>&nbsp;</td>';
-				}
-				if (alignment.targetCode) {
-					html += '<td>'+alignment.targetCode+'</td>';
-				} else {
-					html += '<td>&nbsp;</td>';
-				}
-
-				html += '</tr>';
-			}
-
-			tableitems.innerHTML = html;
-		}
-		catch(e) {
-		   document.getElementById("alignmentitems").innerHTML = 'invalid alignment json';
-		}
-	}
-}
-
-function loadEndorsements(endorsementdata) {
-	// add endorsements
-	if (endorsementdata) {
-		document.getElementById("endorsementsection").style.display = "block";
-		try {
-			var endorsements = endorsementdata;
-			var count = endorsements.length;
-
-			var tableitems = document.getElementById("endorsementitems");
-
-			var html = "";
-			for (var i=0; i<count;i++) {
-
-				html += '<tr valign="top" style="line-height: 100%;">';
-				var endorsement = endorsements[i];
-
-				if (endorsement.claim.endorsementComment) {
-					html += '<td>'+endorsement.claim.endorsementComment+'</td>';
-				} else {
-					html += '<td>&nbsp;</td>';
-				}
-
-				if (endorsement.issuer.name) {
-					html += '<td>'+endorsement.issuer.name+'</td>';
-				} else {
-					html += '<td>&nbsp;</td>';
-				}
-
-				if (endorsement.issuer.image.id) {
-				  html += '<td><img width="80" src="'+endorsement.issuer.image.id+'" /></td>';
-				} else {
-					html += '<td>&nbsp;</td>';
-				}
-
-				if (endorsement.issuer.description) {
-					html += '<td>'+endorsement.issuer.description+'</td>';
-				} else {
-					html += '<td>&nbsp;</td>';
-				}
-				if (endorsement.issuer.url) {
-					html += '<td>'+endorsement.issuer.url+'</td>';
-				} else {
-					html += '<td>&nbsp;</td>';
-				}
-				if (endorsement.issuer.email) {
-					html += '<td>'+endorsement.issuer.email+'</td>';
-				} else {
-					html += '<td>&nbsp;</td>';
-				}
-				if (endorsement.issuer.telephone) {
-					html += '<td>'+endorsement.issuer.telephone+'</td>';
-				} else {
-					html += '<td>&nbsp;</td>';
-				}
-
-				html += '</tr>';
-			}
-
-			tableitems.innerHTML = html;
-		}
-		catch(e) {
-		   document.getElementById("endorsementitems").innerHTML = 'invalid alignment json';
-		}
-}
 }

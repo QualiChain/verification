@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2016 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -28,6 +28,7 @@ var EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 categories = [];
 subcategories = {};
+var issuecount = 0;
 
 function addCell(tr, text, wrapit) {
 	var td = tr.insertCell();
@@ -72,7 +73,7 @@ function addButtons(tr, uniqueid, contract) {
 	button.style.minWidth = "38px";
 
 	var img = document.createElement("img");
-	img.src = "/badges/images/eye_grey-sm.png";
+	img.src = cfg.proxy_path+"/images/eye_grey-sm.png";
 	img.alt = "JSON LD logo";
 	img.style.width = "34px";
 	img.style.padding = "0px";
@@ -86,7 +87,7 @@ function addButtons(tr, uniqueid, contract) {
 	button.appendChild(img);
 	button.title = "Open a user friendly view of the data for this badge - in a new tab";
 	button.onclick = function() {
-		var url = cfg.proxy_path+'/badges/view/'+uniqueid;
+		var url = cfg.proxy_path+cfg.badges_path+'/view/'+uniqueid;
 		var win = window.open(url, '_blank');
 		win.focus();
 	};
@@ -116,39 +117,49 @@ function addButtons(tr, uniqueid, contract) {
 	button2.appendChild(img2);
 	button2.style.marginTop = "5px";
 	button2.onclick = function() {
-		var url = cfg.proxy_path+'/badges/'+uniqueid;
+		var url = cfg.proxy_path+cfg.badges_path+'/'+uniqueid;
 		var win = window.open(url, '_blank');
 		win.focus();
 	};
 
-	var button3 = document.createElement("button");
-	button3.style.backgroundColor = "transparent";
-	button3.title = "Open a Badge blockchain data view of this badge - in a new tab";
-	button3.style.padding = "0px";
-	button3.style.margin = "0px";
-	button3.style.border = "none";
-	button3.style.marginTop = "5px";
-	button3.style.width="38px";
-	button3.style.minWidth = "38px";
+	if (contract && contract != "" && contract != null) {
+		var button3 = document.createElement("button");
+		button3.style.backgroundColor = "transparent";
+		button3.title = "Open a Badge blockchain data view of this badge - in a new tab";
+		button3.style.padding = "0px";
+		button3.style.margin = "0px";
+		button3.style.border = "none";
+		button3.style.marginTop = "5px";
+		button3.style.width="38px";
+		button3.style.minWidth = "38px";
 
-	var img3 = document.createElement("img");
-	img3.src = cfg.proxy_path+"/images/blockchain_grey-sm.png";
-	img3.alt = "view blockchain data icon";
-	img3.style.width = "34px";
-	img3.style.padding = "0px";
-	img3.style.margin = "0px";
-	img3.onmouseover = function() {
-		img3.src = cfg.proxy_path+"/images/blockchain_dark-sm.png";
-	}
-	img3.onmouseout = function() {
+		var img3 = document.createElement("img");
 		img3.src = cfg.proxy_path+"/images/blockchain_grey-sm.png";
+		img3.alt = "view blockchain data icon";
+		img3.style.width = "34px";
+		img3.style.padding = "0px";
+		img3.style.margin = "0px";
+		img3.onmouseover = function() {
+			img3.src = cfg.proxy_path+"/images/blockchain_dark-sm.png";
+		}
+		img3.onmouseout = function() {
+			img3.src = cfg.proxy_path+"/images/blockchain_grey-sm.png";
+		}
+		button3.appendChild(img3);
+		button3.onclick = function() {
+			var url = cfg.proxy_path+cfg.badges_path+'/contract/view/'+contract;
+			var win = window.open(url, '_blank');
+			win.focus();
+		};
+	} else {
+		var button3 = document.createElement("img");
+		button3.src = cfg.proxy_path+"/images/blockchain_disabled.png";
+		button3.alt = "disabled blockchain data icon";
+		button3.title = "The blockchain data view is only available once a badge type has had at least one issuance";
+		button3.style.width = "34px";
+		button3.style.padding = "0px";
+		button3.style.margin = "0px";
 	}
-	button3.appendChild(img3);
-	button3.onclick = function() {
-		var url = cfg.proxy_path+'/badges/contract/view/'+contract;
-		var win = window.open(url, '_blank');
-		win.focus();
-	};
 
 	var td = tr.insertCell();
 	td.align="center";
@@ -204,6 +215,7 @@ function drawTable(category, subcategory) {
 
 	document.getElementById('itemcount').innerHTML = 0;
 	var count = 0;
+	issuecount = 0;
 
 	for (i=0;i<dArray.length;i++){
 		var next = dArray[i];
@@ -221,6 +233,7 @@ function drawTable(category, subcategory) {
 			addCell(row, next.version, true);
 			addCell(row, next.year, true);
 			addCell(row, next.count, true);
+			issuecount += next.count;
 			addCell(row, next.issuername, true);
 			addSmallTextCell(row, next.blockchainaddress, true);
 			//addCell(row, next.uniqueid, true);
@@ -230,6 +243,7 @@ function drawTable(category, subcategory) {
 	}
 
 	document.getElementById('itemcount').innerHTML = count;
+	document.getElementById('issuecount').innerHTML = issuecount;
 }
 
 function redrawTable() {

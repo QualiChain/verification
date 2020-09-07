@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -23,10 +23,6 @@
 *                                                                                *
 **********************************************************************************/
 
-/** Author: Michelle Bachler, KMi, The Open University **/
-/** Author: Manoharan Ramachandran, KMi, The Open University **/
-/** Author: Kevin Quick, KMi, The Open University **/
-
 var DATE_FORMAT = 'd mmm yyyy';
 var TIME_FORMAT = 'd/m/yy - H:MM';
 var DATE_FORMAT_PHASE = 'd mmm yyyy H:MM';
@@ -36,6 +32,7 @@ var badge = {};
 var recipient = {};
 
 var evidences = {};
+var table = null;
 
 var protocol = "";
 var domain = "";
@@ -85,7 +82,7 @@ function loadBadgeData(badgedid){
 		}
 	}
 
-	makeRequest("GET", cfg.proxy_path+"/badges/id/"+badgedid, {}, handler);
+	makeRequest("GET", cfg.proxy_path+cfg.badges_path+"/id/"+badgedid, {}, handler);
 }
 
 function loadRecipientData(recipientid){
@@ -106,82 +103,6 @@ function loadRecipientData(recipientid){
 	}
 
 	makeRequest("GET", cfg.proxy_path+"/recipients/id/"+recipientid, {}, handler);
-}
-
-function updateList(){
-
-	var handler = function(response) {
-
-		var theevddiv = document.getElementById("storedList");
-		theevddiv.innerHTML = "";
-		evidences = {};
-
-		//console.log('RESPONSE: ', response);
-		if (response.error) {
-			showError(response);
-		} else {
-			if ( !response || !response.evidence || (response.evidence && response.evidence.length == 0) ) {
-				theevddiv.innerHTML = "Currently you have no Evidence records";
-			} else {
-				var html = "";
-
-				html += "<center><table style='width:100%;line-height:120%;font-size: 14px;'>";
-				html += "<tr>";
-
-				html += "<th style='font-weight:400; background-color: lightgray; padding: 6px; border: 1px solid grey; text-align: center;'>Name</th>";
-				html += "<th style='font-weight:400; background-color: lightgray; padding: 6px; border: 1px solid grey; text-align: center;'>View</th>";
-
-				html += "<th style='font-weight:400; background-color: lightgray; padding: 6px; border: 1px solid grey; text-align: center;'>Edit</th>";
-
-				html += "<th style='font-weight:400; background-color: lightgray; padding: 6px; border: 1px solid grey; text-align: center;'>Delete</th>";
-
-				html += "</tr>";
-
-				for (i = 0; i < response.evidence.length; i++) {
-					var item = response.evidence[i];
-
-					evidences[item.id] = item;
-					//console.log(item.id);
-					html += "<tr style='background-color: #fff;'>";
-
-					html += "<td style='padding: 6px; border: 1px solid grey;'>";
-					html += evidences[item.id].name;
-					html += "</td>";
-
-					html += '<td style="padding: 6px; border: 1px solid grey;">';
-					html += '<center><button class="sbut" title="View" onclick="displayEvidence(\''+item.id+'\', \''+badgeissuedid+'\');"><img src="'+cfg.proxy_path+'/badges/images/issuing_buttons/view.png" /></button></center>';
-					html += '</td>';
-
-					html += '<td style="padding: 6px; border: 1px solid grey;">';
-					if (response.evidence[i].issued === false) {
-						html += '<center><button class="sbut" title="Edit" onclick="editEvidence(\''+item.id+'\', \''+badgeissuedid+'\');"><img src="'+cfg.proxy_path+'/badges/images/issuing_buttons/edit.png" /></button></center>';
-					} else {
-						html += '<center>Used</center>';
-					}
-					html += '</td>';
-
-					html += '<td style="padding: 6px; border: 1px solid grey;">';
-					if (response.evidence[i].issued === false) {
-						html += '<center><button class="sbut" title="Delete" onclick="deleteEvidence(\''+item.id+'\');"><img src="'+cfg.proxy_path+'/badges/images/issuing_buttons/delete.png" /></button></center>';
-					} else {
-						html += '<center>Used</center>';
-					}
-					html += '</td>';
-
-					html += "</tr>";
-				}
-
-				html += "</table>";
-				html += "<center><br>";
-
-				theevddiv.innerHTML = html;
-			}
-		}
-	}
-	var send = {};
-	send.id = badgeissuedid;
-
-	makeRequest("POST", cfg.proxy_path+"/evidence/list", send, handler);
 }
 
 function createEvidence() {
@@ -369,4 +290,59 @@ function deleteEvidence(evidenceid) {
 	} else {
 	  // do nothing
 	}
+}
+
+function updateList(){
+
+	var handler = function(response) {
+
+		evidences = {};
+		var data = new Array();
+
+		//console.log('RESPONSE: ', response);
+		if ( response && response.evidence && response.evidence.length > 0 ) {
+
+			for (i = 0; i < response.evidence.length; i++) {
+
+				var item = response.evidence[i];
+				evidences[item.id] = item;
+
+				data[i] = {};
+				data[i].id = response.evidence[i].id;
+				data[i].name = evidences[item.id].name;
+
+				data[i].view = '<center><button class="sbut" title="View" onclick="displayEvidence(\''+item.id+'\', \''+badgeissuedid+'\');"><img src="'+cfg.proxy_path+'/images/issuing_buttons/view.png" /></button></center>';
+
+				if (response.evidence[i].usedInIssuance === false) {
+					data[i].edit = '<center><button class="sbut" title="Edit" onclick="editEvidence(\''+item.id+'\', \''+badgeissuedid+'\');"><img src="'+cfg.proxy_path+'/images/issuing_buttons/edit.png" /></button></center>';
+				} else {
+					data[i].edit = '<center>Used</center>';
+				}
+
+				if (response.evidence[i].usedInIssuance === false) {
+					data[i].delete = '<center><button class="sbut" title="Delete" onclick="deleteEvidence(\''+item.id+'\');"><img src="'+cfg.proxy_path+'/images/issuing_buttons/delete.png" /></button></center>';
+				} else {
+					data[i].delete = '<center>Used</center>';
+				}
+			}
+		}
+
+
+		if (table != null) table.destroy();
+
+		table = $('#storedList').DataTable({
+			"data": data,
+			"stateSave": true,
+			"columns": [
+				{ "data": "id", "title": "ID", "width": "5%" },
+				{ "data": "name", "title": "Name", "width": "50%" },
+				{ "data": "view" , "title": "View", "width": "15%", "orderable": false },
+				{ "data": "edit" , "title": "Edit", "width": "15%", "orderable": true },
+				{ "data": "delete" , "title": "Delete", "width": "15%", "orderable": true },
+			],
+			"order": [[ 0, "desc" ]]
+		});
+	}
+
+	makeRequest("GET", cfg.proxy_path+"/evidence/list/"+badgeissuedid, {}, handler);
 }

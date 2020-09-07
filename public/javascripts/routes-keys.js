@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2020 KMi, The Open University UK                                 *
+* Copyright (c) 2019 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -23,37 +23,34 @@
 *                                                                                *
 **********************************************************************************/
 
-var mainBaseURL = "";
-var routesBaseURL = "https:/ioc.kmi.open.ac.uk/";
+/** Author: Michelle Bachler, KMi, The Open University **/
+/** Author: Manoharan Ramachandran, KMi, The Open University **/
+/** Author: Kevin Quick, KMi, The Open University **/
 
-var config = {"path":"./public/docs.html","examples":"./public/examples.txt"}
+var maintitle = "Web Service API - Keys";
 
-var examples = [
-{
-	"routeId": "30",
-	"rows": [{
-		"url": cfg.proxy_path+"/users/signin",
-		"method": "POST",
-		"request": "%7B%22username%22:%22&#60;your%20username&#62;%22,%22password%22:%22&#60;your%20password&#62;%22%7D",
-		"status": 201,
-		"type": "application/json",
-		"response": "%7B%22token%22:%22eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ8.eyJ1c2VyaWQiOjE3LCJ1c2VybmFtZSI6IlJERiBTdG9yZSBUZXN0Iiwi...%22%7D",
-		"id": "1"
-	},{
-		"url": cfg.proxy_path+"/users/signin",
-		"method": "POST",
-		"request": "%7B%22username%22:%22&#60;your%20username&#62;%22,%22password%22:%22&#60;your%20password&#62;%22%7D",
-		"status": 401,
-		"type": "application/json",
-		"response": "%7B%22error%22:%22The%20username%20or%20password%20don't%20match%22%7D",
-		"id": "2"
-	},{
-		"url": cfg.proxy_path+"/users/signin",
-		"method": "POST",
-		"request": "%7B%22username%22:%22&#60;your%20username&#62;%22,%22password%22:%22&#60;your%20password&#62;%22%7D",
-		"status": 404,
-		"type": "application/json",
-		"response": "%7B%22error%22:%22An%20different%20error%20or%20message%22%7D",
-		"id": "3"
-	}]
-}]
+var routes = [
+	{
+		"path": "/public/:id",
+		"description": "Get the Public Key for Signatures for Open Badges.",
+		"params": [
+			{ "name": "issuerid", "description": "Required. The issuer id of the public key you want to get" }
+		],
+		"returns": [
+			{ "name": "@context", "description": "The open badges spec url" },
+			{ "name": "type", "description": "CryptographicKey" },
+			{ "name": "id", "description": "Pulic Key url" },
+			{ "name": "owner", "description": "Issuer profile url" },
+			{ "name": "publicKeyPem", "description": "Public key of issuer" }
+		],
+		"methods": {
+			"get": true
+		},
+		"permissions": ["everyone"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/keys\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/keys/",
+		"id": "330",
+		"regexp": "/\\/public\\/:id(?:\\?.*)?$/",
+		"examplesPresent": false
+	}
+];

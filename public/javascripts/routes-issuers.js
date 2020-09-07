@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -23,108 +23,55 @@
 *                                                                                *
 **********************************************************************************/
 
-/** Author: Michelle Bachler, KMi, The Open University **/
-/** Author: Manoharan Ramachandran, KMi, The Open University **/
-/** Author: Kevin Quick, KMi, The Open University **/
-
 var maintitle = "Web Service API - Issuers";
 var routes = [
 	{
-		"path": "/",
-		"description": "Draws the Issuer home page - if logged in and user has permissions",
+		"path": "/id/:id",
+		"description": "Get an Issuer record by it's record identifier.",
 		"params": [
-			{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"}
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "id", "description": "Required. The identifier of the Issuer record you wish to retrieve" }
 		],
-		"returns" : [],
-		"methods": {
-			"get": true
-		},
-		"prefixRegexp": "/^\\/issuers\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/issuers",
-		"id": "50",
-		"regexp": "/\\/(?:\\?.*)?$/",
-		"examplesPresent": false
-	},
-	{
-		"path": "/manage",
-		"description": "Draws the Manage Issuer's page - if logged in and user has permissions",
-		"params": [
-			{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"}
-		],
-		"returns" : [],
-		"methods": {
-			"get": true
-		},
-		"prefixRegexp": "/^\\/issuers\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/issuers",
-		"id": "51",
-		"regexp": "/\\/manage(?:\\?.*)?$/",
-		"examplesPresent": false
-	},
-	{
-		"path": "/docs",
-		"description": "Draws the Issuer API Documentation page",
-		"params": [],
-		"returns" : [],
-		"methods": {
-			"get": true
-		},
-		"prefixRegexp": "/^\\/issuers\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/issuers",
-		"id": "52",
-		"regexp": "/\\/docs(?:\\?.*)?$/",
-		"examplesPresent": false
-	},
-	{
-		"path": "/id",
-		"description": "Get an Issuer by it's record identifier. Only administrators will be allowed to retrieve Issuer records.",
-		"params": [
-			{"name":"id", "description":"Requires the identifier of the Issuer record you wish to retrieve."},
-			{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"}
-		],
-		"returns" : [
-			{"name":"id", "description":"ID of the Issuer"},
-			{"name":"timecreated", "description":"Time at which the user account was created"},
+		"returns": [
+			{"name":"id", "description":"The record identifier of the Issuer"},
+			{"name":"timecreated", "description":"Time at which the Issuer record was created"},
+			{"name":"uniqueid", "description":"Unique hash identification number used in JSONLD"},
 			{"name":"name", "description":"Name of the Issuer"},
 			{"name":"description", "description":"Description of the Issuer"},
 			{"name":"url", "description":"URL of the website of the Issuer"},
 			{"name":"email", "description":"Email of the Issuer"},
-			{"name":"telephone", "description":"Telephone of the Issuer"},
-			{"name":"imageurl", "description":"Image url of the Issuer"},
-			{"name":"status", "description":"Status of the Issuer"},
+			{"name":"telephone", "description":"Telephone number of the Issuer"},
+			{"name":"imageurl", "description":"URL pointing to a logo / image file for the Issuer"},
+			{"name":"status", "description":"Stauts of a Issuer's associated user account"},
+			{"name":"loginemail", "description": "If an Issuer login account has been created, the email address used." },
+			{"name":"usedInIssuance", "description": "true/false as to whether this Issuer has been used against an issued badge." }
 		],
+		"permissions" : ["super","admin"],
 		"methods": {
-			"post": true
+			"get": true
 		},
-		"prefixRegexp": "/^\\/issuers\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/issuers/",
-		"id": "53",
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/issuers\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/issuers/",
+		"id": "184",
 		"regexp": "/\\/id(?:\\?.*)?$/",
 		"examplesPresent": false
 	},
 	{
 		"path": "/list",
-		"description": "Get a list of all issuer records. Only administrators will be allowed to retrieve Issuer records.",
+		"description": "Get a list of all Issuer records. Only administrators will be allowed to retrieve Issuer records.",
 		"params": [
 			{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"}
 		],
-		"returns" : [
-			{"name":"id", "description":"ID of the Issuers"},
-			{"name":"timecreated", "description":"Time at which the user account was created"},
-			{"name":"name", "description":"Name of the Issuer"},
-			{"name":"description", "description":"Description of the Issuer"},
-			{"name":"url", "description":"URL of the website of the Issuer"},
-			{"name":"email", "description":"Email of the Issuer"},
-			{"name":"telephone", "description":"Telephone of the Issuer"},
-			{"name":"imageurl", "description":"Image url of the Issuer"},
-			{"name":"status", "description":"Status of the Issuer"},
+		"returns": [
+			{ "name": "endorsers", "description": "An array of Issuer records (see route '" + cfg.proxy_path + "/issuers/id:id' for full details of the record structure)" }
 		],
 		"methods": {
-			"post": true
+			"get": true
 		},
-		"prefixRegexp": "/^\\/issuers\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/issuers/",
-		"id": "54",
+		"permissions" : ["super","admin"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/issuers\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/issuers/",
+		"id": "185",
 		"regexp": "/\\/list(?:\\?.*)?$/",
 		"examplesPresent": false
 	},
@@ -132,87 +79,176 @@ var routes = [
 		"path": "/create",
 		"description": "Create a new Issuer - creates a new login account if one does not already exists for the given login email address. Only administrators will be allowed to create new Issuers",
 		"params": [
-			{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"},
-			{"name":"name", "description":"Required. You must include a name for the new Issuer"},
-			{"name":"loginemail", "description":"Required. You must include an email address that can be used as the login for the new Issuer. A verification email will be sent to complete registration."},
-			{"name":"password", "description":"Required. You must include a temporary login password for the new Issuer"},
-			{"name":"url", "description":"Required. You must include a website url for the new Issuer"},
-			{"name":"telephone", "description":"Required. You must include a contact telephone number for the new Issuer"},
-			{"name":"email", "description":"Required. You must include an email address for the new Issuer"},
-			{"name":"description", "description":"Optional. You can include a description for the new Issuer"},
-			{"name":"imageurl", "description":"Optional. You can include an image url for the new Issuer"},
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "name", "description": "Required. A name for the Issuer." },
+			{ "name": "url", "description": "Required. A website url for the Issuer." },
+			{ "name": "email", "description": "Optional. An email address for the Issuer." },
+			{ "name": "telephone", "description": "Optional. A telephone Number for the Issuer." },
+			{ "name": "description", "description": "Optional. A textual description of the Issuer." },
+			{ "name": "imageurl", "description": "Optional. A URL pointing to a logo / image file for the Issuer." }
 		],
-		"returns" : [
-			{"name":"id", "description":"ID of the Issuer"},
-			{"name":"timecreated", "description":"Time at which the Issuer account was created"},
+		"returns": [
+			{"name":"id", "description":"The record identifier of the Issuer"},
+			{"name":"timecreated", "description":"Time at which the Issuer record was created"},
+			{"name":"uniqueid", "description":"Unique hash identification number used in JSONLD"},
 			{"name":"name", "description":"Name of the Issuer"},
 			{"name":"description", "description":"Description of the Issuer"},
 			{"name":"url", "description":"URL of the website of the Issuer"},
 			{"name":"email", "description":"Email of the Issuer"},
-			{"name":"telephone", "description":"Telephone of the Issuer"},
-			{"name":"imageurl", "description":"Image url of the Issuer"},
-			{"name":"status", "description":"Status of the Issuer"},
+			{"name":"telephone", "description":"Telephone number of the Issuer"},
+			{"name":"imageurl", "description":"URL pointing to a logo / image file for the Issuer"},
+			{"name":"status", "description":"Stauts of a Issuer's associated user account"},
+			{"name":"loginemail", "description": "If an Issuer login account has been created, the email address used." },
+			{"name":"usedInIssuance", "description": "true/false as to whether this Issuer has been used against an issued badge." }
 		],
 		"methods": {
 			"post": true
 		},
-		"prefixRegexp": "/^\\/issuers\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/issuers/",
-		"id": "55",
+		"permissions" : ["super","admin"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/issuers\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/issuers/",
+		"id": "186",
 		"regexp": "/\\/create(?:\\?.*)?$/",
 		"examplesPresent": false
 	},
 	{
-		"path": "/update",
-		"description": "Update an existing Issuer record only if it has not been used to issue a badge",
+		"path": "/createuseraccount",
+		"description": "Create a User record entry to allow an Issuer to login to the system.",
 		"params": [
-
-			{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"},
-			{"name":"id", "description":"Required. You must include an id to update an Issuer"},
-			{"name":"name", "description":"Optional. You can update the name of an Issuer"},
-			{"name":"loginemail", "description":"Optional You can update an email address of an Issuer"},
-
-			{"name":"url", "description":"Optional. You can update website url of an Issuer"},
-			{"name":"telephone", "description":"Optional. You can update contact telephone number of an Issuer"},
-			{"name":"email", "description":"Optional. You can update an email address of an Issuer"},
-			{"name":"description", "description":"Optional. You can update description of an Issuer"},
-			{"name":"imageurl", "description":"Optional. You can update imageurl of an Issuer"},
-
-	],
-		"returns" : [
-			{"name":"id", "description":"ID of the updated Issuer"},
-			{"name":"timecreated", "description":"Time at which the Issuer account was created"},
-			{"name":"name", "description":"Name of the Updated Issuer"},
-			{"name":"description", "description":"Description of the Updated Issuer"},
-			{"name":"url", "description":"URL of the website of the Updated Issuer"},
-			{"name":"email", "description":"Email of the Updated Issuer"},
-			{"name":"telephone", "description":"Telephone of the Updated Issuer"},
-			{"name":"imageurl", "description":"Image url of the Updated Issuer"},
-			{"name":"status", "description":"Status of the Updated Issuer"}
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "id", "description": "Required. The record identifier of the Issuer record you want to add a login account for." },
+			{ "name": "loginemail", "description": "Required. An email address to use the the Issuer login account." }
+		],
+		"returns": [
+			{ "name": "id", "description": "The record identifier of the Issuer record that this login account is for." },
+			{ "name": "timecreated", "description": "Time at which the user account was created." },
+			{ "name": "name", "description": "The name of the Issuer used on the Issuer login account record." },
+			{ "name": "email", "description": "The login email address used on the Issuer login account record." },
+			{ "name": "status", "description": "Status of the login account registration process. It will be '0' at this point." }
 		],
 		"methods": {
 			"post": true
 		},
-		"prefixRegexp": "/^\\/issuers\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/issuers/",
-		"id": "56",
+		"permissions" : ["super","admin"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/issuers\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/issuers/",
+		"id": "187",
+		"regexp": "/\\/createuseraccount(?:\\?.*)?$/",
+		"examplesPresent": false
+	},
+	{
+		"path": "/update",
+		"description": "Update an existing Issuer record only if it has not been used to issue a badge.",
+		"params": [
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "id", "description": "Required. You must include an id to update an Issuer" },
+			{ "name": "name", "description": "Optional. A name for the Issuer." },
+			{ "name": "url", "description": "Optional. A website url for the Issuer." },
+			{ "name": "email", "description": "Optional. An email address for the Issuer." },
+			{ "name": "telephone", "description": "Optional. A telephone Number for the Issuer." },
+			{ "name": "description", "description": "Optional. A textual description of the Issuer." },
+			{ "name": "imageurl", "description": "Optional. A URL pointing to a logo / image file for the Issuer." }
+		],
+		"returns": [
+			{"name":"id", "description":"The record identifier of the Issuer"},
+			{"name":"timecreated", "description":"Time at which the Issuer record was created"},
+			{"name":"uniqueid", "description":"Unique hash identification number used in JSONLD"},
+			{"name":"name", "description":"Name of the Issuer"},
+			{"name":"description", "description":"Description of the Issuer"},
+			{"name":"url", "description":"URL of the website of the Issuer"},
+			{"name":"email", "description":"Email of the Issuer"},
+			{"name":"telephone", "description":"Telephone number of the Issuer"},
+			{"name":"imageurl", "description":"URL pointing to a logo / image file for the Issuer"},
+			{"name":"status", "description":"Stauts of a v's associated user account"},
+			{"name":"loginemail", "description": "If an Issuer login account has been created, the email address used." },
+			{"name":"usedInIssuance", "description": "true/false as to whether this Issuer has been used against an issued badge." }
+		],
+		"methods": {
+			"post": true
+		},
+		"permissions" : ["super","admin"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/issuers\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/issuers/",
+		"id": "189",
 		"regexp": "/\\/update(?:\\?.*)?$/",
 		"examplesPresent": false
 	},
 	{
 		"path": "/delete",
-		"description": "Delete an existing Issuer record only if it has not been used to issue a badge",
-		"params": [{"name":"token", "description":"Required. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"},
-		{"name":"id", "description":"Required. You must enter an ID of an Issuer to delete them"}],
-		"returns" : [
-			{"name":"ID", "description":"returns ID of the deleted `Issuer"}
+		"description": "Delete an existing Issuer record only if it has not been used to issue a badge.",
+		"params": [
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "id", "description": "Required. The record identifier of the Issuer you wish to delete." }
+		],
+		"returns": [
+			{ "name": "id", "description": "The record identifier of the Issuer record that was deleted" },
+			{ "name": "status", "description": "A status of -1 to show that the Issuer record was deleted" }
 		],
 		"methods": {
 			"post": true
 		},
-		"prefixRegexp": "/^\\/issuers\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/issuers/",
-		"id": "57",
+		"permissions" : ["super","admin"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/issuers\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/issuers/",
+		"id": "190",
 		"regexp": "/\\/delete(?:\\?.*)?$/",
 		"examplesPresent": false
-	},];
+	},
+	{
+		"path": "/:id",
+		"description": "Get the Issuer Open Badge JSON from the given unique issuer identifier.",
+		"params": [
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "id", "description": "Required. The identifier of the Issuer record you wish to retrieve" }
+		],
+		"returns": [
+			{"name":"@context", "description":"The open badge context url"},
+			{"name":"type", "description":"Issuer"},
+			{"name":"id", "description":"The uri/url representing this issuer"},
+			{"name":"name", "description":"Name of the Issuer"},
+			{"name":"description", "description":"Optional. Description of the Issuer"},
+			{"name":"url", "description":"URL of the website of the Issuer"},
+			{"name":"email", "description":"Email of the Issuer"},
+			{"name":"telephone", "description":"Optional. Telephone number of the Issuer"},
+			{"name":"imageurl", "description":"URL pointing to a logo / image file for the Issuer"}
+		],
+		"permissions" : ["everyone"],
+		"methods": {
+			"get": true
+		},
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/issuers\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/issuers/",
+		"id": "185",
+		"regexp": "/\\/:id(?:\\?.*)?$/",
+		"examplesPresent": false
+	},
+	{
+		"path": "/hosted/:id",
+		"description": "Get the hosted Issuer Open Badge JSON from the given unique issuer identifier.",
+		"params": [
+			{ "name": "id", "description": "Required. the Issuer unique identifier." }
+		],
+		"returns": [
+			{"name":"@context", "description":"The open badge context url"},
+			{"name":"type", "description":"Issuer"},
+			{"name":"id", "description":"The uri/url representing this issuer"},
+			{"name":"name", "description":"Name of the Issuer"},
+			{"name":"description", "description":"Optional. Description of the Issuer"},
+			{"name":"url", "description":"URL of the website of the Issuer"},
+			{"name":"email", "description":"Email of the Issuer"},
+			{"name":"telephone", "description":"Optional. Telephone number of the Issuer"},
+			{"name":"imageurl", "description":"URL pointing to a logo / image file for the Issuer"},
+			{"name":"verification", "description":"hosted"},
+			{"name":"publicKey", "description":"The public key url of this issuer"},
+		],
+		"permissions" : ["everyone"],
+		"methods": {
+			"get": true
+		},
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/issuers\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/issuers/",
+		"id": "186",
+		"regexp": "/\\/hosted\\/:id(?:\\?.*)?$/",
+		"examplesPresent": false
+	}
+];

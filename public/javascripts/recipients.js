@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -23,15 +23,12 @@
 *                                                                                *
 **********************************************************************************/
 
-/** Author: Michelle Bachler, KMi, The Open University **/
-/** Author: Manoharan Ramachandran, KMi, The Open University **/
-/** Author: Kevin Quick, KMi, The Open University **/
-
 var DATE_FORMAT = 'd mmm yyyy';
 var TIME_FORMAT = 'd/m/yy - H:MM';
 var DATE_FORMAT_PHASE = 'd mmm yyyy H:MM';
 
 var badges = [];
+var table = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     getPortfolioList();
@@ -48,76 +45,62 @@ function getPortfolioList(){
 	makeRequest("GET", cfg.proxy_path+"/assertions/portfolio", {}, handler);
 }
 
-function drawPortofilioList(response) {
+function drawPortofilioList(response){
 
-	var thediv = document.getElementById('portfoilioList');
-	console.log(response.items.length);
-	if (response.items.length == 0) {
-		thediv.innerHTML = "Currently you have no stored Badge records";
-	} else {
+	organizations = {}
+	var data = new Array();
 
+	if ( response && response.items && response.items.length > 0 ) {
 		badges = response.items;
-
-		var html = '<center><table style="width:100%;line-height:120%;font-size: 14px; border: 1px solid grey; padding: 6px;color:black;">';
-		html += '<tr>';
-		html += '<th style="background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;">Image</th>';
-		html += '<th style="background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;">Issuer</th>';
-		html += '<th style="background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;">Issued On</th>';
-		html += '<th style="background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;">Title</th>';
-		//html += '<th style="background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;">Description</th>';
-		html += '<th style="background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;">View</th>';
-		html += '<th style="background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;">Download</th>';
-		html += '</tr>';
-		var temp=0;
 
 		for (i = 0; i < badges.length; i++) {
 
 			var next  = badges[i];
 
-			html += '<tr>';
+			data[i] = {};
 
-			html += '<td style="padding: 6px; border: 1px solid grey;">';
-			html += '<img src="'+next.imageurl+'" height="50" />';
-			html += '</td>';
+			data[i].id = next.id;
 
-			html += '<td style="padding: 6px; border: 1px solid grey;">';
-			html += next.issuer;
-			html += '</td>';
-
-			html += '<td style="padding: 6px; border: 1px solid grey;">';
+			data[i].image = '<center><img src="'+next.imageurl+'" height="50" /></center>';
+			data[i].issuer = next.issuer;
 
 			var cDate = new Date(next.issuedon*1000);
 			var nicedate = cDate.format(DATE_FORMAT);
+			data[i].issued = nicedate;
 
-			html += nicedate;
-			html += '</td>';
+			data[i].title = next.title;
 
-			html += '<td style="padding: 6px; border: 1px solid grey;">';
-			html += next.title;
-			html += '</td>';
-
-			//html += '<td style="padding: 6px; border: 1px solid grey;">';
-			//html += next.description;
-			//html += '</td>';
-
-			html += '<td style="padding: 6px; border: 1px solid grey;align:center">';
-			html += '<button style="min-height:30px;" onclick="viewFile('+next.id+');">View</button>'
-			html += '</td>';
-
-			html += '<td style="padding: 6px; border: 1px solid grey;align:center">';
-			html += '<button style="min-height:30px;" onclick="downloadFile('+next.id+');">Download</button>'
-			html += '</td>';
+			data[i].view = '<center><button style="min-height:30px;" onclick="viewFile('+next.id+');">View</button></center>';
 
 
-			html += "</tr>";
-			temp = i;
+			if (next.status == 'revoked') {
+				data[i].downloadb = 'Badge Revoked';
+				data[i].downloadt = 'Badge Revoked';
+			} else {
+				data[i].downloadb = '<center><button style="min-height:30px;" onclick="downloadFile('+next.id+');">Download</button></center>';
+				data[i].downloadt = '<center><button style="min-height:30px;" onclick="downloadFileHosted(\''+next.uniqueid+'\');">Download</button></center>';
+			}
 		}
-
-		html += "</table></center> <br> <br>";
-		thediv.innerHTML = html;
 	}
-}
 
+	if (table != null) table.destroy();
+
+	table = $('#storedList').DataTable({
+		"data": data,
+		"stateSave": true,
+		"columns": [
+		 	{ "data": "id", 'visible': false, 'type': 'num' },
+			{ "data": "image", "title": "Image", "width": "10%" },
+			{ "data": "issuer", "title": "Issuer", "width": "15%" },
+			{ "data": "issued" , "title": "Issued", "width": "15%", "orderable": false },
+			{ "data": "title" , "title": "Title", "width": "30%", "orderable": true },
+			{ "data": "view" , "title": "View", "width": "10%", "orderable": true },
+			{ "data": "downloadb" , "title": "Blockchain</br>Verified", "width": "10%", "orderable": true },
+			{ "data": "downloadt" , "title": "Traditionally</br>Verified", "width": "10%", "orderable": true },
+		],
+		"order": [[ 0, "desc" ]]
+	});
+}
 
 function viewFile(id) {
 	window.open( cfg.proxy_path+"/assertions/view/"+id, "View Badge");
@@ -136,6 +119,21 @@ function downloadFile(id) {
 	//var properties = {};
 	//properties.id = id;
 	makeRequestDownload("GET", cfg.proxy_path+"/assertions/download/"+id, {}, handler);
+}
+
+function downloadFileHosted(id) {
+
+	var handler = function(response) {
+		if (response.error) {
+			showError(response);
+		} else {
+			//console.log(response);
+		}
+	}
+
+	//var properties = {};
+	//properties.id = id;
+	makeRequestDownload("GET", cfg.proxy_path+"/assertions/downloadhosted/"+id, {}, handler);
 }
 
 function makeRequestDownload(method, path, properties, handler) {

@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -23,11 +23,8 @@
 *                                                                                *
 **********************************************************************************/
 
-/** Author: Michelle Bachler, KMi, The Open University **/
-/** Author: Manoharan Ramachandran, KMi, The Open University **/
-/** Author: Kevin Quick, KMi, The Open University **/
-
 var alignments = {};
+var table = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     initializePage();
@@ -153,7 +150,7 @@ function editAlignment(alignmentid) {
 	editform.name.value = alignment.name;
 	editform.url.value = alignment.url;
 	editform.description.value = alignment.description;
-	editform.code.value = alignment.framework;
+	editform.code.value = alignment.code;
 	editform.framework.value = alignment.framework;
 
 	document.getElementById('viewDiv').style.display = "none";
@@ -170,7 +167,7 @@ function viewAlignment(alignmentid) {
 	viewform.name.value = alignment.name;
 	viewform.url.value = alignment.url;
 	viewform.description.value = alignment.description;
-	viewform.code.value = alignment.framework;
+	viewform.code.value = alignment.code;
 	viewform.framework.value = alignment.framework;
 
 	document.getElementById('createDiv').style.display = "none";
@@ -193,7 +190,6 @@ function deleteAlignment(alignmentid) {
 				clearCreateForm(); // in case it was open
 				cancelEditForm(); // in case it was open
 				updateList();
-				alert("The alignment record has been deleted");
 			}
 		}
 
@@ -209,65 +205,51 @@ function updateList(){
 
 	var handler = function(response) {
 
-		var thediv =document.getElementById('storedList');
-		thediv.innerHTML = "";
 		alignments = {}
+		var data = new Array();
 
-		if ( !response || !response.alignments || (response.alignments && response.alignments.length == 0) ) {
-			thediv.innerHTML = "You have not added any alignments yet";
-		} else {
-			// clear global variable
+		if ( response && response.alignments && response.alignments.length > 0 ) {
 
-			var html = "<center><table style='width:100%;line-height:120%;font-size: 14px;'>";
-			html += "<tr>";
-
-			html += '<th width="15%" style="background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;">ID</th>';
-			html += '<th width="40%" style="background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;">Name</th>';
-			html += '<th width="15%" style="background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;">View</th>';
-			html += '<th width="15%" style="background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;">Edit</th>';
-			html += '<th width="15%" style="background-color: lightgrey; padding: 6px; border: 1px solid grey; text-align: center;">Delete</th>';
-
-			html += "</tr>";
 			for (i = 0; i < response.alignments.length; i++) {
 
 				// store to global list by id
 				alignments[response.alignments[i].id] = response.alignments[i]
 
-				html += "<tr>";
+				data[i] = {};
 
-				html += "<td style='padding: 6px; border: 1px solid grey;'>";
-				html += response.alignments[i].id;
-				html += "</td>";
+				data[i].id = response.alignments[i].id;
+				data[i].name = response.alignments[i].name;
 
-				html += "<td style='padding: 6px; border: 1px solid grey;'>";
-				html += response.alignments[i].name;
-				html += "</td>";
+				data[i].view = '<center><button class="sbut" title="View" onclick="viewAlignment(\''+response.alignments[i].id+'\');"><img src="'+cfg.proxy_path+'/images/issuing_buttons/view.png" /></button></center>';
 
-				html += '<td style="padding: 6px; border: 1px solid grey;">';
-				html += '<center><button class="sbut" title="View" onclick="viewAlignment(\''+response.alignments[i].id+'\');"><img src="'+cfg.proxy_path+'/badges/images/issuing_buttons/view.png" /></button></center>';
-				html += '</td>';
-
-				html += '<td style="padding: 6px; border: 1px solid grey;">';
 				if (response.alignments[i].usedInIssuance === false) {
-					html += '<center><button class="sbut" title="Edit" onclick="editAlignment(\''+response.alignments[i].id+'\');"><img src="'+cfg.proxy_path+'/badges/images/issuing_buttons/edit.png" /></button></center>';
+					data[i].edit = '<center><button class="sbut" title="Edit" onclick="editAlignment(\''+response.alignments[i].id+'\');"><img src="'+cfg.proxy_path+'/images/issuing_buttons/edit.png" /></button></center>';
 				} else {
-					html += '<center>Used</center>';
+					data[i].edit = '<center>Used</center>';
 				}
-				html += '</td>';
 
-				html += '<td style="padding: 6px; border: 1px solid grey;">';
 				if (response.alignments[i].usedInIssuance === false) {
-					html += '<center><button class="sbut" title="Delete" onclick="deleteAlignment(\''+response.alignments[i].id+'\');"><img src="'+cfg.proxy_path+'/badges/images/issuing_buttons/delete.png" /></button></center>';
+					data[i].delete = '<center><button class="sbut" title="Delete" onclick="deleteAlignment(\''+response.alignments[i].id+'\');"><img src="'+cfg.proxy_path+'/images/issuing_buttons/delete.png" /></button></center>';
 				} else {
-					html += '<center>Used</center>';
+					data[i].delete = '<center>Used</center>';
 				}
-				html += '</td>';
-
-				html += "</tr>";
 			}
-			html += "</table></center> <br> <br>";
-			thediv.innerHTML = html;
 		}
+
+		if (table != null) table.destroy();
+
+		table = $('#storedList').DataTable({
+			"data": data,
+			"stateSave": true,
+			"columns": [
+				{ "data": "id", "title": "ID", "width": "5%" },
+				{ "data": "name", "title": "Name", "width": "50%" },
+				{ "data": "view" , "title": "View", "width": "15%", "orderable": true },
+				{ "data": "edit" , "title": "Edit", "width": "15%", "orderable": true },
+				{ "data": "delete" , "title": "Delete", "width": "15%", "orderable": true },
+			],
+			"order": [[ 0, "desc" ]]
+		});
 	}
 
 	makeRequest("GET", cfg.proxy_path+"/alignments/list", {}, handler);

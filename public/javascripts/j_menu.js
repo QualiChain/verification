@@ -84,15 +84,20 @@ function showname() {
 	var loginarea = document.getElementById('loginarea');
 	var loggedin = false;
 
-	if (document.cookie.split(';').filter((item) => item.trim().startsWith('token=')).length) {
-		var result = document.cookie.split(';').filter((item) => item.trim().startsWith('token='));
-		if (result != "") {
-			if (document.cookie.split(';').filter((item) => item.trim().startsWith('displayname=')).length) {
-				var result = document.cookie.split(';').filter((item) => item.trim().startsWith('displayname='));
-				loggedin = true;
-				loginarea.innerHTML = "sign out: "+result[0].substr(13);
-				loginarea.onclick = signout;
-				return;
+	if (!(document.cookie === null)) {
+		if (document.cookie.split(';').filter((item) => item.trim().startsWith('token=')).length) {
+			var result = document.cookie.split(';').filter((item) => item.trim().startsWith('token='));
+			if (result != "") {
+				if (document.cookie.split(';').filter((item) => item.trim().startsWith('displayname=')).length) {
+					var result = document.cookie.split(';').filter((item) => item.trim().startsWith('displayname='));
+					loggedin = true;
+					loginarea.innerHTML = "sign out: "+result[0].substr(13);
+					loginarea.onclick = signout;
+
+					// show change password link
+					document.getElementById('changepasswordarea').style.display = "block";
+					return;
+				}
 			}
 		}
 	}
@@ -100,6 +105,9 @@ function showname() {
 	if (!loggedin) {
 		loginarea.onclick = signinpage;
 		loginarea.innerHTML = "sign in";
+
+		// hide change password link
+		document.getElementById('changepasswordarea').style.display = "none";
 	}
 }
 
@@ -116,25 +124,36 @@ function j_menuonload(){
 
 	html += '<a class="j_menulink" onclick="jl_menulink(\''+cfg.proxy_path+'/\')">Home</a><br>';
 
-	// logged in pages - depending on your role(s).
-	if (roles.includes("issuer")) {
-		html += '<a class="j_menulink" onclick="jl_menulink(\''+cfg.proxy_path+'/issuers/\')">Issuers</a><br>';
-		html += '<a class="j_menulink" onclick="jl_menulink(\''+cfg.proxy_path+'/merkle/\')">My RDF Store</a><br>';
-	}
-	if (roles.includes("recipient")) {
-		html += '<a class="j_menulink" onclick="jl_menulink(\''+cfg.proxy_path+'/badges/portfolio/\')">Badge Portfolios</a><br>';
-		html += '<a class="j_menulink" onclick="jl_menulink(\''+cfg.proxy_path+'/merkle/\')">My RDF Store</a><br>';
-	}
 	if (roles.includes("admin")) {
 		html += '<a class="j_menulink" onclick="jl_menulink(\''+cfg.proxy_path+'/admin/\')">Admin</a><br>';
 		html += '<a class="j_menulink" onclick="jl_menulink(\''+cfg.proxy_path+'/merkle/\')">My RDF Store</a><br>';
+		// set extra height for the menu
+		document.getElementById("j_menu").style.height= "510px";
+		document.getElementById("j_menu").style.top= "-515px"; /* allow for shadow */
+	} else {
+		html += '<a class="j_menulink" onclick="jl_menulink(\''+cfg.proxy_path+'/merkle/\')">My RDF Store</a><br>';
+		// set standard height for the menu
+		document.getElementById("j_menu").style.height= "470px";
+		document.getElementById("j_menu").style.top= "-475px"; /* allow for shadow */
 	}
 
-	// Public pages
-	html += '<a class="j_menulink" onclick="jl_menulink(\''+cfg.proxy_path+'/badges/validation/\')">Validate a Badge</a><br>';
-	html += '<a class="j_menulink" onclick="jl_menulink(\''+cfg.proxy_path+'/badges/issuedbadges/\')">View QualiChain Badges</a><br>';
-	html += '<a class="j_menulink" onclick="jl_menulink(\'http://ioc.kmi.open.ac.uk/\')">SFIA</a><br>';
-	html += '<a class="j_menulink" onclick="jl_menulink(\''+cfg.proxy_path+'/docindex/\')">API Documentation</a><br>';
+	// logged in pages - depending on your role(s).
+
+	if (roles.includes("issuer")) {
+		html += '<a class="j_menulink" onclick="jl_menulink(\''+cfg.proxy_path+'/issuers/\')">Educators</a><br>';
+	} else {
+		html += '<a class="j_menulink" onclick="jl_menulink(\''+cfg.proxy_path+'/badges/educators/\')">Educators</a><br>';
+	}
+	html += '<a class="j_menusublink" onclick="jl_menulink(\'' + cfg.proxy_path + '/issuers/information/\')">Issuer Documentation</a><br>';
+	if (roles.includes("recipient")) {
+		html += '<a class="j_menulink" onclick="jl_menulink(\''+cfg.proxy_path+cfg.badges_path+'/portfolio/\')">Learners</a><br>';
+	} else {
+		html += '<a class="j_menulink" onclick="jl_menulink(\''+cfg.proxy_path+'/recipients/information\')">Learners</a><br>';
+	}
+	html += '<a class="j_menulink" onclick="jl_menulink(\''+cfg.proxy_path+cfg.badges_path+'/validation/\')">Validate a Badge</a><br>';
+	html += '<a class="j_menulink" onclick="jl_menulink(\''+cfg.proxy_path+cfg.badges_path+'/claims/\')">Claim a Badge</a><br>';
+	html += '<a class="j_menulink" onclick="jl_menulink(\''+cfg.proxy_path+cfg.badges_path+'/badgetypespage/\')">IoC Endorsed Badge Types</a><br>';
+	html += '<a class="j_menulink" onclick="jl_menulink(\''+cfg.proxy_path+cfg.badges_path+'/docindex/\')">API Documentation</a><br>';
 	html += '<a class="j_menulink" onclick="jl_menulink(\''+cfg.proxy_path+'/privacy/\')">Privacy</a><br>';
 
 	document.getElementById("j_menu").innerHTML = html;

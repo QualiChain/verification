@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -23,11 +23,8 @@
 *                                                                                *
 **********************************************************************************/
 
-/** Author: Michelle Bachler, KMi, The Open University **/
-/** Author: Manoharan Ramachandran, KMi, The Open University **/
-/** Author: Kevin Quick, KMi, The Open University **/
-
 var endorsers = {};
+var table = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     initializePage();
@@ -41,10 +38,9 @@ function createEndorserAccount(endorserid) {
 	var endorser = endorsers[endorserid];
 
 	var loginemail = prompt("Please enter the email address for the account login", "");
-	if (loginemail != null) {
-		console.log(loginemail);
+	if (loginemail !== null) {
 
-		if (loginemail != "" && !isValidEmail(loginemail)) {
+		if (loginemail == "" || !isValidEmail(loginemail)) {
 			alert("Please enter a valid login email for this endorser");
 			return;
 		}
@@ -66,11 +62,7 @@ function createEndorserAccount(endorserid) {
 			send.id = endorserid;
 			send.loginemail = loginemail;
 			makeRequest("POST", cfg.proxy_path+"/endorsers/createuseraccount", send, handler);
-		} else {
-		  // do nothing
 		}
-	} else {
-		alert("You must enter an email address to use for this Endorser Account");
 	}
 }
 
@@ -280,101 +272,83 @@ function updateList(){
 
 	var handler = function(response) {
 
-		var thediv = document.getElementById('storedList');
-		thediv.innerHTML = "";
 		endorsers = {}
+		var data = new Array();
 
-		if ( !response || !response.endorsers || (response.endorsers && response.endorsers.length == 0) ) {
-			thediv.innerHTML = "Currently you have no stored Endorsers records";
-		} else {
-			// clear global variable
-
-			var html = "<center><table style='width:100%;line-height:120%;font-size: 14px;'>";
-			html += '<tr>';
-			html += '<th width="5%" class="tableheader">ID</th>';
-			html += '<th width="30%" class="tableheader">Image</th>';
-			html += '<th width="20%" class="tableheader">Name</th>';
-			html += '<th width="10%" class="tableheader">View</th>';
-			html += '<th width="10%" class="tableheader">Edit</th>';
-			html += '<th width="10%" class="tableheader">Delete</th>';
-			html += '<th width="15%" class="tableheader">User Account</th>';
-			html += '</tr>';
+		if ( response && response.endorsers && response.endorsers.length > 0 ) {
 
 			for (i = 0; i < response.endorsers.length; i++) {
 
 				// store to global list by id
 				endorsers[response.endorsers[i].id] = response.endorsers[i]
 
-				html += "<tr>";
+				data[i] = {};
+				data[i].id = response.endorsers[i].id;
 
-				html += "<td style='padding: 6px; border: 1px solid grey;'>";
-				html += response.endorsers[i].id;
-				html += "</td>";
-
-				html += '<td style="padding: 6px; border: 1px solid grey;">';
 				if (response.endorsers[i].imageurl && response.endorsers[i].imageurl != "") {
-					html += '<img height="50"; src="'+response.endorsers[i].imageurl+'"/>';
+					data[i].image = '<img height="50"; src="'+response.endorsers[i].imageurl+'"/>';
 				} else {
-					html += '&nbsp';
+					data[i].image = ' ';
 				}
-				html += '</td>';
 
-				html += "<td style='padding: 6px; border: 1px solid grey;'>";
-				html += response.endorsers[i].name;
-				html += "</td>";
+				data[i].name = response.endorsers[i].name;
 
-				html += '<td style="padding: 6px; border: 1px solid grey;">';
-				html += '<center><button class="sbut" title="View" onclick="viewEndorser(\''+response.endorsers[i].id+'\');"><img src="'+cfg.proxy_path+'/badges/images/issuing_buttons/view.png" /></button></center>';
-				html += '</td>';
+				data[i].view = '<center><button class="sbut" title="View" onclick="viewEndorser(\''+response.endorsers[i].id+'\');"><img src="'+cfg.proxy_path+'/images/issuing_buttons/view.png" /></button></center>';
 
-				html += '<td style="padding: 6px; border: 1px solid grey;">';
 				if (response.endorsers[i].usedInIssuance === false) {
-					html += '<center><button class="sbut" title="Edit" onclick="editEndorser(\''+response.endorsers[i].id+'\');"><img src="'+cfg.proxy_path+'/badges/images/issuing_buttons/edit.png" /></button></center>';
+					data[i].edit = '<center><button class="sbut" title="Edit" onclick="editEndorser(\''+response.endorsers[i].id+'\');"><img src="'+cfg.proxy_path+'/images/issuing_buttons/edit.png" /></button></center>';
 				} else {
-					html += '<center>Used</center>';
+					data[i].edit = '<center>Used</center>';
 				}
-				html += '</td>';
 
 				var status = parseInt(response.endorsers[i].status);
 
-				html += '<td style="padding: 6px; border: 1px solid grey;">';
 				if (response.endorsers[i].usedInIssuance === true) {
-					html += '<center>Used</center>';
+					data[i].delete = '<center>Used</center>';
 				} else if (response.endorsers[i].usedInIssuance === false && status == -1) {
-					html += '<center><button class="sbut" title="Delete" onclick="deleteEndorser(\''+response.endorsers[i].id+'\');"><img src="'+cfg.proxy_path+'/badges/images/issuing_buttons/delete.png" /></button></center>';
+					data[i].delete = '<center><button class="sbut" title="Delete" onclick="deleteEndorser(\''+response.endorsers[i].id+'\');"><img src="'+cfg.proxy_path+'/images/issuing_buttons/delete.png" /></button></center>';
 				} else if (response.endorsers[i].usedInIssuance === false && status != -1) {
-					html += '<center>Account Exists</center>';
+					data[i].delete = '<center>Account Exists</center>';
 				} else {
-					html += "Unavailable";
+					data[i].delete = "Unavailable";
 				}
-				html += '</td>';
 
-				html += "<td style='padding: 6px; border: 1px solid grey;'>";
 				if (status == -1) {
-					html += '<div class="accountstatus" title="Create an login Account for this Issuer. You will be asked to enter an email address for this account. An email will then be sent to complete registration"><img src="'+cfg.proxy_path+'/badges/images/red-light.png" width="16" /><button class="smallsubbut" style="margin-left:10px" onclick="createEndorserAccount(\''+response.endorsers[i].id+'\');">Create Account</button>';
+					data[i].useraccount = '<div class="accountstatus" title="Create an login Account for this Issuer. You will be asked to enter an email address for this account. An email will then be sent to complete registration"><img src="'+cfg.proxy_path+'/images/red-light.png" width="16" /><button class="smallsubbut" style="margin-left:10px" onclick="createEndorserAccount(\''+response.endorsers[i].id+'\');">Create Account</button>';
 				} else if (status == 0) {
 					if (response.endorsers[i].login) {
-						html += '<div class="accountstatus" title="Registration Pending"><img src="/badges/images/yellow-light.png" width="16" /><span style="padding-left:10px;">'+response.endorsers[i].login+'</span></div>';
+						data[i].useraccount = '<div class="accountstatus" title="Registration Pending"><img src="'+cfg.proxy_path+'/images/yellow-light.png" width="16" /><span style="padding-left:10px;">'+response.endorsers[i].login+'</span></div>';
 					} else {
-						html += '<div class="accountstatus"><img src="'+cfg.proxy_path+'/badges/images/yellow-light.png" width="16" /><span style="padding-left:10px;">Requested</span></div>';
+						data[i].useraccount = '<div class="accountstatus"><img src="'+cfg.proxy_path+'/images/yellow-light.png" width="16" /><span style="padding-left:10px;">Requested</span></div>';
 					}
 				} else if (status == 1) {
 					if (response.endorsers[i].login) {
-						html += '<div class="accountstatus" title="Registration Complete"><img style="vertical-align:middle" src="'+cfg.proxy_path+'/badges/images/green-light.png" width="16" /><span style="padding-left:10px;">'+response.endorsers[i].login+'</span></div>';
+						data[i].useraccount = '<div class="accountstatus" title="Registration Complete"><img style="vertical-align:middle" src="'+cfg.proxy_path+'/images/green-light.png" width="16" /><span style="padding-left:10px;">'+response.endorsers[i].login+'</span></div>';
 					} else {
-						html += '<div class="accountstatus"><img src="'+cfg.proxy_path+'/badges/images/green-light.png" width="16" /><span style="padding-left:10px;">Registered</span></div>';
+						data[i].useraccount = '<div class="accountstatus"><img src="'+cfg.proxy_path+'/images/green-light.png" width="16" /><span style="padding-left:10px;">Registered</span></div>';
 					}
 				} else {
-					html += "Unknown";
+					data[i].useraccount = "Unknown";
 				}
-				html += "</td>";
-
-				html += "</tr>";
 			}
-			html += "</table><center><br> <br>";
-			thediv.innerHTML = html;
 		}
-	}
 
-	makeRequest("GET", "/endorsers/list", {}, handler);
+		if (table != null) table.destroy();
+
+		table = $('#storedList').DataTable({
+			"data": data,
+			"stateSave": true,
+			"columns": [
+				{ "data": "id", "title": "ID", "width": "5%" },
+				{ "data": "image", "title": "Image", "width": "20%", "orderable": false },
+				{ "data": "name", "title": "Name", "width": "30%" },
+				{ "data": "view" , "title": "View", "width": "10%" , "orderable": false},
+				{ "data": "edit" , "title": "Edit", "width": "10%" , "orderable": true},
+				{ "data": "delete" , "title": "Delete", "width": "10%" , "orderable": true},
+				{ "data": "useraccount" , "title": "Delete", "width": "15%" },
+			],
+			"order": [[ 0, "desc" ]]
+		});    	}
+
+	makeRequest("GET", cfg.proxy_path+"/endorsers/list", {}, handler);
 }

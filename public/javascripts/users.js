@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -22,10 +22,6 @@
 * THE SOFTWARE.                                                                  *
 *                                                                                *
 **********************************************************************************/
-
-/** Author: Michelle Bachler, KMi, The Open University **/
-/** Author: Manoharan Ramachandran, KMi, The Open University **/
-/** Author: Kevin Quick, KMi, The Open University **/
 
 function forgotpassword(protocol, domain, path) {
 
@@ -83,7 +79,7 @@ function changepassword(protocol, domain, path) {
 				if (path.includes("endorsers")) {
 					location.href = protocol+"://"+domain+cfg.proxy_path+"/endorsers";
 				} else if (path.includes("recipients")) {
-					location.href = protocol+"://"+domain+cfg.proxy_path+"/portfolio";
+					location.href = protocol+"://"+domain+cfg.proxy_path+cfg.badges_path+"/portfolio";
 				} else if (path.includes("issuers")) {
 					location.href = protocol+"://"+domain+cfg.proxy_path+"/issuers";
 				} else {
@@ -128,8 +124,6 @@ function signin(protocol, domain, path, queryobj) {
 			var roles = ""
 			if (response.roles != undefined) roles = response.roles;
 
-			console.log(response);
-
 			if (token != "") {
 				var d = new Date();
 				// 6 hour expiry
@@ -152,7 +146,7 @@ function signin(protocol, domain, path, queryobj) {
 				if (roles == "issuer") {
 					location.href = protocol+"://"+domain+cfg.proxy_path+"/issuers";
 				} else if (roles == "recipient") {
-					location.href = protocol+"://"+domain+cfg.proxy_path+"/portfolio";
+					location.href = protocol+"://"+domain+cfg.proxy_path+cfg.badges_path+"/portfolio";
 				} else if (roles == "endorser") {
 					location.href = protocol+"://"+domain+cfg.proxy_path+"/endorsers";
 				} else {

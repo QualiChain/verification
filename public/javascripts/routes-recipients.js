@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -23,172 +23,376 @@
 *                                                                                *
 **********************************************************************************/
 
-/** Author: Michelle Bachler, KMi, The Open University **/
-/** Author: Manoharan Ramachandran, KMi, The Open University **/
-/** Author: Kevin Quick, KMi, The Open University **/
-
 var maintitle = "Web Service API - Recipients";
 var routes = [
 	{
-		"path": "/",
-		"description": "Draws the Recipients home page - if logged in and user has permissions",
-		"params": [
-			{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"}
-		],
-		"returns" : [],
-		"methods": {
-			"get": true
-		},
-		"prefixRegexp": "/^\\/recipients\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/recipients",
-		"id": "10",
-		"regexp": "/\\/(?:\\?.*)?$/",
-		"examplesPresent": false
-	},
-	{
-		"path": "/manage",
-		"description": "Draws the Manage Recipients's page - if logged in and user has permissions",
-		"params": [
-			{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"}
-		],
-		"returns" : [],
-		"methods": {
-			"get": true
-		},
-		"prefixRegexp": "/^\\/recipients\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/recipients",
-		"id": "11",
-		"regexp": "/\\/manage(?:\\?.*)?$/",
-		"examplesPresent": false
-	},
-	{
-		"path": "/docs",
-		"description": "Draws the Recipient API Documentation page",
-		"params": [],
-		"returns" : [],
-		"methods": {
-			"get": true
-		},
-		"prefixRegexp": "/^\\/recipients\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/recipients",
-		"id": "12",
-		"regexp": "/\\/docs(?:\\?.*)?$/",
-		"examplesPresent": false
-	},
-	{
-		"path": "/id",
-		"description": "Get a Recipient by it's record identifier. Only administrators and Issuers will be allowed to retrieve Recipients records.",
-		"params": [
-			{"name":"id", "description":"Requires the identifier of the Recipient record you wish to retrieve."},
-			{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"}
-		],
-		"returns" : [{"name":"passed", "description":"returns true or false if the badged passed validation or not, or error"}],
-		"methods": {
-			"post": true
-		},
-		"prefixRegexp": "/^\\/recipients\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/recipients",
-		"id": "13",
-		"regexp": "/\\/create(?:\\?.*)?$/",
-		"examplesPresent": false
-    },
-    {
-		"path": "/uniqueid/:id",
-		"description": "Get a Recipient by it's unique identifier. Only administrators and Issuers will be allowed to retrieve Recipients records.",
-		"params": [
-			{"name":"uniqueid", "description":"Requires the unique identifier of the Recipient record you wish to retrieve."},
-			{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"}
-		],
-		"returns" : [{"name":"passed", "description":"returns true or false if the badged passed validation or not, or error"}],
-		"methods": {
-			"post": true
-		},
-		"prefixRegexp": "/^\\/recipients\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/recipients",
-		"id": "14",
-		"regexp": "/\\/create(?:\\?.*)?$/",
-		"examplesPresent": false
-	},
-	{
 		"path": "/list",
-		"description": "Get a list of all Recepient records. Only administrators and Issuers will be allowed to retrieve Recepients records.",
+		"description": "Get a list of all Recipient records for the currently logged in user (issuer).",
 		"params": [
-			{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"}
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" }
 		],
-		"returns" : [{"name":"passed", "description":"returns true or false if the badged passed validation or not, or error"}],
+		"returns": [
+			{ "name": "recipients", "description": "An array of Recipient records (see route '"+cfg.proxy_path+"/recipients/id/:id' for more details of record structure)" }
+		],
 		"methods": {
-			"post": true
+			"get": true
 		},
-		"prefixRegexp": "/^\\/recipients\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/recipients/",
-		"id": "15",
+		"permissions": ["issuer"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/recipients\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/recipients/",
+		"id": "224",
 		"regexp": "/\\/list(?:\\?.*)?$/",
 		"examplesPresent": false
 	},
 	{
-		"path": "/create",
-		"description": "Create a new Recepient - creates a new login account if one does not already exists for the given login email address. Only administrators will be allowed to create new Recepients",
+		"path": "/uniqueid/:id",
+		"description": "Get an Recipient record by the issuer's unique identifier for the Recipient.",
 		"params": [
-			{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"},
-			{"name":"name", "description":"Required. You must include a name for the new Recepient"},
-			{"name":"email", "description":"Required. You must include an email address for the new Recepient"},
-			{"name":"uniqueid", "description":"Optional. You can include an unique id for the new Recepient"},
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "uniqueid", "description": "Required. The issuer unique identifier of the Recipient you wish to retrieve." }
 		],
-		"returns" : [
-			{"name":"id", "description":"ID of the Recipient"},
-			{"name":"timecreated", "description":"Time in which the Recipient account is created"},
-			{"name":"name", "description":"Name of the Recipient"},
-			{"name":"email", "description":"Email of the Recipient"},
-			{"name":"uniqueid", "description":"Unique ID of the Recipient"},
-			{"name":"status", "description":"Status of the Recipient"},
-
+		"returns": [
+			{"name":"id", "description": "The record indentifier of the Recipient record" },
+			{"name":"timecreated", "description": "Time at which the Recipient record was created" },
+			{"name":"name", "description": "Name of the Recipient" },
+			{"name":"email", "description": "Email address of the Recipient" },
+			{"name":"encodedemail", "description": "Encodedemail email address of the Recipient" },
+			{"name":"uniqueid", "description": "Unique Isser identifier for the Recipient" },
+			{"name":"status", "description":"Status of a Recipients's associated user account"},
+		],
+		"methods": {
+			"get": true
+		},
+		"permissions": ["issuer"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/recipients\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/recipients",
+		"id": "225",
+		"regexp": "/\\/uniqueid\\/:id(?:\\?.*)?$/",
+		"examplesPresent": false
+	},
+	{
+		"path": "/id/:id",
+		"description": "Get an Recipient record by it's record identifier.",
+		"params": [
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "id", "description": "Required. The identifier of the Recipient record you wish to retrieve." }
+		],
+		"returns": [
+			{"name":"id", "description": "The record indentifier of the Recipient record" },
+			{"name":"timecreated", "description": "Time at which the Recipient record was created" },
+			{"name":"name", "description": "Name of the Recipient" },
+			{"name":"email", "description": "Email address of the Recipient" },
+			{"name":"encodedemail", "description": "Encodedemail email address of the Recipient" },
+			{"name":"uniqueid", "description": "Unique Isser identifier for the Recipient" },
+			{"name":"status", "description":"Status of a Recipients's associated user account"},
+		],
+		"methods": {
+			"get": true
+		},
+		"permissions": ["issuer"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/recipients\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/recipients",
+		"id": "226",
+		"regexp": "/\\/id\\/:id(?:\\?.*)?$/",
+		"examplesPresent": false
+	},
+	{
+		"path": "/create",
+		"description": "Create a new Recipient record.",
+		"params": [
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "name", "description": "Required. A name for the Recipient." },
+			{ "name": "email", "description": "Required. An email address for the Recipient." },
+			{ "name": "issueruniqueid", "description": "Optional. A unique id given by the issuer for this recipient. (internal use only)" }
+		],
+		"returns": [
+			{ "name": "recipients", "description": "An array holding the Recipient record added (see route '"+cfg.proxy_path+"/recipients/id/:id' for more details of record structure)" },
+			{ "name": "recipientsmissed", "description": "An array holding the Recipient record if not process for some reason." },
+			{ "name": "recipientsduplicate", "description": "An array holding the Recipient record if already in the database so not processed." }
 		],
 		"methods": {
 			"post": true
 		},
-		"prefixRegexp": "/^\\/recipients\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/recipients/",
-		"id": "16",
+		"permissions": ["issuer"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/recipients\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/recipients/",
+		"id": "227",
 		"regexp": "/\\/create(?:\\?.*)?$/",
+		"examplesPresent": false
+	},
+	{
+		"path": "/createbulk",
+		"description": "Create bulk recepients - creates a new login account if one does not already exists for the given login email address. Only administrators will be allowed to create new Recepients",
+		"params": [
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "recipientdatafile", "description": "Required. The cvs file with the the recipient data to create Recipient records for, (expected on the req.files object)" }
+		],
+		"returns": [
+			{ "name": "recipients", "description": "An array holding the Recipient records added (see route '"+cfg.proxy_path+"/recipients/id/:id' for more details of record structure)" },
+			{ "name": "recipientsmissed", "description": "An array holding the Recipient records not process for some reason." },
+			{ "name": "recipientsduplicate", "description": "An array holding the Recipient records already in the database so not processed." }
+		],
+		"methods": {
+			"post": true
+		},
+		"permissions": ["issuer"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/recipients\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/recipients/",
+		"id": "228",
+		"regexp": "/\\/createbulk(?:\\?.*)?$/",
 		"examplesPresent": false
 	},
 	{
 		"path": "/update",
 		"description": "Update an existing Recepient record only if it has not been used to issue a badge",
 		"params": [
-
-			{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"},
-			{"name":"id", "description":"Required. You must include an id to update an Recepient"},
-			{"name":"name", "description":"Optional. You can update the name of an Recepient"},
-			{"name":"email", "description":"Optional. You can update email of an Recepient"},
-            {"name":"uniqueid", "description":"Optional. You can update unique id of an Recepient"},
-	],
-		"returns" : [{"name":"id", "description":"ID of the Recipient"},
-		{"name":"timecreated", "description":"Time in which the Recipient account is created"},
-		{"name":"name", "description":"Updated Name of the Recipient"},
-		{"name":"email", "description":"Updated Email of the Recipient"},
-		{"name":"uniqueid", "description":"Updated Unique ID of the Recipient"},
-		{"name":"status", "description":"Updated Status of the Recipient"}],
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "id", "description": "Required. The record identifier of the Recipient record you want to update." },
+			{ "name": "name", "description": "Optional. A name for the Recipient." },
+			{ "name": "email", "description": "Optional. An email address for the Recipient." },
+			{ "name": "uniqueid", "description": "Optional. A unique id given by the issuer for this Recipient. (internal use only)." },
+		],
+		"returns": [
+			{"name":"id", "description": "The record indentifier of the Recipient record" },
+			{"name":"timecreated", "description": "Time at which the Recipient record was created" },
+			{"name":"name", "description": "Name of the Recipient" },
+			{"name":"email", "description": "Email address of the Recipient" },
+			{"name":"encodedemail", "description": "Encodedemail email address of the Recipient" },
+			{"name":"uniqueid", "description": "Unique Isser identifier for the Recipient" },
+			{"name":"status", "description":"Status of a Recipients's associated user account"},
+		],
 		"methods": {
 			"post": true
 		},
-		"prefixRegexp": "/^\\/recipients\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/recipients/",
-		"id": "17",
+		"permissions": ["issuer"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/recipients\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/recipients/",
+		"id": "229",
 		"regexp": "/\\/update(?:\\?.*)?$/",
+		"examplesPresent": false
+	},
+	{
+		"path": "/createuseraccount",
+		"description": "Create a User record entry to allow an Recipient to login to the system.",
+		"params": [
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "id", "description": "Required. The record identifier of the Recipient record you want to add a login account for." }
+		],
+		"returns": [
+			{ "name": "id", "description": "The record identifier of the Recipient record that this login account is for." },
+			{ "name": "timecreated", "description": "Time at which the user account was created." },
+			{ "name": "name", "description": "The name of the Recipient used on the Recipient login account record." },
+			{ "name": "email", "description": "The login email address used on the Recipient login account record." },
+			{ "name": "status", "description": "Status of the login account registration process. It will be '0' at this point." }
+		],
+		"methods": {
+			"post": true
+		},
+		"permissions": ["issuer"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/recipients\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/recipients/",
+		"id": "230",
+		"regexp": "/\\/createuseraccount(?:\\?.*)?$/",
 		"examplesPresent": false
 	},
 	{
 		"path": "/delete",
 		"description": "Delete an existing Recepient record only if it has not been used to issue a badge",
-		"params": [{"name":"token", "description":"Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used"},{"name":"id", "description":"Required. You must enter an ID of an Recepient to delete them"}],
-		"returns" : [{"name":"ID", "description":"returns ID of the deleted recipient"}],
+		"params": [
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "id", "description": "Required. The record identifier of the Recipient you wish to delete." }
+		],
+		"returns": [
+			{ "name": "id", "description": "The record identifier of the Recepient record that was deleted" },
+			{ "name": "status", "description": "A status of -1 to show that the Recepient record was deleted" }
+		],
 		"methods": {
 			"post": true
 		},
-		"prefixRegexp": "/^\\/recipients\\/?(?=\\/|$)/i",
-		"prefix": cfg.proxy_path+"/recipients/",
-		"id": "18",
+		"permissions": ["issuer"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/recipients\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/recipients/",
+		"id": "233",
 		"regexp": "/\\/delete(?:\\?.*)?$/",
 		"examplesPresent": false
-	},];
+	},
+	{
+		"path": "/groups/create",
+		"description": "Create a recipient group record with the given name and status",
+		"params": [
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "name", "description": "Required. The name of the new Recipient group" },
+			{ "name": "status", "description": "Required. 0/1 to indicate if the group is active (1) or inactive (0)" }
+		],
+		"returns": [
+			{ "name": "id", "description": "The record identifier of the Recepient group record" },
+			{ "name": "timecreated", "description": "Time at which the Recepient group record was created. (in seconds)" },
+			{ "name": "name", "description": "Required. The name of the new Recipient group" },
+			{ "name": "status", "description": "Required. The status of the new Recipient group. 0/1 to indicate if the group is active (1) or inactive (0)" }
+		],
+		"methods": {
+			"post": true
+		},
+		"permissions": ["issuer"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/recipients\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/recipients/",
+		"id": "234",
+		"regexp": "/\\/groups\\/create(?:\\?.*)?$/",
+		"examplesPresent": false
+	},
+	{
+		"path": "/groups/update",
+		"description": "Update an existing recipient group record.",
+		"params": [
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "id", "description": "Required. The record identifier of the Recepient group record" },
+			{ "name": "name", "description": "Required. The name of the new Recipient group" },
+			{ "name": "status", "description": "Required. 0/1 to indicate if the group is active (1) or inactive (0)" }
+		],
+		"returns": [
+			{ "name": "id", "description": "The record identifier of the Recepient group record" },
+			{ "name": "timecreated", "description": "Time at which the Recepient group record was created. (in seconds)" },
+			{ "name": "name", "description": "Required. The name of the Recipient group" },
+			{ "name": "status", "description": "Required. The status of the Recipient group. 0/1 to indicate if the group is active (1) or inactive (0)" }
+		],
+		"methods": {
+			"post": true
+		},
+		"permissions": ["issuer"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/recipients\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/recipients/",
+		"id": "235",
+		"regexp": "/\\/groups\\/update(?:\\?.*)?$/",
+		"examplesPresent": false
+	},
+	{
+		"path": "/groups/delete",
+		"description": "Delete an existing Recepient group record.",
+		"params": [
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "id", "description": "Required. The record identifier of the Recipient group you wish to delete." }
+		],
+		"returns": [
+			{ "name": "id", "description": "The record identifier of the Recepient group record that was deleted" },
+			{ "name": "status", "description": "A status of -1 to show that the Recepient group record was deleted" }
+		],
+		"methods": {
+			"post": true
+		},
+		"permissions": ["issuer"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/recipients\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/recipients/",
+		"id": "236",
+		"regexp": "/\\/group\\/delete(?:\\?.*)?$/",
+		"examplesPresent": false
+	},
+	{
+		"path": "/groups/list",
+		"description": "Get a list of all Recipient group records for the currently logged in user (issuer).",
+		"params": [
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" }
+		],
+		"returns": [
+			{ "name": "recipientgroups", "description": "An array of Recipient group records (see route '"+cfg.proxy_path+"/recipients/groups/create' for more details of record structure)" }
+		],
+		"methods": {
+			"get": true
+		},
+		"permissions": ["issuer"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/recipients\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/recipients/",
+		"id": "237",
+		"regexp": "/\\/groups\\/list(?:\\?.*)?$/",
+		"examplesPresent": false
+	},
+	{
+		"path": "/groups/addrecipient",
+		"description": "Add a Recipient to a Recipient group",
+		"params": [
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "id", "description": "Required. The record identifier of the Recipient group you wish to add a Recipient to." },
+			{ "name": "recipientid", "description": "Required. The record identifier of the Recipient you wish to add to the Recipient group." }
+		],
+		"returns": [
+			{ "name": "id", "description": "The record identifier of the recipient group association record" },
+			{ "name": "timecreated", "description": "The time the recipient group association record was created" },
+			{ "name": "groupid", "description": "The record identifier of the Recipient group" },
+			{ "name": "recipientid", "description": "The record identifier of the Recipient" }
+		],
+		"methods": {
+			"post": true
+		},
+		"permissions": ["issuer"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/recipients\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/recipients/",
+		"id": "238",
+		"regexp": "/\\/groups\\/addrecipient(?:\\?.*)?$/",
+		"examplesPresent": false
+	},
+	{
+		"path": "/groups/removerecipient",
+		"description": "Remove a Recipient from a Recipient group",
+		"params": [
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "id", "description": "Required. The record identifier of the Recipient group you wish to remove a Recipient from." },
+			{ "name": "recipientid", "description": "Required. The record identifier of the Recipient you wish to remove from the Recipient group." }
+		],
+		"returns": [
+			{ "name": "groupid", "description": "The record identifier of the recipient group" },
+			{ "name": "recipientid", "description": "The record identifier of the Recipient" },
+			{ "name": "status", "description": "A status of -1 to show that the recipient to recipient group association record was deleted" }
+		],
+		"methods": {
+			"post": true
+		},
+		"permissions": ["issuer"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/recipients\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/recipients/",
+		"id": "239",
+		"regexp": "/\\/groups\\/removerecipient(?:\\?.*)?$/",
+		"examplesPresent": false
+	},
+	{
+		"path": "/groups/setrecipients",
+		"description": "Replace all the Recipients that are in the group with the list of Recipients given. This replaces all previous settings of recipients for this group with just the given list of recipients.",
+		"params": [
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "id", "description": "Required. The record identifier of the Recipient group you wish to set Recipients for." },
+			{ "name": "recipientids", "description": "Required. A comma separate list of Recipient record identifiers so set as the Recipients for the Recipient group." }
+		],
+		"returns": [
+			{ "name": "groupid", "description": "The record identifier of the recipient group" },
+			{ "name": "recipientids", "description": "A comma separate list of Recipient record identifiers so set as the Recipients for the Recipient group." },
+			{ "name": "status", "description": "A status of 1 to show that the recipients where added to the recipient group" }
+		],
+		"methods": {
+			"post": true
+		},
+		"permissions": ["issuer"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/recipients\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/recipients/",
+		"id": "240",
+		"regexp": "/\\/groups\\/setrecipients(?:\\?.*)?$/",
+		"examplesPresent": false
+	},
+	{
+		"path": "/groups/listrecipients/:id",
+		"description": "Get a list of all the Recipients for the Recipient group with the given record identifier.",
+		"params": [
+			{ "name": "token", "description": "Optional. This call requires a login token or you will be redirected to the login page. Authorization Bearer, or Cookie with token property can also be used" },
+			{ "name": "id", "description": "Required. The record identifier of the Recipient group you wish to get Recipients for." },
+		],
+		"returns": [
+			{ "name": "recipients", "description": "An array or Recipients in the group, (see route '"+cfg.proxy_path+"/recipients/id/:id' for more details of record structure)" },
+		],
+		"methods": {
+			"get": true
+		},
+		"permissions": ["issuer"],
+		"prefixRegexp": "/^\\" + cfg.proxy_path + "\\/recipients\\/?(?=\\/|$)/i",
+		"prefix": cfg.proxy_path + "/recipients/",
+		"id": "241",
+		"regexp": "/\\/groups\\/listrecipients\\/:id(?:\\?.*)?$/",
+		"examplesPresent": false
+	}
+];

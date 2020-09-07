@@ -23,37 +23,40 @@
 *                                                                                *
 **********************************************************************************/
 
-var mainBaseURL = "";
-var routesBaseURL = "https:/ioc.kmi.open.ac.uk/";
+function navButton() {
+  if (window.innerWidth > 992){     /* Set the width of the side navigation to 250px */
+    openNav();
+  } else {    /* Set the width of the side navigation to 0 */
+    closeNav();
+  }
+}
 
-var config = {"path":"./public/docs.html","examples":"./public/examples.txt"}
+function openNav() {   /* Set the width of the side navigation to 250px */
+  document.getElementById("sidebar-wrap").style.width = "100%";
+  document.getElementById("sidebar-menu").style.display = "none";
+}
+function closeNav() {    /* Set the width of the side navigation to 0 */
+  document.getElementById("sidebar-wrap").style.width = "0";
+  document.getElementById("sidebar-menu").style.display = "inline-block";
+}
 
-var examples = [
-{
-	"routeId": "30",
-	"rows": [{
-		"url": cfg.proxy_path+"/users/signin",
-		"method": "POST",
-		"request": "%7B%22username%22:%22&#60;your%20username&#62;%22,%22password%22:%22&#60;your%20password&#62;%22%7D",
-		"status": 201,
-		"type": "application/json",
-		"response": "%7B%22token%22:%22eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ8.eyJ1c2VyaWQiOjE3LCJ1c2VybmFtZSI6IlJERiBTdG9yZSBUZXN0Iiwi...%22%7D",
-		"id": "1"
-	},{
-		"url": cfg.proxy_path+"/users/signin",
-		"method": "POST",
-		"request": "%7B%22username%22:%22&#60;your%20username&#62;%22,%22password%22:%22&#60;your%20password&#62;%22%7D",
-		"status": 401,
-		"type": "application/json",
-		"response": "%7B%22error%22:%22The%20username%20or%20password%20don't%20match%22%7D",
-		"id": "2"
-	},{
-		"url": cfg.proxy_path+"/users/signin",
-		"method": "POST",
-		"request": "%7B%22username%22:%22&#60;your%20username&#62;%22,%22password%22:%22&#60;your%20password&#62;%22%7D",
-		"status": 404,
-		"type": "application/json",
-		"response": "%7B%22error%22:%22An%20different%20error%20or%20message%22%7D",
-		"id": "3"
-	}]
-}]
+
+//Get the button:
+mybutton = document.getElementById("toTop");
+
+// When the user scrolls down 100px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+  if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+    mybutton.style.display = "block";
+  } else {
+    mybutton.style.display = "none";
+  }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+  document.body.scrollTop = 0; // For Safari
+  document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+}
