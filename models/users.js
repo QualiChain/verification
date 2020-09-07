@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -23,15 +23,11 @@
 *                                                                                *
 **********************************************************************************/
 
-/** Author: Michelle Bachler, KMi, The Open University **/
-/** Author: Manoharan Ramachandran, KMi, The Open University **/
-/** Author: Kevin Quick, KMi, The Open University **/
-
 const db = require('../db.js')
 const jwt = require('jsonwebtoken');
 const cfg = require('../config.js');
 const bcrypt = require('bcrypt');
-const utilities = require('../utilities.js');
+const utilities = require('../models/utilities.js');
 const nodemailer = require('nodemailer');
 
 // Create web3 instance
@@ -44,6 +40,12 @@ comparePassword = function(password, hash_password) {
 	return bcrypt.compareSync(password, hash_password);
 }
 
+/**
+ * Sign in to the API and get an authorisation token
+ * @param username, Required. The username to sign in to this API with - an email address.
+ * @param password, Required. The pasword to sign in to this API with. Must be at least 8 characters long.
+ * @return JSON with a token property and asociated API token that will expire in 5 hours, or an error object
+ */
 exports.signin = function(req, res, next) {
 	var userData = matchedData(req);
 
@@ -60,7 +62,7 @@ exports.signin = function(req, res, next) {
 			if (rows.length > 0) {
 				var user = rows[0];
 				if (!comparePassword(userData.password, user.hash_password)) {
-					console.log("password missmatch: ");
+					//console.log("password missmatch: ");
 					res.status(401).json({ error: "The username or password don't match"});
 				} else {
 					var claims = {
@@ -202,6 +204,10 @@ exports.verify = function(req, res, callback) {
 	}
 }
 
+/**
+ * Change a password for the currently logged in account.
+ * @param newpassword, Required. The new password to change to. Must be at least 8 characters long.
+ */
 exports.changePassword = function(req, res, callback) {
 
 	var data = matchedData(req);
@@ -237,6 +243,11 @@ exports.changePassword = function(req, res, callback) {
 	});
 }
 
+/**
+ * Request a new password. Email sent out.
+ * @param, Required. The email address of the person that has forgotten their password.
+ * @return JSON message property with message 'Forgot Password completed. Email sent'.
+ */
 exports.forgotPassword = function(req, res, callback) {
 
 	var data = matchedData(req);
@@ -269,19 +280,15 @@ exports.forgotPassword = function(req, res, callback) {
 						const transporter = nodemailer.createTransport({sendmail: true}, {
 							from: cfg.fromemailaddress,
 							to: data.email,
-							subject: 'Institute of Coding Account Password Reset',
+							subject: cfg.model_users_passwordResetEmailSubject,
 						});
 
 						var message = cfg.emailheader;
-
-						message += '<p>Dear '+rows[0].fullname+',</p>';
-
-						message += '<p>You have requested to reset your password.</p>';
-						message += '<p><b>Please <a href="'+cfg.protocol+'://'+cfg.domain+cfg.proxy_path+'/users/completepasswordreset/?id='+user.id+'&key='+user.validationkey+'">click here</a></b> to complete your password reset.</p>';
-
-						message += '<p>Please then sign In with this email address and the password: <b>'+temppassword+'</b><br>';
-						message += '<br>Once you have signed in you will be redirect to a password change page.</p><br>';
-
+						message += '<p>'+cfg.model_users_passwordResetEmailStart+' '+rows[0].fullname+',</p>';
+						message += '<p>'+cfg.model_users_passwordResetEmailLine1+'</p>';
+						message += '<p><b>'+cfg.model_users_passwordResetEmailLine2A+' <a href="'+cfg.protocol+'://'+cfg.domain+cfg.proxy_path+'/users/completepasswordreset/?id='+user.id+'&key='+user.validationkey+'">'+cfg.model_users_passwordResetEmailLine2B+'</a></b> '+cfg.model_users_passwordResetEmailLine2C+'</p>';
+						message += '<p>'+cfg.model_users_passwordResetEmailLine3+' <b>'+temppassword+'</b><br>';
+						message += '<br>'+cfg.model_users_passwordResetEmailLine4+'</p><br>';
 						message += cfg.emailfooter;
 
 						transporter.sendMail({html: message});
@@ -304,37 +311,43 @@ exports.completePasswordReset = function(req, res, callback) {
 		res.render('error', {message: "Expected id and key properties not present"});
 	}
 
-	db.get().query('SELECT * from users where id=? AND validationkey=? AND status=2', [data.id, data.key], function (err, rows) {
+	db.get().query('SELECT * from users where id=? AND validationkey=?', [data.id, data.key], function (err, rows) {
 		if (err) {
 			console.log(err);
 			res.render('error', {message: "Error fetching user data from the database"});
 		} else {
 			if (rows.length == 0) {
-				res.render('error', {message: "The given id and key do not match data in our records or this account has already completed the password reset process"});
+				res.render('error', {message: "The given id and key do not match data in our records"});
 			} else {
-				db.get().query('UPDATE users set status=1 where id=? AND validationkey=?', [data.id, data.key], function (err2, result) {
-					if (err2) {
-						console.log(err2);
-						res.render('error', {message: "Error fetching user data"});
-					} else {
-						//Change password page.
-						var theurl = cfg.protocol+"://"+cfg.domain+cfg.proxy_path+"/users/changepasswordpage";
-						res.render('registrationcomplete', {layout: 'registrationcomplete.hbs', from: 'users', url: theurl});
-					}
-				});
+				if (rows[0].status == 2) {
+					db.get().query('UPDATE users set status=1 where id=? AND validationkey=?', [data.id, data.key], function (err2, result) {
+						if (err2) {
+							console.log(err2);
+							res.render('error', { message: "Error fetching user data" });
+						} else {
+							//Change password page.
+							var theurl = cfg.protocol + "://" + cfg.domain + cfg.proxy_path + "/users/changepasswordpage";
+							res.render('registrationcomplete', { layout: 'registrationcomplete.hbs', from: 'users', url: theurl });
+						}
+					});
+				} else if (rows[0].status == 1) {
+					// already completed password reset. Send them to login screen
+					var path = "/users/signinpage/";
+					res.render('signin', { title: 'Sign In', protocol: cfg.protocol, domain: cfg.domain, path: path, query: "{}", pdir: __dirname });
+				} else if (rows[0].status == 0) {
+					res.render('error', { message: "The given account has not completed registration" });
+				}
 			}
 		}
 	});
 }
 
 /**
- * Return the acount details and associated profiles for the currently logged in token holder
+ * Return the account details and associated profiles for the currently logged in token holder
+ * @return JSON with the user account details and any associated recipient, issuer or endorser records.
  */
 exports.getProfilePage = function(req, res, next) {
 
-	res.locals.issuersfinished = false;
-	res.locals.endorsersfinished = false;
-	res.locals.recipientsfinished = false;
 	res.locals.user = {};
 
 	db.get().query('SELECT * from users where id=? and status=1 LIMIT 1', [req.user.id], function (err, rows) {
@@ -351,9 +364,11 @@ exports.getProfilePage = function(req, res, next) {
 					if (err2) {
 						res.render('error', { message: "Error fetching user record - issuers"});
 					} else {
+						res.locals.user.issuers = [];
+
 						if (rows2.length > 0) {
 							var count = rows2.length;
-							res.locals.user.issuers = [];
+
 
 							for (var i=0; i<count; i++) {
 								var issuer = {};
@@ -367,90 +382,72 @@ exports.getProfilePage = function(req, res, next) {
 								issuer.recordowner = rows.recordowner;
 								issuers.push(issuer);
 							}
-
-							res.locals.issuersfinished = true;
-						} else {
-							res.locals.issuersfinished = true;
 						}
-					}
-				});
-				// endorsers
-				db.get().query('SELECT endorsers.name, endorsers.description, endorsers.url, endorsers.telephone, endorsers.email, endorsers.imageurl, endorsers.uniqueid, users.fullname as recordowner from endorsers left join users on endorsers.userid = users.id where loginuserid=?', [req.user.id], function (err2, rows2) {
-					if (err2) {
-						res.render('error', { message: "Error fetching user record - endorsers"});
-					} else {
-						if (rows2.length > 0) {
-							var count = rows2.length;
-							res.locals.user.endorsers = [];
 
-							for (var i=0; i<count; i++) {
-								var endorser = {};
-								var next = rows2[i];
-								endorser.name = rows.name;
-								endorser.description = rows.description;
-								endorser.url = rows.url;
-								endorser.telephone = rows.telephone;
-								endorser.email = rows.email;
-								endorser.uniqueid = rows.uniqueid;
-								endorser.recordowner = rows.recordowner;
-								endorsers.push(endorser);
+						// endorsers
+						db.get().query('SELECT endorsers.name, endorsers.description, endorsers.url, endorsers.telephone, endorsers.email, endorsers.imageurl, endorsers.uniqueid, users.fullname as recordowner from endorsers left join users on endorsers.userid = users.id where loginuserid=?', [req.user.id], function (err2, rows2) {
+							if (err2) {
+								res.render('error', { message: "Error fetching user record - endorsers"});
+							} else {
+								res.locals.user.endorsers = [];
+
+								if (rows2.length > 0) {
+									var count = rows2.length;
+
+									for (var i=0; i<count; i++) {
+										var endorser = {};
+										var next = rows2[i];
+										endorser.name = rows.name;
+										endorser.description = rows.description;
+										endorser.url = rows.url;
+										endorser.telephone = rows.telephone;
+										endorser.email = rows.email;
+										endorser.uniqueid = rows.uniqueid;
+										endorser.recordowner = rows.recordowner;
+										endorsers.push(endorser);
+									}
+								}
+
+								// recipients
+								db.get().query('SELECT recipients.name, recipients.email, users.fullname as recordowner from recipients left join users on recipients.userid = users.id where loginuserid=?', [req.user.id], function (err2, rows2) {
+									if (err2) {
+										res.render('error', { message: "Error fetching user record - recipients"});
+									} else {
+										res.locals.user.recipients = [];
+
+										if (rows2.length > 0) {
+											var count = rows2.length;
+
+											for (var i=0; i<count; i++) {
+												var recipient = {};
+												var next = rows2[i];
+												recipient.name = rows.name;
+												recipient.email = rows.email;
+												recipient.recordowner = rows.recordowner;
+												recipients.push(recipient);
+											}
+										}
+										var reply = {}
+										reply.fullname = res.locals.user.fullname;
+										reply.email = res.locals.user.email;
+										reply.issuers = res.locals.user.issuers;
+										reply.endorsers = res.locals.user.endorsers;
+										reply.recipients = res.locals.user.recipients;
+
+										res.render('profile', { title: 'Account Details', data: reply});
+									}
+								});
+
 							}
+						});
 
-							res.locals.endorsersfinished = true;
-						} else {
-							res.locals.endorsersfinished = true;
-						}
 					}
 				});
-
-				// recipients
-				db.get().query('SELECT recipients.name, recipients.email, users.fullname as recordowner from recipients left join users on recipients.userid = users.id where loginuserid=?', [req.user.id], function (err2, rows2) {
-					if (err2) {
-						res.render('error', { message: "Error fetching user record - recipients"});
-					} else {
-						if (rows2.length > 0) {
-							var count = rows2.length;
-							res.locals.user.recipients = [];
-
-							for (var i=0; i<count; i++) {
-								var recipient = {};
-								var next = rows2[i];
-								recipient.name = rows.name;
-								recipient.email = rows.email;
-								recipient.recordowner = rows.recordowner;
-								recipients.push(recipient);
-							}
-
-							res.locals.recipientsfinished = true;
-						} else {
-							res.locals.recipientsfinished = true;
-						}
-					}
-				});
-
 
 			} else {
 				res.render('error', { message: "The user name given does not exist or the account creation has not yet been completed."});
 			}
 		}
 	});
-
-	req.flagCheck = setInterval(function() {
-		if (res.locals.issuersfinished && res.locals.endorsersfinished && res.locals.recipientsfinished) {
-			clearInterval(req.flagCheck);
-
-			var reply = {}
-			reply.fullname = res.locals.user.fullname;
-			reply.email = res.locals.user.email;
-			reply.issuers = res.locals.user.issuers;
-			reply.endorsers = res.locals.user.endorsers;
-			reply.recipients = res.locals.user.recipients;
-
-			res.render('profile', { title: 'Account Details', data: reply});
-		} else if (res.locals.errormsg != "") {
-			clearInterval(req.flagCheck);
-			res.render('error', { message: res.locals.errormsg});
-		}
-	}, 100); // interval set at 100 milliseconds
 }
 

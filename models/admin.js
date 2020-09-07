@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -23,23 +23,13 @@
 *                                                                                *
 **********************************************************************************/
 
-/** Author: Michelle Bachler, KMi, The Open University **/
-/** Author: Manoharan Ramachandran, KMi, The Open University **/
-/** Author: Kevin Quick, KMi, The Open University **/
-
-const ipfsAPI = require('ipfs-http-client');
-
 var db = require('../db.js')
 var cfg = require('../config.js');
-var utilities = require('../utilities.js');
-var nodemailer = require('nodemailer');
+var utilities = require('../models/utilities.js');
 
 // Create web3 instance
 const Web3 = require('web3');
 var web3 = new Web3(new Web3.providers.WebsocketProvider(cfg.parity_ipc_path));
-
-var ipfsurl = cfg.ipfs_transport +"://"+ cfg.ipfs_domain + ':' + cfg.ipfs_port + '/ipfs/';
-var ipfs = ipfsAPI(cfg.ipfs_domain, cfg.ipfs_api_port, {protocol: 'http'});
 
 const { matchedData } = require('express-validator/filter');
 const contractgas = 6000000;
@@ -59,7 +49,31 @@ exports.getAdminPage = function(req, res, next) {
 			if (rows.length == 0) {
 				res.render('error', { message: "The currently logged in user does not have permissions to perform this action"});
 			} else {
-				res.render('admin', { title: 'Administration'});
+				var isSuper = false;
+				for (let i=0; i<rows.length; i++) {
+					var rolename = rows[0].rolename
+					if (rolename == "super") {
+						isSuper = true;
+						break;
+					}
+				}
+
+				var object = {};
+
+				object["Manage Issuers"] = cfg.proxy_path+'/issuers/manage';
+				object["Manage Endorsers"] = cfg.proxy_path+'/endorsers/manage';
+				object["Manage Alignments"] = cfg.proxy_path+'/alignments/manage';
+				object["Manage Organizations"] = cfg.proxy_path+'/organizations/manage';
+				object["Manage Events"] = cfg.proxy_path+'/events/manage';
+				object["Manage Badges"] = cfg.proxy_path+cfg.badges_path+'/manage';
+				object["Create Badge Images"] = cfg.proxy_path+cfg.badges_path+'/images/manage';
+				//object["Manage Pods"] = cfg.proxy_path+'/pods/manage';
+
+				if (isSuper) {
+					object["Manage Assertions"] = cfg.proxy_path+'/assertions/admin/';
+				}
+
+				res.render('admin', { title: 'Administration', sections: JSON.stringify(object)});
 			}
 		}
 	});

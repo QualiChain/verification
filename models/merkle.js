@@ -31,7 +31,12 @@ var cfg = require('../config.js');
 var utilities = require('../utilities.js');
 
 var fs = require('fs');
-var http = require('http');
+
+var http = require('https');
+if (cfg.ipfs_protocol == "http") {
+	http = require('http');
+}
+
 var stream = require("stream");
 var keccak256 = require('js-sha3').keccak_256;
 var MerkleTools = require('merkle-tools');
@@ -39,9 +44,7 @@ var ipfsClient = require('ipfs-http-client');
 
 const request = require('request');
 const N3 = require('n3');
-const parser = new N3.Parser({
- format: 'N-Triples'
-});
+const parser = new N3.Parser({});
 
 var ipfs = ipfsClient(cfg.ipfs_api_domain, cfg.ipfs_api_port, { protocol: cfg.ipfs_api_transport });
 
@@ -804,7 +807,12 @@ exports.validateSingle = function(req, res, next) {
 		return res.status(400).send({error: "You must include the blockchain address for the RDF Merkle Tree record the set is being validated against"});
 	}
 
-	var triple = data.triple.trim();
+	if (typeof data.triple === 'string' || data.triple instanceof String) {
+		var triple = data.triple.trim();
+	} else {
+		return res.status(400).send({error: "The RDF data is of an invalid format. You must include RDF data as Triples/Quads in N-Triple format. "});
+	}
+
 	var merklestoreInstance = new web3.eth.Contract(cfg.contracts.ipfsmerkleproof.abi, data.contract);
 	if (merklestoreInstance){
 		var handler = function (e, result) {
