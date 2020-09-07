@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -30,6 +30,7 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var app = require('../apptest.js');
+const cfg = require('../config.js');
 
 // Configure chai
 chai.use(chaiHttp);

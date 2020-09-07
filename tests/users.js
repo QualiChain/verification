@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -30,16 +30,12 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var app = require('../apptest.js');
+const cfg = require('../config.js');
 
 // Configure chai
 chai.use(chaiHttp);
 chai.should();
 var expect = chai.expect;
-
-let login_details_correct = {
-  'username': 'ioc@kmi.open.ac.uk',
-  'password': '10CM00d13b10cKcH@16n'
-}
 
 let login_details_fail_password_len = {
   'username': 'fred@open.ac.uk',
@@ -59,10 +55,10 @@ let login_details_fail_account_exists = {
 describe("Users", () => {
 
     // Test login that works
-    describe("POST /badges/users/signin - with correct data", () => {
+    describe("POST "+cfg.proxy_path+"/users/signin - with correct data", () => {
         it("should return a login token", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 
@@ -79,10 +75,10 @@ describe("Users", () => {
     });
 
     // Test login with no parameters - should be caught by controller checking parameters
-    describe("POST /badges/users/signin with good data - Test login with no parameters - should be caught by controller checking parameters", () => {
+    describe("POST "+cfg.proxy_path+"/users/signin with good data - Test login with no parameters - should be caught by controller checking parameters", () => {
         it("login and return 422 error", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send({ username: '', password: '' })
                 .end((err, res) => {
                      res.should.have.status(422);
@@ -93,10 +89,10 @@ describe("Users", () => {
     });
 
     // Test login with email address but password too short
-    describe("POST /badges/users/signin - login with too short a password", () => {
+    describe("POST "+cfg.proxy_path+"/users/signin - login with too short a password", () => {
         it("login and return a 422", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_fail_password_len)
                 .end((err, res) => {
 
@@ -112,10 +108,10 @@ describe("Users", () => {
     });
 
     // Test login with username as not an email address but password correct length
-    describe("POST /badges/users/signin - login with non email username but 8 character password", () => {
+    describe("POST "+cfg.proxy_path+"/users/signin - login with non email username but 8 character password", () => {
         it("Login and return a 422", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_fail_username_email)
                 .end((err, res) => {
 
@@ -131,10 +127,10 @@ describe("Users", () => {
 	});
 
     // Test login with unregistered user but details correct format
-    describe("POST /badges/users/signin - Unregistered login details", () => {
+    describe("POST "+cfg.proxy_path+"/users/signin - Unregistered login details", () => {
         it("Sign in and return a 401", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_fail_account_exists)
                 .end((err, res) => {
                      res.should.have.status(401);

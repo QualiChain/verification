@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -30,6 +30,7 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var app = require('../apptest.js');
+const cfg = require('../config.js');
 
 // Configure chai
 chai.use(chaiHttp);
@@ -96,11 +97,6 @@ router.get('/id', [
 
 */
 
-let login_details_correct = {
-  'username': 'ioc@kmi.open.ac.uk',
-  'password': '10CM00d13b10cKcH@16n'
-}
-
 let endorser_data_ioc = {
   'name': "Institute of Coding",
   'loginemail': 'kmi-compendium@open.ac.uk',
@@ -160,10 +156,10 @@ describe("Endorsers", () => {
 
 	/** RETURN WEB PAGES **/
 
-    describe("GET /badges/endorsers", () => {
+    describe("GET "+cfg.proxy_path+"/endorsers", () => {
         it("sign in and get the endorser's home page", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -173,7 +169,7 @@ describe("Endorsers", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.get('/badges/endorsers')
+						.get(cfg.proxy_path+'/endorsers')
 						.set('Authorization', token)
 						.end((err, res) => {
 							if (res.error) {
@@ -193,10 +189,10 @@ describe("Endorsers", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/endorsers/manage", () => {
+    describe("GET "+cfg.proxy_path+"/endorsers/manage", () => {
         it("sign in and get the manage endrosers page", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -206,7 +202,7 @@ describe("Endorsers", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.get('/badges/endorsers/manage')
+						.get(cfg.proxy_path+'/endorsers/manage')
 						.set('Authorization', token)
 						.end((err, res) => {
 							if (res.error) {
@@ -226,10 +222,10 @@ describe("Endorsers", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/endorsers/docs", () => {
+    describe("GET "+cfg.proxy_path+"/endorsers/docs", () => {
         it("Get the Endorsers API docs", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -239,7 +235,7 @@ describe("Endorsers", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.get('/badges/endorsers/docs')
+						.get(cfg.proxy_path+'/endorsers/docs')
 						.set('Authorization', token)
 						.end((err, res) => {
 							if (res.error) {
@@ -257,10 +253,10 @@ describe("Endorsers", () => {
 
 	/** RETURN JSON DATA **/
 
-    describe("POST /badges/endorsers/create with no email", () => {
+    describe("POST "+cfg.proxy_path+"/endorsers/create with no email", () => {
         it("login and return a status of not 200", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -270,7 +266,7 @@ describe("Endorsers", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/openbadges/endorsers/create')
+						.post(cfg.proxy_path+'/endorsers/create')
 						.set('Authorization', token)
 						.send(endorser_data_no_email)
 						.end((err, res) => {
@@ -283,10 +279,10 @@ describe("Endorsers", () => {
 		}).timeout(100000);
 	});
 
-    describe("POST /badges/endorsers/create with good data", () => {
+    describe("POST "+cfg.proxy_path+"/endorsers/create with good data", () => {
         it("should create a new endorser and user entries and email user to complete registration", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -296,7 +292,7 @@ describe("Endorsers", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/endorsers/create')
+						.post(cfg.proxy_path+'/endorsers/create')
 						.set('Authorization', token)
 						.send(endorser_data_correct)
 						.end((err, res) => {
@@ -329,10 +325,10 @@ describe("Endorsers", () => {
 		}).timeout(100000);
 	});
 
-    describe("POST /badges/endorsers/update with no id", () => {
+    describe("POST "+cfg.proxy_path+"/endorsers/update with no id", () => {
         it("should update an endorser", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -342,7 +338,7 @@ describe("Endorsers", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/endorsers/update')
+						.post(cfg.proxy_path+'/endorsers/update')
 						.set('Authorization', token)
 						.send(endorser_data_update_no_id)
 						.end((err, res) => {
@@ -356,10 +352,10 @@ describe("Endorsers", () => {
 		}).timeout(100000);
 	});
 
-    describe("POST /badges/endorsers/update with good data", () => {
+    describe("POST "+cfg.proxy_path+"/endorsers/update with good data", () => {
         it("should update an endorser", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -369,7 +365,7 @@ describe("Endorsers", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/endorsers/update')
+						.post(cfg.proxy_path+'/endorsers/update')
 						.set('Authorization', token)
 						.send(endorser_data_update)
 						.end((err, res) => {
@@ -396,10 +392,10 @@ describe("Endorsers", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/endorsers/list", () => {
+    describe("GET "+cfg.proxy_path+"/endorsers/list", () => {
         it("sign in and get a list of all endorsers for the current user", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -409,7 +405,7 @@ describe("Endorsers", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.get('/badges/endorsers/list')
+						.get(cfg.proxy_path+'/endorsers/list')
 						.set('Authorization', token)
 						.end((err, res) => {
 							if (res.error) {
@@ -427,10 +423,10 @@ describe("Endorsers", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/endorsers/id/:id", () => {
+    describe("GET "+cfg.proxy_path+"/endorsers/id/:id", () => {
         it("sign in and get an endorser record by id", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -440,7 +436,7 @@ describe("Endorsers", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.get('/badges/endorsers/id/'+endorserid)
+						.get(cfg.proxy_path+'/endorsers/id/'+endorserid)
 						.set('Authorization', token)
 						.end((err, res) => {
 							if (res.error) {
@@ -465,10 +461,10 @@ describe("Endorsers", () => {
 		}).timeout(100000);
 	});
 /*
-    describe("POST /badges/endorsers/delete with unused id", () => {
+    describe("POST "+cfg.proxy_path+"/endorsers/delete with unused id", () => {
         it("should delete the endorser with the given id, as not already used to issue a badge", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -478,7 +474,7 @@ describe("Endorsers", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/endorsers/delete')
+						.post(cfg.proxy_path+'/endorsers/delete')
 						.set('Authorization', token)
 						.send(endorser_data_delete)
 						.end((err, res) => {

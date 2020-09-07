@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -30,6 +30,7 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var app = require('../apptest.js');
+const cfg = require('../config.js');
 
 // Configure chai
 chai.use(chaiHttp);
@@ -71,11 +72,6 @@ router.post('/delete', [
 ], recipient_controller.deleteRecipient);
 */
 
-let login_details_correct = {
-  'username': 'ioc@kmi.open.ac.uk',
-  'password': '10CM00d13b10cKcH@16n'
-}
-
 let recipient_data_correct = {
   'name': "Michelle Bachler",
   'email': 'michelle_bachler@yahoo.co.uk',
@@ -113,10 +109,10 @@ describe("Recipients", () => {
 
 	/** RETURN WEB PAGES **/
 
-    describe("GET /badges/recipients", () => {
+    describe("GET "+cfg.proxy_path+"/recipients", () => {
         it("sign in and get the recipient's home page", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -125,7 +121,7 @@ describe("Recipients", () => {
 
 					let token = res.body.token;
 					chai.request(app)
-						.get('/badges/recipients/')
+						.get(cfg.proxy_path+'/recipients/')
 						.set('Authorization', token)
 						.end((err, res) => {
 							//console.log(res.text);
@@ -143,10 +139,10 @@ describe("Recipients", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/recipients/manage", () => {
+    describe("GET "+cfg.proxy_path+"/recipients/manage", () => {
         it("sign in and get the recipient's home page", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -155,7 +151,7 @@ describe("Recipients", () => {
 
 					let token = res.body.token;
 					chai.request(app)
-						.get('/badges/recipients/manage')
+						.get(cfg.proxy_path+'/recipients/manage')
 						.set('Authorization', token)
 						.end((err, res) => {
 							//console.log(res.text);
@@ -173,10 +169,10 @@ describe("Recipients", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/recipients/docs", () => {
+    describe("GET "+cfg.proxy_path+"/recipients/docs", () => {
         it("get the recipient API docs", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -185,7 +181,7 @@ describe("Recipients", () => {
 
 					let token = res.body.token;
 					chai.request(app)
-						.get('/badges/recipients/docs')
+						.get(cfg.proxy_path+'/recipients/docs')
 						.set('Authorization', token)
 						.end((err, res) => {
 
@@ -200,10 +196,10 @@ describe("Recipients", () => {
 
 	/** RETURN JSON DATA **/
 
-    describe("POST /badges/recipients/create with no email", () => {
+    describe("POST "+cfg.proxy_path+"/recipients/create with no email", () => {
         it("login and return a status of not 200", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -213,7 +209,7 @@ describe("Recipients", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/recipients/create')
+						.post(cfg.proxy_path+'/recipients/create')
 						.set('Authorization', token)
 						.send(recipient_data_no_email)
 						.end((err, res) => {
@@ -226,10 +222,10 @@ describe("Recipients", () => {
 		}).timeout(100000);
 	});
 
-    describe("POST /badges/recipients/create with good data", () => {
+    describe("POST "+cfg.proxy_path+"/recipients/create with good data", () => {
         it("should create a new recipient and user entries and email user to complete registration", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -239,7 +235,7 @@ describe("Recipients", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/recipients/create')
+						.post(cfg.proxy_path+'/recipients/create')
 						.set('Authorization', token)
 						.send(recipient_data_correct)
 						.end((err, res) => {
@@ -270,10 +266,10 @@ describe("Recipients", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/recipients/uniqueid/:id", () => {
+    describe("GET "+cfg.proxy_path+"/recipients/uniqueid/:id", () => {
         it("sign in and get recipients by uniqueid", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -283,7 +279,7 @@ describe("Recipients", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.get('/badges/recipients/uniqueid/'+recipient_data_correct.uniqueid)
+						.get(cfg.proxy_path+'/recipients/uniqueid/'+recipient_data_correct.uniqueid)
 						.set('Authorization', token)
 						.end((err, res) => {
 
@@ -310,10 +306,10 @@ describe("Recipients", () => {
 		}).timeout(100000);
 	});
 
-    describe("POST /badges/recipients/update with no id", () => {
+    describe("POST "+cfg.proxy_path+"/recipients/update with no id", () => {
         it("should update an recipient", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -323,7 +319,7 @@ describe("Recipients", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/recipients/update')
+						.post(cfg.proxy_path+'/recipients/update')
 						.set('Authorization', token)
 						.send(recipient_data_update_no_id)
 						.end((err, res) => {
@@ -338,10 +334,10 @@ describe("Recipients", () => {
 		}).timeout(100000);
 	});
 
-    describe("POST /badges/recipients/update with good data", () => {
+    describe("POST "+cfg.proxy_path+"/recipients/update with good data", () => {
         it("should update an recipient", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -351,7 +347,7 @@ describe("Recipients", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/recipients/update')
+						.post(cfg.proxy_path+'/recipients/update')
 						.set('Authorization', token)
 						.send(recipient_data_update)
 						.end((err, res) => {
@@ -376,10 +372,10 @@ describe("Recipients", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/recipients/list", () => {
+    describe("GET "+cfg.proxy_path+"/recipients/list", () => {
         it("sign in and get a list of all recipients for the current user", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -389,7 +385,7 @@ describe("Recipients", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.get('/badges/recipients/list')
+						.get(cfg.proxy_path+'/recipients/list')
 						.set('Authorization', token)
 						.end((err, res) => {
 
@@ -416,10 +412,10 @@ describe("Recipients", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/recipients/id/:id", () => {
+    describe("GET "+cfg.proxy_path+"/recipients/id/:id", () => {
         it("sign in and get an recipient record by id", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -429,7 +425,7 @@ describe("Recipients", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.get('/badges/recipients/id/'+recipientid)
+						.get(cfg.proxy_path'/recipients/id/'+recipientid)
 						.set('Authorization', token)
 						.end((err, res) => {
 
@@ -453,10 +449,10 @@ describe("Recipients", () => {
 	});
 
 /*
-    describe("POST /badges/recipients/delete with good id", () => {
+    describe("POST "+cfg.proxy_path+"/recipients/delete with good id", () => {
         it("should delete the recipient with the given id, only if not already used to issue a badge", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -466,7 +462,7 @@ describe("Recipients", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/recipients/delete')
+						.post(cfg.proxy_path+'/recipients/delete')
 						.set('Authorization', token)
 						.send(recipient_data_delete)
 						.end((err, res) => {

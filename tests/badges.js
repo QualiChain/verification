@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -30,16 +30,12 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var app = require('../apptest.js');
+const cfg = require('../config.js');
 
 // Configure chai
 chai.use(chaiHttp);
 chai.should();
 var expect = chai.expect;
-
-let login_details_correct = {
-  'username': 'ioc@kmi.open.ac.uk',
-  'password': '10CM00d13b10cKcH@16n'
-}
 
 let issuer_data_correct = {
   'name': 'Institute of Coding',
@@ -113,10 +109,10 @@ let badge_alignment_data = {
 var badgeid = "";
 
 describe("Badges", () => {
-    describe("POST /badges/create with good data", () => {
+    describe("POST "+cfg.proxy_path+cfg.badges_path+"/create with good data", () => {
         it("sign in and create badge and criteria", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -126,7 +122,7 @@ describe("Badges", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/create')
+						.post(cfg.proxy_path+cfg.badges_path+'/create')
 						.set('Authorization', token)
 						.send(badge_data_correct)
 						.end((err, res) => {
@@ -167,10 +163,10 @@ describe("Badges", () => {
 		}).timeout(100000);
 	});
 /*
-    describe("POST /badges/update with good data", () => {
+    describe("POST "+cfg.proxy_path+cfg.badges_path+"/update with good data", () => {
         it("should update a badge record", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -180,7 +176,7 @@ describe("Badges", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/update')
+						.post(cfg.proxy_path+cfg.badges_path+'/update')
 						.set('Authorization', token)
 						.send(badge_data_update)
 						.end((err, res) => {
@@ -213,10 +209,10 @@ describe("Badges", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/id/:id - to get previously created badge", () => {
+    describe("GET "+cfg.proxy_path+cfg.badges_path+"/id/:id - to get previously created badge", () => {
         it("sign in and get badge by id", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -226,7 +222,7 @@ describe("Badges", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.get('/badges/id/'+badge_data_correct.id)
+						.get(cfg.proxy_path+cfg.badges_path+'/id/'+badge_data_correct.id)
 						.set('Authorization', token)
 						.end((err, res) => {
 
@@ -258,10 +254,10 @@ describe("Badges", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/list", () => {
+    describe("GET "+cfg.proxy_path+cfg.badges_path+"/list", () => {
         it("sign in and get a list of all badges for the current user", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -271,7 +267,7 @@ describe("Badges", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.get('/badges/list')
+						.get(cfg.proxy_path+cfg.badges_path+'/list')
 						.set('Authorization', token)
 						.end((err, res) => {
 
@@ -288,10 +284,10 @@ describe("Badges", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/listall", () => {
+    describe("GET "+cfg.proxy_path+cfg.badges_path+"/listall", () => {
         it("sign in and get a list of all badges in the system", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -301,7 +297,7 @@ describe("Badges", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.get('/badges/listall')
+						.get(cfg.proxy_path+cfg.badges_path+'/listall')
 						.set('Authorization', token)
 						.end((err, res) => {
 
@@ -320,10 +316,10 @@ describe("Badges", () => {
 */
 
 /*
-    describe("POST /badges/create with incorrect issuer id", () => {
+    describe("POST "+cfg.proxy_path+cfg.badges_path+"/create with incorrect issuer id", () => {
         it("login and return a 404", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -333,7 +329,7 @@ describe("Badges", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/create')
+						.post(cfg.proxy_path+cfg.badges_path+'/create')
 						.set('Authorization', token)
 						.send(badge_data_incorrect_issuer)
 						.end((err, res) => {
@@ -345,10 +341,10 @@ describe("Badges", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/badges/:address with a good address", () => {
+    describe("GET "+cfg.proxy_path+cfg.badges_path+"/:address with a good address", () => {
         it("sign in and get badges by address", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -358,7 +354,7 @@ describe("Badges", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.get('/badges/badges/'+badgeaddress)
+						.get(cfg.proxy_path+cfg.badges_path+'/'+badgeaddress)
 						.set('Authorization', token)
 						.end((err, res) => {
 							res.should.have.status(200);
@@ -383,10 +379,10 @@ describe("Badges", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/badges/:address with bad address", () => {
+    describe("GET "+cfg.proxy_path+cfg.badges_path+"/:address with bad address", () => {
         it("sign in and return a 404", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -396,7 +392,7 @@ describe("Badges", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.get('/badges/badges/'+badbadgeaddress)
+						.get(cfg.proxy_path+cfg.badges_path+'/'+badbadgeaddress)
 						.set('Authorization', token)
 						.end((err, res) => {
 							res.should.have.status(404);
@@ -406,10 +402,10 @@ describe("Badges", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/badges/transaction/:address with a good address", () => {
+    describe("GET "+cfg.proxy_path+cfg.badges_path+"/transaction/:address with a good address", () => {
         it("sign in and return transaction details", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -419,7 +415,7 @@ describe("Badges", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.get('/badges/badges/transaction/'+badgeaddress)
+						.get(cfg.proxy_path+cfg.badges_path+'/transaction/'+badgeaddress)
 						.set('Authorization', token)
 						.end((err, res) => {
 							res.should.have.status(200);
@@ -431,10 +427,10 @@ describe("Badges", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/badges/transaction/:address with a bad address", () => {
+    describe("GET "+cfg.proxy_path+cfg.badges_path+"/transaction/:address with a bad address", () => {
         it("sign in and return a 404", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -444,7 +440,7 @@ describe("Badges", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.get('/badges/badges/transaction/'+badbadgeaddress)
+						.get(cfg.proxy_path+cfg.badges_path+'/transaction/'+badbadgeaddress)
 						.set('Authorization', token)
 						.end((err, res) => {
 							res.should.have.status(404);
@@ -455,10 +451,10 @@ describe("Badges", () => {
 		}).timeout(100000);
 	});
 
-    describe("POST /badges/badges/addalignment", () => {
+    describe("POST "+cfg.proxy_path+cfg.badges_path+"/addalignment", () => {
         it("sign in and add an alignment to the badge", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -468,7 +464,7 @@ describe("Badges", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/badges/addalignment')
+						.post(cfg.proxy_path+cfg.badges_path+'/addalignment')
 						.set('Authorization', token)
 						.send(badge_alignment_data)
 						.end((err, res) => {
@@ -483,10 +479,10 @@ describe("Badges", () => {
 */
 
 /*
-    describe("POST /badges/delete with good id", () => {
+    describe("POST "+cfg.proxy_path+cfg.badges_path+"/delete with good id", () => {
         it("should delete the badge with the given id, only if not already used to issue a badge", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -496,7 +492,7 @@ describe("Badges", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/delete')
+						.post(cfg.proxy_path+cfg.badges_path+'/delete')
 						.set('Authorization', token)
 						.send(badge_data_delete)
 						.end((err, res) => {

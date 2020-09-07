@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -30,16 +30,12 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var app = require('../apptest.js');
+const cfg = require('../config.js');
 
 // Configure chai
 chai.use(chaiHttp);
 chai.should();
 var expect = chai.expect;
-
-let login_details_correct = {
-  'username': 'ioc@kmi.open.ac.uk',
-  'password': '10CM00d13b10cKcH@16n'
-}
 
 /*
 	check('id').withMessage('You must include your reference id for the new badge'),
@@ -106,10 +102,10 @@ var assertion_endorserid = "";
 
 describe("Assertions", () => {
 
-	    describe("POST /badges/assertions/issue ", () => {
+	    describe("POST "+cfg.proxy_path+"/assertions/issue ", () => {
 	        it("sign in and create assertion", (done) => {
 				chai.request(app)
-				    .post('/badges/users/signin')
+				    .post(cfg.proxy_path+'/users/signin')
 				    .send(login_details_correct)
 	                .end((err, res) => {
 						res.should.have.status(201);
@@ -119,7 +115,7 @@ describe("Assertions", () => {
 						let token = res.body.token;
 
 						chai.request(app)
-							.post('/badges/assertions/issue')
+							.post(cfg.proxy_path+'/assertions/issue')
 							.set('Authorization', token)
 							.send(assertion_issue)
 							.end((err, res) => {
@@ -153,10 +149,10 @@ describe("Assertions", () => {
 	});
 
 	/*
-    describe("POST /badges/assertions/create with good data", () => {
+    describe("POST "+cfg.proxy_path+"/assertions/create with good data", () => {
         it("sign in and create assertion", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -166,7 +162,7 @@ describe("Assertions", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/assertions/create')
+						.post(cfg.proxy_path+'/assertions/create')
 						.set('Authorization', token)
 						.send(assertion_data_correct)
 						.end((err, res) => {
@@ -209,10 +205,10 @@ describe("Assertions", () => {
 		}).timeout(100000);
 	});
 
-    describe("POST /badges/assertions/update recipientid", () => {
+    describe("POST "+cfg.proxy_path+"/assertions/update recipientid", () => {
         it("should update an assertion record", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -222,7 +218,7 @@ describe("Assertions", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/assertions/update')
+						.post(cfg.proxy_path+'/assertions/update')
 						.set('Authorization', token)
 						.send(assertion_data_update_recipientid)
 						.end((err, res) => {
@@ -253,10 +249,10 @@ describe("Assertions", () => {
 		}).timeout(100000);
 	});
 
-    describe("POST /badges/assertions/update badgeid", () => {
+    describe("POST "+cfg.proxy_path+"/assertions/update badgeid", () => {
         it("should update an assertion record", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -266,7 +262,7 @@ describe("Assertions", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/assertions/update')
+						.post(cfg.proxy_path+'/assertions/update')
 						.set('Authorization', token)
 						.send(assertion_data_update_badgeid)
 						.end((err, res) => {
@@ -300,10 +296,10 @@ describe("Assertions", () => {
 */
 
 /*
-    describe("POST /badges/assertions/update badgeid and recipient", () => {
+    describe("POST "+cfg.proxy_path+"/assertions/update badgeid and recipient", () => {
         it("should update an assertion record", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -313,7 +309,7 @@ describe("Assertions", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/assertions/update')
+						.post(cfg.proxy_path+'/assertions/update')
 						.set('Authorization', token)
 						.send(assertion_data_update)
 						.end((err, res) => {
@@ -345,10 +341,10 @@ describe("Assertions", () => {
 	});
 */
 /*
-    describe("GET /badges/assertions/id/:id - to get previously created badge", () => {
+    describe("GET "+cfg.proxy_path+"/assertions/id/:id - to get previously created badge", () => {
         it("sign in and get assertion by id", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -358,7 +354,7 @@ describe("Assertions", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.get('/badges/assertions/id/'+assertionid)
+						.get(cfg.proxy_path+'/assertions/id/'+assertionid)
 						.set('Authorization', token)
 						.end((err, res) => {
 
@@ -388,10 +384,10 @@ describe("Assertions", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/assertions/list", () => {
+    describe("GET "+cfg.proxy_path+"/assertions/list", () => {
         it("sign in and get a list of all assertions for the current user", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -401,7 +397,7 @@ describe("Assertions", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.get('/badges/assertions/list')
+						.get(cfg.proxy_path+'/assertions/list')
 						.set('Authorization', token)
 						.end((err, res) => {
 
@@ -432,10 +428,10 @@ describe("Assertions", () => {
 		}).timeout(100000);
 	});
 
-    describe("POST /badges/assertions/addendorser with good data", () => {
+    describe("POST "+cfg.proxy_path+"/assertions/addendorser with good data", () => {
         it("should add an endorser to an assertion", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -445,7 +441,7 @@ describe("Assertions", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/assertions/addendorser')
+						.post(cfg.proxy_path+'/assertions/addendorser')
 						.set('Authorization', token)
 						.send(assertion_endorser_add)
 						.end((err, res) => {
@@ -472,10 +468,10 @@ describe("Assertions", () => {
 		}).timeout(100000);
 	});
 
-    describe("POST /badges/assertions/listendorsers", () => {
+    describe("POST "+cfg.proxy_path+"/assertions/listendorsers", () => {
         it("should sign in and get a list of endorsers for the given assertion id", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -485,7 +481,7 @@ describe("Assertions", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.get('/badges/assertions/listendorsers/'+assertionid)
+						.get(cfg.proxy_path+'/assertions/listendorsers/'+assertionid)
 						.set('Authorization', token)
 						.end((err, res) => {
 
@@ -514,10 +510,10 @@ describe("Assertions", () => {
 
 /* TESTED BUT REMOVED TO KEEP RECORDS
 
-    describe("POST /badges/assertions/removeendorser", () => {
+    describe("POST "+cfg.proxy_path+"/assertions/removeendorser", () => {
         it("should remove an endorser from an assertion record", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -527,7 +523,7 @@ describe("Assertions", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/assertions/removeendorser')
+						.post(cfg.proxy_path+'/assertions/removeendorser')
 						.set('Authorization', token)
 						.send(assertion_endorser_remove)
 						.end((err, res) => {
@@ -548,10 +544,10 @@ describe("Assertions", () => {
 		}).timeout(100000);
 	});
 
-    describe("POST /badges/assertions/delete with good id", () => {
+    describe("POST "+cfg.proxy_path+"/assertions/delete with good id", () => {
         it("should delete the assertion with the given id, only if not already issued", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -561,7 +557,7 @@ describe("Assertions", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/assertions/delete')
+						.post(cfg.proxy_path+'/assertions/delete')
 						.set('Authorization', token)
 						.send(assertion_data_delete)
 						.end((err, res) => {

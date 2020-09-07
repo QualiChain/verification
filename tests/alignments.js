@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -30,16 +30,12 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var app = require('../apptest.js');
+const cfg = require('../config.js');
 
 // Configure chai
 chai.use(chaiHttp);
 chai.should();
 var expect = chai.expect;
-
-let login_details_correct = {
-  'username': 'ioc@kmi.open.ac.uk',
-  'password': '10CM00d13b10cKcH@16n'
-}
 
 /*
 	check('id').withMessage('You must include your reference id for the new badge'),
@@ -94,10 +90,10 @@ let alignment_data_delete = {
 var alignmentid = "";
 
 describe("Alignments", () => {
-    describe("POST /badges/alignments/create with good data", () => {
+    describe("POST "+cfg.proxy_path+"/alignments/create with good data", () => {
         it("sign in and create alignment", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -107,7 +103,7 @@ describe("Alignments", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/alignments/create')
+						.post(cfg.proxy_path+'/alignments/create')
 						.set('Authorization', token)
 						.send(alignment_data_correct)
 						.end((err, res) => {
@@ -137,10 +133,10 @@ describe("Alignments", () => {
 		}).timeout(100000);
 	});
 
-    describe("POST /badges/alignments/update with good data", () => {
+    describe("POST "+cfg.proxy_path+"/alignments/update with good data", () => {
         it("should update an alignment record", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -150,7 +146,7 @@ describe("Alignments", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/alignments/update')
+						.post(cfg.proxy_path+'/alignments/update')
 						.set('Authorization', token)
 						.send(alignment_data_update)
 						.end((err, res) => {
@@ -175,10 +171,10 @@ describe("Alignments", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/alignments/id/:id - to get previously created badge", () => {
+    describe("GET "+cfg.proxy_path+"/alignments/id/:id - to get previously created badge", () => {
         it("sign in and get alignment by id", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -188,7 +184,7 @@ describe("Alignments", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.get('/badges/alignments/id/'+alignmentid)
+						.get(cfg.proxy_path+'/alignments/id/'+alignmentid)
 						.set('Authorization', token)
 						.end((err, res) => {
 
@@ -212,10 +208,10 @@ describe("Alignments", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/alignments/list", () => {
+    describe("GET "+cfg.proxy_path+"/alignments/list", () => {
         it("sign in and get a list of all alignments for the current user", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -225,7 +221,7 @@ describe("Alignments", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.get('/badges/alignments/list')
+						.get(cfg.proxy_path+'/alignments/list')
 						.set('Authorization', token)
 						.end((err, res) => {
 
@@ -243,173 +239,10 @@ describe("Alignments", () => {
 	});
 
 /*
-    describe("POST /badges/create with incorrect issuer id", () => {
-        it("login and return a 404", (done) => {
-			chai.request(app)
-			    .post('/badges/users/signin')
-			    .send(login_details_correct)
-                .end((err, res) => {
-					res.should.have.status(201);
-					res.body.should.be.a('object');
-					res.body.should.have.property('token');
-
-					let token = res.body.token;
-
-					chai.request(app)
-						.post('/badges/create')
-						.set('Authorization', token)
-						.send(badge_data_incorrect_issuer)
-						.end((err, res) => {
-							res.should.have.status(404);
-
-							done();
-					});
-			});
-		}).timeout(100000);
-	});
-
-    describe("GET /badges/badges/:address with a good address", () => {
-        it("sign in and get badges by address", (done) => {
-			chai.request(app)
-			    .post('/badges/users/signin')
-			    .send(login_details_correct)
-                .end((err, res) => {
-					res.should.have.status(201);
-					res.body.should.be.a('object');
-					res.body.should.have.property('token');
-
-					let token = res.body.token;
-
-					chai.request(app)
-						.get('/badges/badges/'+badgeaddress)
-						.set('Authorization', token)
-						.end((err, res) => {
-							res.should.have.status(200);
-
-							res.body.should.have.property('address');
-							res.body.should.have.property('owner');
-							res.body.should.have.property('title');
-							res.body.should.have.property('description');
-							res.body.should.have.property('imageurl');
-							res.body.should.have.property('imagecaption');
-							res.body.should.have.property('imageauthor');
-							res.body.should.have.property('issuer');
-							res.body.should.have.property('alignment');
-							res.body.should.have.property('criteria');
-							res.body.should.have.property('criteriaowner');
-							res.body.should.have.property('criteriaid');
-							res.body.should.have.property('criteriatype');
-							res.body.should.have.property('criterianarrative');
-							done();
-					});
-			});
-		}).timeout(100000);
-	});
-
-    describe("GET /badges/badges/:address with bad address", () => {
-        it("sign in and return a 404", (done) => {
-			chai.request(app)
-			    .post('/badges/users/signin')
-			    .send(login_details_correct)
-                .end((err, res) => {
-					res.should.have.status(201);
-					res.body.should.be.a('object');
-					res.body.should.have.property('token');
-
-					let token = res.body.token;
-
-					chai.request(app)
-						.get('/badges/badges/'+badbadgeaddress)
-						.set('Authorization', token)
-						.end((err, res) => {
-							res.should.have.status(404);
-							done();
-					});
-			});
-		}).timeout(100000);
-	});
-
-    describe("GET /badges/badges/transaction/:address with a good address", () => {
-        it("sign in and return transaction details", (done) => {
-			chai.request(app)
-			    .post('/badges/users/signin')
-			    .send(login_details_correct)
-                .end((err, res) => {
-					res.should.have.status(201);
-					res.body.should.be.a('object');
-					res.body.should.have.property('token');
-
-					let token = res.body.token;
-
-					chai.request(app)
-						.get('/badges/badges/transaction/'+badgeaddress)
-						.set('Authorization', token)
-						.end((err, res) => {
-							res.should.have.status(200);
-							res.body.should.have.property('transaction')
-
-							done();
-					});
-			});
-		}).timeout(100000);
-	});
-
-    describe("GET /badges/badges/transaction/:address with a bad address", () => {
-        it("sign in and return a 404", (done) => {
-			chai.request(app)
-			    .post('/badges/users/signin')
-			    .send(login_details_correct)
-                .end((err, res) => {
-					res.should.have.status(201);
-					res.body.should.be.a('object');
-					res.body.should.have.property('token');
-
-					let token = res.body.token;
-
-					chai.request(app)
-						.get('/badges/badges/transaction/'+badbadgeaddress)
-						.set('Authorization', token)
-						.end((err, res) => {
-							res.should.have.status(404);
-
-							done();
-					});
-			});
-		}).timeout(100000);
-	});
-
-    describe("POST /badges/badges/addalignment", () => {
-        it("sign in and add an alignment to the badge", (done) => {
-			chai.request(app)
-			    .post('/badges/users/signin')
-			    .send(login_details_correct)
-                .end((err, res) => {
-					res.should.have.status(201);
-					res.body.should.be.a('object');
-					res.body.should.have.property('token');
-
-					let token = res.body.token;
-
-					chai.request(app)
-						.post('/badges/badges/addalignment')
-						.set('Authorization', token)
-						.send(badge_alignment_data)
-						.end((err, res) => {
-							res.should.have.status(200);
-							res.body.should.have.property('transaction')
-
-							done();
-					});
-			});
-		}).timeout(100000);
-	});
-*/
-
-/*
-    describe("POST /badges/alignments/delete with good id", () => {
+    describe("POST "+cfg.proxy_path+"/alignments/delete with good id", () => {
         it("should delete the alignment with the given id, only if not already used to issue a badge", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -419,7 +252,7 @@ describe("Alignments", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/alignments/delete')
+						.post(cfg.proxy_path+'/alignments/delete')
 						.set('Authorization', token)
 						.send(alignment_data_delete)
 						.end((err, res) => {

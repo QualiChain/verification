@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -30,16 +30,12 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var app = require('../apptest.js');
+const cfg = require('../config.js');
 
 // Configure chai
 chai.use(chaiHttp);
 chai.should();
 var expect = chai.expect;
-
-let login_details_correct = {
-  'username': 'ioc@kmi.open.ac.uk',
-  'password': '10CM00d13b10cKcH@16n'
-}
 
 /*
 	//check('pendingissuanceid').withMessage('You must include the pending issuance id for the badge issuance you want to add evidence to'),
@@ -84,10 +80,10 @@ let evidence_data_delete = {
 var pendingissuanceid = "";
 
 describe("Evidence", () => {
-    describe("POST /badges/evidence/create with good data", () => {
+    describe("POST "+cfg.proxy_path+"/evidence/create with good data", () => {
         it("sign in and create an evidence item", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -97,7 +93,7 @@ describe("Evidence", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/evidence/create')
+						.post(cfg.proxy_path+'/evidence/create')
 						.set('Authorization', token)
 						.send(evidence_data_correct)
 						.end((err, res) => {
@@ -129,10 +125,10 @@ describe("Evidence", () => {
 		}).timeout(100000);
 	});
 
-    describe("POST /badges/evidence/update with good data", () => {
+    describe("POST "+cfg.proxy_path+"/evidence/update with good data", () => {
         it("should update an evidence record", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -142,7 +138,7 @@ describe("Evidence", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/evidence/update')
+						.post(cfg.proxy_path+'/evidence/update')
 						.set('Authorization', token)
 						.send(evidence_data_update)
 						.end((err, res) => {
@@ -169,10 +165,10 @@ describe("Evidence", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/evidence/list", () => {
+    describe("GET "+cfg.proxy_path+"/evidence/list", () => {
         it("sign in and get a list of all badges for the current user", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -182,7 +178,7 @@ describe("Evidence", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.get('/badges/evidence/list')
+						.get(cfg.proxy_path+'/evidence/list')
 						.set('Authorization', token)
 						.end((err, res) => {
 
@@ -200,10 +196,10 @@ describe("Evidence", () => {
 	});
 
 /*
-    describe("POST /badges/create with missing url", () => {
+    describe("POST "+cfg.proxy_path+"/create with missing url", () => {
         it("login and return a 404", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -213,7 +209,7 @@ describe("Evidence", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/evidence/create')
+						.post(cfg.proxy_path+'/evidence/create')
 						.set('Authorization', token)
 						.send(evidence_data_no_url)
 						.end((err, res) => {
@@ -227,10 +223,10 @@ describe("Evidence", () => {
 */
 
 /*
-    describe("POST /badges/evidence/delete with good id", () => {
+    describe("POST "+cfg.proxy_path+"/evidence/delete with good id", () => {
         it("should delete the evidence item with the given id, only if not already used to issue a badge", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -240,7 +236,7 @@ describe("Evidence", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/evidence/delete')
+						.post(cfg.proxy_path+'/evidence/delete')
 						.set('Authorization', token)
 						.send(evidence_data_delete)
 						.end((err, res) => {

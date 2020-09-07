@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -30,23 +30,19 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var app = require('../apptest.js');
+const cfg = require('../config.js');
 
 // Configure chai
 chai.use(chaiHttp);
 chai.should();
 var expect = chai.expect;
 
-let login_details_correct = {
-  'username': 'ioc@kmi.open.ac.uk',
-  'password': '10CM00d13b10cKcH@16n'
-}
-
 describe("Portfolio", () => {
 
-    describe("GET /badges/portfolio", () => {
+    describe("GET "+cfg.proxy_path+cfg.badges_path+"/portfolio", () => {
         it("sign in and get the recipient's home/portfolio page", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -55,7 +51,7 @@ describe("Portfolio", () => {
 
 					let token = res.body.token;
 					chai.request(app)
-						.get('/badges/portfolio/')
+						.get(cfg.proxy_path+cfg.badges_path+'/portfolio/')
 						.set('Authorization', token)
 						.end((err, res) => {
 							res.should.have.status(200);
@@ -71,10 +67,10 @@ describe("Portfolio", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/portfolio", () => {
+    describe("GET "+cfg.proxy_path+cfg.badges_path+"/portfolio", () => {
         it("try andget the recipient's home/portfolio page without signing in - should get signin page", (done) => {
 			chai.request(app)
-				.get('/badges/portfolio/')
+				.get(cfg.proxy_path+cfg.badges_path+'/portfolio/')
 				.end((err, res) => {
 					res.should.have.status(200);
 					res.should.be.html;

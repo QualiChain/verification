@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -30,6 +30,7 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var app = require('../apptest.js');
+const cfg = require('../config.js');
 
 // Configure chai
 chai.use(chaiHttp);
@@ -95,11 +96,6 @@ router.get('/id', [
 ], issuer_controller.getIssuerById);
 */
 
-let login_details_correct = {
-  'username': 'ioc@kmi.open.ac.uk',
-  'password': '10CM00d13b10cKcH@16n'
-}
-
 let issuer_data_correct = {
   'name': "Institute of Coding",
   'loginemail': 'kmi-compendium-Webmaster@open.ac.uk',
@@ -157,10 +153,10 @@ describe("Issuers", () => {
 
 	/** RETURN WEB PAGES **/
 
-    describe("GET /badges/issuers", () => {
+    describe("GET "+cfg.proxy_path+"/issuers", () => {
         it("sign in and get the issuer's home page", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -169,7 +165,7 @@ describe("Issuers", () => {
 
 					let token = res.body.token;
 					chai.request(app)
-						.get('/badges/issuers/')
+						.get(cfg.proxy_path+'/issuers/')
 						.set('Authorization', token)
 						.end((err, res) => {
 							//console.log(res.text);
@@ -187,10 +183,10 @@ describe("Issuers", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/issuers/manage", () => {
+    describe("GET "+cfg.proxy_path+"/issuers/manage", () => {
         it("sign in and get the issuer's home page", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -199,7 +195,7 @@ describe("Issuers", () => {
 
 					let token = res.body.token;
 					chai.request(app)
-						.get('/badges/issuers/manage')
+						.get(cfg.proxy_path+'/issuers/manage')
 						.set('Authorization', token)
 						.end((err, res) => {
 							//console.log(res.text);
@@ -217,10 +213,10 @@ describe("Issuers", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/issuers/docs", () => {
+    describe("GET "+cfg.proxy_path+"/issuers/docs", () => {
         it("Get the Issuer API docs", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -229,7 +225,7 @@ describe("Issuers", () => {
 
 					let token = res.body.token;
 					chai.request(app)
-						.get('/badges/issuers/docs')
+						.get(cfg.proxy_path+'/issuers/docs')
 						.set('Authorization', token)
 						.end((err, res) => {
 							//console.log(res.text);
@@ -245,10 +241,10 @@ describe("Issuers", () => {
 
 	/** RETURN JSON DATA **/
 
-    describe("POST /badges/issuers/create with no login email", () => {
+    describe("POST "+cfg.proxy_path+"/issuers/create with no login email", () => {
         it("should sign in and return 422", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -258,7 +254,7 @@ describe("Issuers", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/issuers/create')
+						.post(cfg.proxy_path+'/issuers/create')
 						.set('Authorization', token)
 						.send(issuer_data_no_email)
 						.end((err, res) => {
@@ -277,10 +273,10 @@ describe("Issuers", () => {
 		}).timeout(100000);
 	});
 
-    describe("POST /openbadges/issuers/create with email invalid", () => {
+    describe("POST "+cfg.proxy_path+"/issuers/create with email invalid", () => {
         it("should sign in and return a 422", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -290,7 +286,7 @@ describe("Issuers", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/issuers/create')
+						.post(cfg.proxy_path+'/issuers/create')
 						.set('Authorization', token)
 						.send(issuer_data_invalid_email)
 						.end((err, res) => {
@@ -303,10 +299,10 @@ describe("Issuers", () => {
 
 		}).timeout(100000);
 	});
-    describe("POST /badges/issuers/create with no optional fields", () => {
+    describe("POST "+cfg.proxy_path+"/issuers/create with no optional fields", () => {
         it("should sign in and return issuer contract address, transaction and account", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -316,7 +312,7 @@ describe("Issuers", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/issuers/create')
+						.post(cfg.proxy_path+'/issuers/create')
 						.set('Authorization', token)
 						.send(issuer_data_no_optionals)
 						.end((err, res) => {
@@ -330,10 +326,10 @@ describe("Issuers", () => {
 		}).timeout(100000);
 	});
 
-    describe("POST /badges/issuers/create with correct details", () => {
+    describe("POST "+cfg.proxy_path+"/issuers/create with correct details", () => {
         it("should sign in and return issuer contract address, transaction and account", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -343,7 +339,7 @@ describe("Issuers", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/issuers/create')
+						.post(cfg.proxy_path+'/issuers/create')
 						.set('Authorization', token)
 						.send(issuer_data_correct)
 						.end((err, res) => {
@@ -378,10 +374,10 @@ describe("Issuers", () => {
 		}).timeout(100000);
 	});
 
-    describe("POST /badges/issuers/update with no id", () => {
+    describe("POST "+cfg.proxy_path+"/issuers/update with no id", () => {
         it("login and return a 422/400", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -391,7 +387,7 @@ describe("Issuers", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/issuers/update')
+						.post(cfg.proxy_path+'/issuers/update')
 						.set('Authorization', token)
 						.send(issuer_data_update_no_id)
 						.end((err, res) => {
@@ -405,10 +401,10 @@ describe("Issuers", () => {
 		}).timeout(100000);
 	});
 
-    describe("POST /badges/issuers/update with good data", () => {
+    describe("POST "+cfg.proxy_path+"/issuers/update with good data", () => {
         it("should update an issuer", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -418,7 +414,7 @@ describe("Issuers", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/issuers/update')
+						.post(cfg.proxy_path+'/issuers/update')
 						.set('Authorization', token)
 						.send(issuer_data_update)
 						.end((err, res) => {
@@ -445,10 +441,10 @@ describe("Issuers", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/issuers/list", () => {
+    describe("GET "+cfg.proxy_path+"/issuers/list", () => {
         it("sign in and get a list of all issuers", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -458,7 +454,7 @@ describe("Issuers", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.get('/badges/issuers/list')
+						.get(cfg.proxy_path+'/issuers/list')
 						.set('Authorization', token)
 						.end((err, res) => {
 							res.should.have.status(200);
@@ -471,10 +467,10 @@ describe("Issuers", () => {
 		}).timeout(100000);
 	});
 
-    describe("GET /badges/issuers/id/:id", () => {
+    describe("GET "+cfg.proxy_path+"/issuers/id/:id", () => {
         it("sign in and get an issuers record by id", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -484,7 +480,7 @@ describe("Issuers", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.get('/badges/issuers/id/'+issuerid)
+						.get("+cfg.proxy_path+'/issuers/id/'+issuerid)
 						.set('Authorization', token)
 						.end((err, res) => {
 							if (res.error) {
@@ -511,10 +507,10 @@ describe("Issuers", () => {
 	});
 
 /*
-    describe("POST /badges/issuers/delete with good id", () => {
+    describe("POST "+cfg.proxy_path+"/issuers/delete with good id", () => {
         it("should delete the issuer with the given id, only if not already used to issue a badge", (done) => {
 			chai.request(app)
-			    .post('/badges/users/signin')
+			    .post(cfg.proxy_path+'/users/signin')
 			    .send(login_details_correct)
                 .end((err, res) => {
 					res.should.have.status(201);
@@ -524,7 +520,7 @@ describe("Issuers", () => {
 					let token = res.body.token;
 
 					chai.request(app)
-						.post('/badges/issuers/delete')
+						.post(cfg.proxy_path+'/issuers/delete')
 						.set('Authorization', token)
 						.send(issuer_data_delete)
 						.end((err, res) => {
