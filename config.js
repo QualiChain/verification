@@ -29,13 +29,28 @@
 
 'use strict';
 
+// for running tests in test folder
+var login_details_correct = {
+  'username': 'ioc@kmi.open.ac.uk',
+  'password': '10CM00d13b10cKcH@16n'
+}
+
 var config = module.exports;
 
+config.express_port = 8000;
+
+// PARITY
 // used for curl on create account
 config.rpcapi = "127.0.0.1";
 config.rpcport = "55280";
-
 config.parity_ipc_path = 'ws://localhost:56000'
+
+//IPFS
+config.ipfs_protocol = "https";
+config.ipfs_url_stub = config.ipfs_protocol+"://blockchain21.kmi.open.ac.uk/ipfs/";
+config.ipfs_api_transport = "http";
+config.ipfs_api_domain = "137.108.68.154";
+config.ipfs_api_port = "54292",
 
 config.badgefolder = "/data/web/blockchain21.kmi.open.ac.uk/node/service_linkchain/badges/";
 config.badgeimagesfolder = "/data/web/blockchain21.kmi.open.ac.uk/node/service_linkchain/badge_images/";
@@ -45,24 +60,69 @@ config.directorpath = "/data/web/blockchain21.kmi.open.ac.uk/node/service_linkch
 config.protocol = "https";
 config.domain = "blockchain21.kmi.open.ac.uk";
 config.proxy_path = "/qualichain";
+// If your proxy path is /badges then this property should be empty. Otherwise it should be '/badges'
+config.badges_path = "/badges";
+// If your proxy path is /badges then this property should be empty. Otherwise it should be 'badges/'
+config.badges_path_stub = "badges/";
 config.uri_stub = config.protocol+"://"+config.domain+config.proxy_path+"/";
 
+// all url's get sent back to root url when in maintenace mode
+config.maintenance_redirect = "https://blockchain21.kmi.open.ac.uk/qualichain/";
+
+// link data context path
+config.linkdata_context = "https://instituteofcoding.open.ac.uk/badges/ld/context.jsonld";
+
+// STATUS
+// Three types of status for the issuance of a badge assertion and/or endorsement
+config.ISSUED_STATUS_PENDING = "pending";
+config.ISSUED_STATUS_ENDORSED = "endorsed";
+config.ISSUED_STATUS_ISSUED = "issued";
+config.ISSUED_STATUS_REVOKED = "revoked";
+
+// ENDORSEMENT
+// true if you want to add IoC endorsement to the badge JSON in the badges, else false.
+config.hasIoCEndorsement = false;
+
+// VERIFICATION TYPES
+config.VERIFICATION_TYPE_HOSTED = "hosted";
+config.VERIFICATION_TYPE_BLOCKCHAIN = "blockchain";
+
+// Three types of item that can be endorsed in the system
+config.ENDORSEMENT_TYPE_BADGE = "badge";
+config.ENDORSEMENT_TYPE_ASSERTION = "assertion";
+config.ENDORSEMENT_TYPE_RECIPIENT = "recipient";
+
+// Enter the IoC endorsers record entry uniqueid from the database
+config.IoCEndorser = "";
+config.IoCEndorsementClaim = "The Institute of Coding endorse this badge and its issuer";
+
+// Database configuration
+config.db = {
+    host: 'localhost',
+    user: 'linkchain',
+    password: 'YbMt0SFYpYHb4bGk',
+    database_test: 'service_linkchain_test',
+    database_production: 'service_linkchain'
+};
+
+//JWT signing token
+config.keys = {
+    secret: '2jVdf7X+u/Kn3sLP2+ashQgyV5UhkM8cdh1i3xsdzM='
+};
+
+// algorythm and hashing used when creating JSONLD
 config.canonicalizationAlgorithm = 'URDNA2015';
 config.hashingAlgorithm = 'Keccak-256';
 
-config.fromemailaddress = "noreply@open.ac.uk";
-
-config.db = {
-    host: '',
-    user: '',
-    password: '',
-    database_test: '',
-    database_production: ''
-};
-
+//JWT signing token
 config.keys = {
-    secret: ''
+    secret: '2jVdf7X+u/Kn3sLP2+ashQgyV5UhkM8cdh1i3xsdzM='
 };
+
+// salt for encoding recipient email addresses in Open Badge JSON
+config.badgesalt = "linkchainbadges1569851162";
+
+/*** BLOCKCHAIN RELATED CONFIGURATIONS ***/
 
 //15 Oct 2019 - live chain
 config.tokenContractAddress = "0x919D4cAd30555df495D9f90CA55c3Bdf02586117"; // for main V3
@@ -73,21 +133,10 @@ config.optimumAccountBalance = 20.0; // ether
 config.systemBankAccount = "0x4aDec2e878F7E8098906B503a4f2EbDD110C4797";
 
 config.account = "0x0063df45c72a268207c5aa5e496bf4d973611422";
-config.password = "";
+config.password = "YbMt0SFYpYHb4bGk";
+//config.phrase = "juggle these visa emptier postage degrease demote employer unmatched maternal impose stowing";
 
-config.badgesalt = "";
-
-config.ipfs_url_stub = "http://blockchain21.kmi.open.ac.uk/ipfs/";
-config.ipfs_api_transport = "http";
-config.ipfs_api_domain = "137.108.68.154";
-config.ipfs_api_port = "54292",
-
-config.emailheader = '<html><head><style>body {font-family: "Lucida Grande", Verdana, Arial, Helvetica, sans-serif; margin: 10px;font-size: 90%; color: DimGrey; } a {color: #e80074;}</style>';
-config.emailheader += '</head><body><img src="'+config.protocol+'://'+config.domain+config.proxy_path+'/images/ioc-logo.png'+'" alt="Institute of Coding logo"/>';
-
-config.emailfooter = '<p><i>The Institute Of Coding Team<i></p>';
-config.emailfooter += '<p><img src="'+config.protocol+'://'+config.domain+config.proxy_path+'/images/ou-logo.png'+'" alt="The Open University logo"/><i><br>The Open University is incorporated by Royal Charter (RC 000391), an exempt charity in England & Wales and a charity registered in Scotland (SC 038302).<i></p></body></html>';
-
+// Smart contracts for token realted contracts and badge type rdfstore
 config.contracts = {
 
 	"rdfdatastore": {
@@ -106,3 +155,125 @@ config.contracts = {
 			"binary": "0x608060405234801561001057600080fd5b5060405161055f38038061055f8339810180604052602081101561003357600080fd5b81019080805164010000000081111561004b57600080fd5b8281019050602081018481111561006157600080fd5b815185600182028301116401000000008211171561007e57600080fd5b505092919050505033600260006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555080600090805190602001906100dd9291906100eb565b504260018190555050610190565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f1061012c57805160ff191683800117855561015a565b8280016001018555821561015a579182015b8281111561015957825182559160200191906001019061013e565b5b509050610167919061016b565b5090565b61018d91905b80821115610189576000816000905550600101610171565b5090565b90565b6103c08061019f6000396000f3fe608060405234801561001057600080fd5b506004361061004c5760003560e01c80633bc5de30146100515780634a6173931461010e5780638da5cb5b14610191578063d8270dce146101db575b600080fd5b6100596101f9565b604051808481526020018373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200180602001828103825283818151815260200191508051906020019080838360005b838110156100d15780820151818401526020810190506100b6565b50505050905090810190601f1680156100fe5780820380516001836020036101000a031916815260200191505b5094505050505060405180910390f35b6101166102ca565b6040518080602001828103825283818151815260200191508051906020019080838360005b8381101561015657808201518184015260208101905061013b565b50505050905090810190601f1680156101835780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b610199610368565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6101e361038e565b6040518082815260200191505060405180910390f35b60008060606001549250600260009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16915060008054600181600116156101000203166002900480601f0160208091040260200160405190810160405280929190818152602001828054600181600116156101000203166002900480156102be5780601f10610293576101008083540402835291602001916102be565b820191906000526020600020905b8154815290600101906020018083116102a157829003601f168201915b50505050509050909192565b60008054600181600116156101000203166002900480601f0160208091040260200160405190810160405280929190818152602001828054600181600116156101000203166002900480156103605780601f1061033557610100808354040283529160200191610360565b820191906000526020600020905b81548152906001019060200180831161034357829003601f168201915b505050505081565b600260009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b6001548156fea165627a7a72305820709b3a4d91a29ea98b742ccc06dc50d93728c933659a868a880fe0dd4c0967850029"
 	}
 };
+
+/*** LANGUAGE RELATED CONFIGURATIONS ***/
+// Titles
+config.title_docindex = "QualiChain Web Service API";
+
+// for email communications
+config.mailto = "niaz.chowdhury@open.ac.uk";
+config.mailtosubject = "Qualichain Badges";
+config.fromemailaddress = "noreply@open.ac.uk";
+
+config.emailheader = '<html><head><style>body {font-family: "Lucida Grande", Verdana, Arial, Helvetica, sans-serif; margin: 10px;font-size: 90%; color: DimGrey; } a {color: #e80074;}</style>';
+config.emailheader += '</head><body><img src="'+config.protocol+'://'+config.domain+config.proxy_path+'/images/qualichain-logo250.png'+'" alt="Qualichain logo"/>';
+
+config.emailfooter = '<p><i>Qualichain Team<i></p>';
+config.emailfooter += '</body></html>';
+
+// model/assertions
+config.model_assertions_badgeIssueEmailSubject = 'Qulaichain: You have been issued a Badge';
+config.model_assertions_badgeIssueEmailStart = 'Dear'; // +recipient name
+config.model_assertions_badgeIssueEmailLine1A = 'You have been issued the badge'; // +badge name
+config.model_assertions_badgeIssueEmailLine1B = 'on the Qualichain Badging website.';
+config.model_assertions_badgeIssueEmailLine2 = 'Please find the badge attached to this email.';
+config.model_assertions_badgeIssueEmailLine3A = 'You can view or download your badge by going to your'; // +url to portfolio
+config.model_assertions_badgeIssueEmailLine3B = 'badge portfolio';
+//or
+config.model_assertions_badgeIssueEmailLine4A = 'If you would like to view or download any of your badges in the future, please request an account on our website by clicking: '; // +url to request account
+config.model_assertions_badgeIssueEmailLine4B = 'request account';
+
+config.model_assertions_badgeRevokeEmailSubject = 'Qualichain: Badge Revocation Notification';
+config.model_assertions_badgeRevokeEmailStart = 'Dear'; // +recipient name
+config.model_assertions_badgeRevokeEmailLine1A = 'Your badge:'; // +badge name
+config.model_assertions_badgeRevokeEmailLine1B = 'has been revoked by the issuer on the Institute of Coding website.';
+config.model_assertions_badgeRevokeEmailLine2A = 'Please speak to the issuer:'; // +Issuer name
+config.model_assertions_badgeRevokeEmailLine2B = 'for more details about why your badge has been revoked.';
+
+// model/endorsers
+config.model_endorsers_registrationEmailSubject = 'Qualichain Badge Endorser Account';
+config.model_endorsers_registrationEmailStart = 'Dear'; // +person name
+config.model_endorsers_registrationEmailLine1 = 'Welcome to Qualichain';
+config.model_endorsers_registrationEmailLine2 = 'An acount has been created for you on our website by'; // +person name
+config.model_endorsers_registrationEmailLine3A = 'Please'; // +url to complete registration
+config.model_endorsers_registrationEmailLine3B = 'click here';
+config.model_endorsers_registrationEmailLine3C = 'to complete your registration.';
+config.model_endorsers_registrationEmailLine4 = 'Please then sign in with this email address and the password:'; // +temp password
+config.model_endorsers_registrationEmailLine5 = 'Once you have signed in you will be redirect to a password change page.';
+
+config.model_endorsers_registrationCompleteSubject = 'Qualichain Badge Endorser Registration Completed';
+config.model_endorsers_registrationCompleteStart = 'Dear'; // +person name - issuer
+config.model_endorsers_registrationCompleteLine1 = 'This is to inform you that the following Endorser has now completed the registation process:'; // person name - endorser
+
+// model/issuers
+config.model_issuers_registrationEmailSubject = 'Qualichain Badge Issuer Account';
+config.model_issuers_registrationEmailStart = 'Dear'; // +person name
+config.model_issuers_registrationEmailLine1 = 'Welcome to Qualichain';
+config.model_issuers_registrationEmailLine2 = 'An acount has been created for you on our website by'; // +person name
+config.model_issuers_registrationEmailLine3A = 'Please'; // +url to complete registration
+config.model_issuers_registrationEmailLine3B = 'click here';
+config.model_issuers_registrationEmailLine3C = 'to complete your registration.';
+config.model_issuers_registrationEmailLine4 = 'Please then sign in with this email address and the password:'; // +temp password
+config.model_issuers_registrationEmailLine5 = 'Once you have signed in you will be redirect to a password change page.';
+
+//config.model_issuers_registrationCompleteSubject = 'Qualichain Badge Issuer Registration Completed';
+//config.model_issuers_registrationCompleteStart = 'Dear'; // +person name - issuer
+//config.model_issuers_registrationCompleteLine1 = 'This is to inform you that the following Issuer has now completed the registation process:'; // person name - endorser
+config.model_issuer_registrationCompleteSubject = 'QualiChain Badge Issuer Registration Completed';
+config.model_issuer_registrationCompleteStart = 'Dear'; // +person name - issuer
+config.model_issuer_registrationCompleteLine1 = 'This is to inform you that the following Issuer has now completed the registation process:'; // person name - endorser
+
+
+// model/recipients
+config.model_recipients_registrationEmailSubject = 'Qualichain Badge Recipient Account';
+config.model_recipients_registrationEmailStart = 'Dear'; // +person name
+config.model_recipients_registrationEmailLine1 = 'Welcome to Qualichain';
+config.model_recipients_registrationEmailLine2 = 'You have been registered on our website as a badge recipient by'; // +person name
+config.model_recipients_registrationEmailLine3A = 'Please'; // +url to complete registration
+config.model_recipients_registrationEmailLine3B = 'click here';
+config.model_recipients_registrationEmailLine3C = 'to complete your registration.';
+config.model_recipients_registrationEmailLine4 = 'Please then sign in with this email address and the password:'; // +temp password
+config.model_recipients_registrationEmailLine5 = 'Once you have signed in you will be redirect to a password change page.';
+config.model_recipients_registrationEmailLine6A = 'When you have completed the registration process,';
+config.model_recipients_registrationEmailLine6B = 'will be able to Issue you your Badge(s).';
+
+config.model_recipients_registrationCompleteSubject = 'Qualichain Badge Recipient Registration Completed';
+config.model_recipients_registrationCompleteStart = 'Dear'; // +person name - issuer
+config.model_recipients_registrationCompleteLine1 = 'This is to inform you that the following Recipient has now completed the registation process:'; // person name - endorser
+config.model_recipients_registrationCompleteLine2A = 'Please'; // url to issuer administration page
+config.model_recipients_registrationCompleteLine2B = 'click here';
+config.model_recipients_registrationCompleteLine2C = ' and login to issue them badges.';
+
+config.model_recipients_newIssuerEmailSubject = 'Qualichain New Badge Recipient Entry';
+config.model_recipients_newIssuerEmailStart = 'Dear'; // +person name
+config.model_recipients_newIssuerEmailLine1 = 'You have been registered on our website as a badge recipient by'; // +person name - issuer
+config.model_recipients_newIssuerEmailLine2 = 'As you already have an account with us, no more action is required by you.';
+
+config.model_recipients_accountRequestEmailSubject = "QualiChain Badge Recipient Account Request";
+config.model_recipients_accountRequestEmailStart = 'Dear'; // +person name - issuer
+config.model_recipients_accountRequestEmailLine1A  = 'A badge recipient of yours named'; // +person name - recipient
+config.model_recipients_accountRequestEmailLine1B  = 'has requested an account on the Institute of Coding website.';
+config.model_recipients_accountRequestEmailLine2A = 'Please sign in to '
+config.model_recipients_accountRequestEmailLine2B = 'the website';
+config.model_recipients_accountRequestEmailLine2C = "and press the 'Create Account' button for this recipient.";
+// model/qualifying
+config.model_qualifying_registrationEmailSubject = 'Qualichain Badge Recipient Account';
+config.model_qualifying_registrationEmailStart = 'Dear'; // +person name
+config.model_qualifying_registrationEmailLine1 = 'Welcome to Qualichain';
+config.model_qualifying_registrationEmailLine2 = 'An acount has been created for you on our website by'; // +person name
+config.model_qualifying_registrationEmailLine3A = 'Please'; // +url to complete registration
+config.model_qualifying_registrationEmailLine3B = 'click here';
+config.model_qualifying_registrationEmailLine3C = 'to complete your registration.';
+config.model_qualifying_registrationEmailLine4 = 'Please then sign in with this email address and the password:'; // +temp password
+config.model_qualifying_registrationEmailLine5 = 'Once you have signed in you will be redirect to a password change page.';
+config.model_qualifying_registrationEmailLine6 = 'When you have completed the registration process you will be able to claim your Qualifying Badge(s).';
+
+// model/users
+config.model_users_passwordResetEmailSubject = 'Qualichain Account Password Reset';
+config.model_users_passwordResetEmailStart = 'Dear'; // +person name
+config.model_users_passwordResetEmailLine1 = 'You have requested to reset your password.';
+config.model_users_passwordResetEmailLine2A = 'Please';
+config.model_users_passwordResetEmailLine2B = 'click here';
+config.model_users_passwordResetEmailLine2C = 'to complete your password reset.';
+config.model_users_passwordResetEmailLine3 = 'Please then sign In with this email address and the password:'; // +temp password
+config.model_users_passwordResetEmailLine4 = 'Once you have signed in you will be redirect to a password change page.';
