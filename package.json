@@ -27,7 +27,7 @@
     "express-handlebars": "^3.0.0",
     "express-slash": "^2.0.1",
     "express-validator": "^4.1.1",
-    "http-proxy": "^1.17.0",
+    "http-proxy": "^1.18.1",
     "image-type": "^4.1.0",
     "ipfs-api": "^22.1.1",
     "ipfs-http-client": "^32.0.1",
