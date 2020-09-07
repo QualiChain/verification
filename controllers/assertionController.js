@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -23,16 +23,92 @@
 *                                                                                *
 **********************************************************************************/
 
-/** Author: Michelle Bachler, KMi, The Open University **/
-/** Author: Manoharan Ramachandran, KMi, The Open University **/
-/** Author: Kevin Quick, KMi, The Open University **/
+const cfg = require('../config.js');
 
-var cfg = require('../config.js');
-
-var assertion_model = require('../models/assertions');
-var user_model = require('../models/users');
+const assertion_model = require('../models/assertions');
+const user_model = require('../models/users');
 
 const { validationResult } = require('express-validator/check');
+
+/**
+ * Return the JSON of an assertion
+ */
+exports.getHostedAssertionJSONByUniqueId = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+
+	// public page so no login checks
+	assertion_model.getHostedAssertionJSONByUniqueId(req, res, next);
+}
+
+/**
+ * Get the badge assertion management page
+ *
+ * @return the assertion management page.
+ */
+exports.getAssertionAdministrationPage = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		res.render('error', {message: "All expected properties not present"});
+	}
+
+	user_model.verify(req, res, function(passed, error) {
+		if (passed) {
+			assertion_model.getAssertionAdministrationPage(req, res, next);
+		} else {
+			//console.log(req);
+			let path = req.baseUrl + req._parsedUrl.pathname;
+			let query = req._parsedUrl.query;
+			res.render('signin', { title: 'Sign In', protocol: cfg.protocol, domain: cfg.domain, path: path, query: JSON.stringify(req.query), pdir: __dirname});
+		}
+	});
+};
+
+exports.getClaimsAssertionPage = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		res.render('error', {message: "All expected properties not present"});
+	}
+
+	user_model.verify(req, res, function(passed, error) {
+		if (passed) {
+			assertion_model.getClaimsAssertionPage(req, res);
+		} else {
+			//console.log(req);
+			let path = req.baseUrl + req._parsedUrl.pathname;
+			let query = req._parsedUrl.query;
+			res.render('signin', { layout: 'signin.hbs', title: 'Sign In', protocol: cfg.protocol, domain: cfg.domain, path: path, query: JSON.stringify(req.query), pdir: __dirname});
+			// render sign in page
+			//res.status(401).json({ error: 'Unauthorized user!' });
+			//res.status(401).json({ error: req.originalUrl });
+		}
+
+	});
+};
+
+exports.getAssertionPage = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		res.render('error', {message: "All expected properties not present"});
+	}
+
+	user_model.verify(req, res, function(passed, error) {
+		if (passed) {
+			assertion_model.getAssertionPage(req, res);
+		} else {
+			//console.log(req);
+			let path = req.baseUrl + req._parsedUrl.pathname;
+			let query = req._parsedUrl.query;
+			res.render('signin', { layout: 'signin.hbs', title: 'Sign In', protocol: cfg.protocol, domain: cfg.domain, path: path, query: JSON.stringify(req.query), pdir: __dirname});
+			// render sign in page
+			//res.status(401).json({ error: 'Unauthorized user!' });
+			//res.status(401).json({ error: req.originalUrl });
+		}
+
+	});
+};
 
 exports.viewAssertionByID = function(req, res, next) {
 	const errors = validationResult(req);
@@ -45,31 +121,9 @@ exports.viewAssertionByID = function(req, res, next) {
 			assertion_model.viewAssertionByID(req, res);
 		} else {
 			//console.log(req);
-			var path = req.baseUrl + req._parsedUrl.pathname;
-			var query = req._parsedUrl.query;
+			let path = req.baseUrl + req._parsedUrl.pathname;
+			let query = req._parsedUrl.query;
 			res.render('signin', { title: 'Sign In', protocol: cfg.protocol, domain: cfg.domain, path: path, query: JSON.stringify(req.query), pdir: __dirname});
-			// render sign in page
-			//res.status(401).json({ error: 'Unauthorized user!' });
-			//res.status(401).json({ error: req.originalUrl });
-		}
-
-	});
-};
-
-exports.getAssertionPage = function(req, res, next) {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(422).json({ error: errors.mapped() });
-	}
-
-	user_model.verify(req, res, function(passed, error) {
-		if (passed) {
-			assertion_model.getAssertionPage(req, res);
-		} else {
-			//console.log(req);
-			var path = req.baseUrl + req._parsedUrl.pathname;
-			var query = req._parsedUrl.query;
-			res.render('signin', { layout: 'signin.hbs', title: 'Sign In', protocol: cfg.protocol, domain: cfg.domain, path: path, query: JSON.stringify(req.query), pdir: __dirname});
 			// render sign in page
 			//res.status(401).json({ error: 'Unauthorized user!' });
 			//res.status(401).json({ error: req.originalUrl });
@@ -108,6 +162,66 @@ exports.issueAssertion = function(req, res, next) {
 	});
 }
 
+exports.autoCheckCanIssueBadge = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+
+	user_model.verify(req, res, function(passed, error) {
+		if (passed) {
+			assertion_model.autoCheckCanIssueBadge(req, res);
+		} else {
+			res.status(401).json({ error: error });
+		}
+	});
+}
+
+exports.checkCanIssueBadge = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+
+	user_model.verify(req, res, function(passed, error) {
+		if (passed) {
+			assertion_model.checkCanIssueBadge(req, res);
+		} else {
+			res.status(401).json({ error: error });
+		}
+	});
+}
+
+exports.qualifyingClaimAssertion = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+
+	user_model.verify(req, res, function(passed, error) {
+		if (passed) {
+			assertion_model.qualifyingClaimAssertion(req, res);
+		} else {
+			res.status(401).json({ error: error });
+		}
+	});
+}
+
+exports.autoIssueAssertion = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+
+	user_model.verify(req, res, function(passed, error) {
+		if (passed) {
+			assertion_model.autoIssueAssertion(req, res);
+		} else {
+			res.status(401).json({ error: error });
+		}
+	});
+}
+
 exports.revokeAssertion = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
@@ -117,6 +231,21 @@ exports.revokeAssertion = function(req, res, next) {
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
 			assertion_model.revokeAssertion(req, res);
+		} else {
+			res.status(401).json({ error: error });
+		}
+	});
+}
+
+exports.updateRevocationReason = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+
+	user_model.verify(req, res, function(passed, error) {
+		if (passed) {
+			assertion_model.updateRevocationReason(req, res);
 		} else {
 			res.status(401).json({ error: error });
 		}
@@ -183,6 +312,21 @@ exports.deleteAssertion = function(req, res, next) {
 	});
 }
 
+exports.deleteAssertionAdmin = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+
+	user_model.verify(req, res, function(passed, error) {
+		if (passed) {
+			assertion_model.deleteAssertionAdmin(req, res);
+		} else {
+			res.status(401).json({ error: error });
+		}
+	});
+}
+
 exports.getAssertionById = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
@@ -213,6 +357,21 @@ exports.downloadAssertion = function(req, res, next) {
 	});
 }
 
+exports.downloadAssertionHosted = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+
+	user_model.verify(req, res, function(passed, error) {
+		if (passed) {
+			assertion_model.downloadAssertionHosted(req, res);
+		} else {
+			res.status(401).json({ error: error });
+		}
+	});
+}
+
 exports.listAssertions = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
@@ -222,6 +381,36 @@ exports.listAssertions = function(req, res, next) {
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
 			assertion_model.listAssertions(req, res);
+		} else {
+			res.status(401).json({ error: error });
+		}
+	});
+}
+
+exports.listAssertionsClaimed = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+
+	user_model.verify(req, res, function(passed, error) {
+		if (passed) {
+			assertion_model.listAssertionsClaimed(req, res);
+		} else {
+			res.status(401).json({ error: error });
+		}
+	});
+}
+
+exports.listAllAssertions = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+
+	user_model.verify(req, res, function(passed, error) {
+		if (passed) {
+			assertion_model.listAllAssertions(req, res);
 		} else {
 			res.status(401).json({ error: error });
 		}

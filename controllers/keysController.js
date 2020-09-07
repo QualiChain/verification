@@ -25,71 +25,17 @@
 
 const cfg = require('../config.js');
 
-const admin_model = require('../models/admin');
-const user_model = require('../models/users');
+const key_model = require('../models/keys');
 
 const { validationResult } = require('express-validator/check');
 
-
 /**
- * Get the Admin's home page
- *
- * @return the Admin page.
+ * Get the Public Key for Signatures
  */
-exports.getAdminPage = function(req, res, next) {
-    const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(422).json({ error: errors.mapped() });
-	}
-
-	user_model.verify(req, res, function(passed, error) {
-		if (passed) {
-			admin_model.getAdminPage(req, res);
-		} else {
-			//console.log(req);
-			let path = req.baseUrl + req._parsedUrl.pathname;
-			let query = req._parsedUrl.query;
-			res.render('signin', { title: 'Sign In', protocol: cfg.protocol, domain: cfg.domain, path: path, query: JSON.stringify(req.query), pdir: __dirname});
-			// render sign in page
-			//res.status(401).json({ error: 'Unauthorized user!' });
-			//res.status(401).json({ error: req.originalUrl });
-		}
-
-	});
-};
-
-/*exports.listAdmins = function(req, res, next) {
+exports.getPublicKey = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
 	}
-
-	user_model.verify(req, res, function(passed, error) {
-		if (passed) {
-			admin_model.listAdmins(req, res);
-		} else {
-			res.status(401).json({ error: error });
-		}
-	});
-}*/
-
-
-/*
-exports.getAdminsById = function(req, res, next) {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(422).json({ error: errors.mapped() });
-	}
-
-	user_model.verify(req, res, function(passed, error) {
-		if (passed) {
-			admin_model.getAdminsById(req, res);
-		} else {
-			res.status(401).json({ error: error });
-		}
-	});
-};*/
-
-
-
-
+	key_model.getPublicKey(req, res, next);
+}

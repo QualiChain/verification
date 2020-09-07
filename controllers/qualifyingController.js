@@ -25,44 +25,15 @@
 
 const cfg = require('../config.js');
 
-const issuer_model = require('../models/issuers');
+const qualifying_model = require('../models/qualifying');
 const user_model = require('../models/users');
 
 const { validationResult } = require('express-validator/check');
 
 
-/**
- * Return the JSON of an issuer
- */
-exports.getIssuerJSONByUniqueId = function(req, res, next) {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(422).json({ error: errors.mapped() });
-	}
+/******************** Public Routes *********************/
 
-	// public page so no login checks
-	issuer_model.getIssuerJSONByUniqueId(req, res, next);
-}
-
-/**
- * Return the JSON of an issuer
- */
-exports.getHostedIssuerJSONByUniqueId = function(req, res, next) {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(422).json({ error: errors.mapped() });
-	}
-
-	// public page so no login checks
-	issuer_model.getHostedIssuerJSONByUniqueId(req, res, next);
-}
-
-/**
- * Get the Issuer's home page.
- *
- * @return the Issuer's home page.
- */
-exports.getIssuerPage = function(req, res, next) {
+exports.getQualifyingBadgeManagementPage = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
@@ -70,80 +41,14 @@ exports.getIssuerPage = function(req, res, next) {
 
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
-			issuer_model.getIssuerPage(req, res);
-		} else {
-			//console.log(req);
-			let path = req.baseUrl + req._parsedUrl.pathname;
-			let query = req._parsedUrl.query;
-			res.render('signin', { title: 'Sign In', protocol: cfg.protocol, domain: cfg.domain, path: path, query: JSON.stringify(req.query), pdir: __dirname});
-			// render sign in page
-			//res.status(401).json({ error: 'Unauthorized user!' });
-			//res.status(401).json({ error: req.originalUrl });
-		}
-
-	});
-};
-
-
-/**
- * Get the page to Manage Issuer's.
- *
- * @return the page to Manage Issuer's.
- */
-exports.getIssuerManagementPage = function(req, res, next) {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(422).json({ error: errors.mapped() });
-	}
-
-	user_model.verify(req, res, function(passed, error) {
-		if (passed) {
-			issuer_model.getIssuerManagementPage(req, res);
-		} else {
-			//console.log(req);
-			let path = req.baseUrl + req._parsedUrl.pathname;
-			let query = req._parsedUrl.query;
-			res.render('signin', { title: 'Sign In', protocol: cfg.protocol, domain: cfg.domain, path: path, query: JSON.stringify(req.query), pdir: __dirname});
-			// render sign in page
-			//res.status(401).json({ error: 'Unauthorized user!' });
-			//res.status(401).json({ error: req.originalUrl });
-		}
-
-	});
-};
-
-
-exports.getRDFByAddress = function(req, res, next) {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(422).json({ error: errors.mapped() });
-	}
-
-	user_model.verify(req, res, function(passed, error) {
-		if (passed) {
-			issuer_model.getRDFByAddress(req, res);
-		} else {
-			res.status(401).json({ error: error });
-		}
-	});
-};
-
-exports.createIssuer = function(req, res, next) {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(422).json({ error: errors.mapped() });
-	}
-
-	user_model.verify(req, res, function(passed, error) {
-		if (passed) {
-			issuer_model.createIssuer(req, res);
+			qualifying_model.getQualifyingBadgeManagementPage(req, res, next);
 		} else {
 			res.status(401).json({ error: error });
 		}
 	});
 }
 
-exports.createIssuerUserAccount = function(req, res, next) {
+exports.getQualifyingBadgeIssuerPage = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
@@ -151,11 +56,129 @@ exports.createIssuerUserAccount = function(req, res, next) {
 
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
-			issuer_model.createIssuerUserAccount(req, res);
+			qualifying_model.getQualifyingBadgeIssuerPage(req, res, next);
 		} else {
 			res.status(401).json({ error: error });
 		}
 	});
+}
+
+exports.createBadge = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+
+	user_model.verify(req, res, function(passed, error) {
+		if (passed) {
+			qualifying_model.createBadge(req, res, next);
+		} else {
+			res.status(401).json({ error: error });
+		}
+	});
+}
+
+exports.updateBadge = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+
+	user_model.verify(req, res, function(passed, error) {
+		if (passed) {
+			qualifying_model.updateBadge(req, res, next);
+		} else {
+			res.status(401).json({ error: error });
+		}
+	});
+}
+
+exports.deleteBadge = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+
+	user_model.verify(req, res, function(passed, error) {
+		if (passed) {
+			qualifying_model.deleteBadge(req, res, next);
+		} else {
+			res.status(401).json({ error: error });
+		}
+	});
+}
+
+exports.listAllBadges = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+
+	user_model.verify(req, res, function(passed, error) {
+		if (passed) {
+			qualifying_model.listAllBadges(req, res, next);
+		} else {
+			res.status(401).json({ error: error });
+		}
+	});
+}
+
+exports.qualifyingCheck = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+
+	qualifying_model.qualifyingCheck(req, res, next);
+}
+
+exports.enableUpdate = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+
+	user_model.verify(req, res, function(passed, error) {
+		if (passed) {
+			qualifying_model.enableUpdate(req, res, next);
+		} else {
+			res.status(401).json({ error: error });
+		}
+	});
+}
+
+exports.checkUserMatch = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+	user_model.verify(req, res, function(passed, error) {
+		if (passed) {
+			qualifying_model.checkUserMatch(req, res, next);
+		} else {
+			let reply = {};
+			reply.signedon = false;
+			reply.identityok = false;
+			res.send(reply);
+		}
+	});
+}
+
+exports.checkUserEmailMatch = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+	qualifying_model.checkUserEmailMatch(req, res, next);
+}
+
+exports.createAccount = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+
+	qualifying_model.createAccount(req, res, next);
 }
 
 exports.completeRegistration = function(req, res, next) {
@@ -164,66 +187,13 @@ exports.completeRegistration = function(req, res, next) {
 		return res.status(422).json({ error: errors.mapped() });
 	}
 
-	issuer_model.completeRegistration(req, res);
+	qualifying_model.completeRegistration(req, res, next);
 }
 
-exports.updateIssuer = function(req, res, next) {
+exports.loadRemoteData = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
 	}
-
-	user_model.verify(req, res, function(passed, error) {
-		if (passed) {
-			issuer_model.updateIssuer(req, res);
-		} else {
-			res.status(401).json({ error: error });
-		}
-	});
+	qualifying_model.loadRemoteData(req, res, next);
 }
-
-exports.deleteIssuer = function(req, res, next) {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(422).json({ error: errors.mapped() });
-	}
-
-	user_model.verify(req, res, function(passed, error) {
-		if (passed) {
-			issuer_model.deleteIssuer(req, res);
-		} else {
-			res.status(401).json({ error: error });
-		}
-	});
-}
-
-exports.listIssuers = function(req, res, next) {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(422).json({ error: errors.mapped() });
-	}
-
-	user_model.verify(req, res, function(passed, error) {
-		if (passed) {
-			issuer_model.listIssuers(req, res);
-		} else {
-			res.status(401).json({ error: error });
-		}
-	});
-}
-
-exports.getIssuerById = function(req, res, next) {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(422).json({ error: errors.mapped() });
-	}
-
-	user_model.verify(req, res, function(passed, error) {
-		if (passed) {
-			issuer_model.getIssuerById(req, res);
-		} else {
-			res.status(401).json({ error: error });
-		}
-	});
-}
-

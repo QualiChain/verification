@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -23,14 +23,10 @@
 *                                                                                *
 **********************************************************************************/
 
-/** Author: Michelle Bachler, KMi, The Open University **/
-/** Author: Manoharan Ramachandran, KMi, The Open University **/
-/** Author: Kevin Quick, KMi, The Open University **/
+const cfg = require('../config.js');
 
-var cfg = require('../config.js');
-
-var alignment_model = require('../models/alignments');
-var user_model = require('../models/users');
+const alignment_model = require('../models/alignments');
+const user_model = require('../models/users');
 
 const { validationResult } = require('express-validator/check');
 
@@ -43,7 +39,6 @@ const { validationResult } = require('express-validator/check');
 exports.getAlignmentManagementPage = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
-		return res.status(422).json({ error: errors.mapped() });
 		res.render('error', {message: "All expected properties not present"});
 	}
 
@@ -52,8 +47,8 @@ exports.getAlignmentManagementPage = function(req, res, next) {
 			alignment_model.getAlignmentManagementPage(req, res, next);
 		} else {
 			//console.log(req);
-			var path = req.baseUrl + req._parsedUrl.pathname;
-			var query = req._parsedUrl.query;
+			let path = req.baseUrl + req._parsedUrl.pathname;
+			let query = req._parsedUrl.query;
 			res.render('signin', { title: 'Sign In', protocol: cfg.protocol, domain: cfg.domain, path: path, query: JSON.stringify(req.query), pdir: __dirname});
 		}
 	});

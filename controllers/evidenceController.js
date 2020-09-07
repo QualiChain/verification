@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -23,14 +23,10 @@
 *                                                                                *
 **********************************************************************************/
 
-/** Author: Michelle Bachler, KMi, The Open University **/
-/** Author: Manoharan Ramachandran, KMi, The Open University **/
-/** Author: Kevin Quick, KMi, The Open University **/
+const cfg = require('../config.js');
 
-var cfg = require('../config.js');
-
-var evidence_model = require('../models/evidence');
-var user_model = require('../models/users');
+const evidence_model = require('../models/evidence');
+const user_model = require('../models/users');
 
 const { validationResult } = require('express-validator/check');
 
@@ -45,8 +41,8 @@ exports.getEvidencePage = function(req, res, next) {
 		if (passed) {
 			evidence_model.getEvidencePage(req, res);
 		} else {
-			var path = req.baseUrl + req._parsedUrl.pathname;
-			var query = req._parsedUrl.query;
+			let path = req.baseUrl + req._parsedUrl.pathname;
+			let query = req._parsedUrl.query;
 			res.render('signin', { layout: 'signin.hbs', title: 'Sign In', protocol: cfg.protocol, domain: cfg.domain, path: path, query: JSON.stringify(req.query), pdir: __dirname});
 		}
 	});

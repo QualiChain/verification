@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -23,14 +23,10 @@
 *                                                                                *
 **********************************************************************************/
 
-/** Author: Michelle Bachler, KMi, The Open University **/
-/** Author: Manoharan Ramachandran, KMi, The Open University **/
-/** Author: Kevin Quick, KMi, The Open University **/
+const cfg = require('../config.js');
 
-var cfg = require('../config.js');
-
-var endorser_model = require('../models/endorsers');
-var user_model = require('../models/users');
+const endorser_model = require('../models/endorsers');
+const user_model = require('../models/users');
 
 const { validationResult } = require('express-validator/check');
 
@@ -52,8 +48,8 @@ exports.getEndorserPage = function(req, res, next) {
 			endorser_model.getEndorserPage(req, res);
 		} else {
 			//console.log(req);
-			var path = req.baseUrl + req._parsedUrl.pathname;
-			var query = req._parsedUrl.query;
+			let path = req.baseUrl + req._parsedUrl.pathname;
+			let query = req._parsedUrl.query;
 			res.render('signin', { title: 'Sign In', protocol: cfg.protocol, domain: cfg.domain, path: path, query: JSON.stringify(req.query), pdir: __dirname});
 			// render sign in page
 			//res.status(401).json({ error: 'Unauthorized user!' });
@@ -80,8 +76,8 @@ exports.getEndorserManagementPage = function(req, res, next) {
 			endorser_model.getEndorserManagementPage(req, res, next);
 		} else {
 			//console.log(req);
-			var path = req.baseUrl + req._parsedUrl.pathname;
-			var query = req._parsedUrl.query;
+			let path = req.baseUrl + req._parsedUrl.pathname;
+			let query = req._parsedUrl.query;
 			res.render('signin', { title: 'Sign In', protocol: cfg.protocol, domain: cfg.domain, path: path, query: JSON.stringify(req.query), pdir: __dirname});
 			// render sign in page
 			//res.status(401).json({ error: 'Unauthorized user!' });
@@ -187,5 +183,23 @@ exports.getEndorserById = function(req, res, next) {
 			res.status(401).json({ error: error });
 		}
 	});
+}
+
+exports.getHostedEndorserJSONByUniqueId = function(req, res, next) {
+
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+	endorser_model.getHostedEndorserJSONByUniqueId(req, res, next);
+}
+
+exports.getEndorserJSONByUniqueId = function(req, res, next) {
+
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+	endorser_model.getEndorserJSONByUniqueId(req, res, next);
 }
 

@@ -25,73 +25,44 @@
 
 const cfg = require('../config.js');
 
-const badge_model = require('../models/badges');
+const event_model = require('../models/events');
 const user_model = require('../models/users');
 
 const { validationResult } = require('express-validator/check');
 
 
-/******************** Public Routes *********************/
-
 /**
- * Return the JSON of an base badge used with blockchain verification
+ * Get event badge stats (for leader board refresh)
  */
-exports.getBadgeJSONByUniqueId = function(req, res, next) {
+exports.getEventStatistics = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
 	}
 
-	// public page so no login checks
-	badge_model.getBadgeJSONByUniqueId(req, res, next);
+	// Public page?
+	//user_model.verify(req, res, function(passed, error) {
+	//	if (passed) {
+			event_model.getEventStatistics(req, res, next);
+	//	} else {
+	//		res.status(401).json({ error: error });
+	//	}
+	//});
 }
 
 /**
- * Return the JSON of a base badge used with hosted verification
+ * Check if a badge recipient with the given information has been added to the system and is against the given event.
  */
-exports.getHostedBadgeJSONByUniqueId = function(req, res, next) {
+exports.checkEventAttendee = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
 	}
 
-	// public page so no login checks
-	badge_model.getHostedBadgeJSONByUniqueId(req, res, next);
-}
-
-/**
- * Return the view all base badges page which will display base badge data for badges that have been issued
- */
-exports.getViewAllBaseBadgesPage = function(req, res, next) {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(422).json({ error: errors.mapped() });
-	}
-
-	// public page so no login checks
-	badge_model.getViewAllBaseBadgesPage(req, res, next);
-}
-
-exports.getBadgeByAddress = function(req, res, next) {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(422).json({ error: errors.mapped() });
-	}
-
-	badge_model.getBadgeByAddress(req, res, next);
-};
-
-/***********************************************************/
-
-exports.getBadgeById = function(req, res, next) {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(422).json({ error: errors.mapped() });
-	}
-
+	// Public page?
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
-			badge_model.getBadgeById(req, res, next);
+			event_model.checkEventAttendee(req, res, next);
 		} else {
 			res.status(401).json({ error: error });
 		}
@@ -99,37 +70,52 @@ exports.getBadgeById = function(req, res, next) {
 }
 
 /**
- * Get the badge Managment home page
+ * Draw and Event leader board and stats
+ */
+exports.getEventStatisticsPage = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+
+	// Public page?
+	//user_model.verify(req, res, function(passed, error) {
+	//	if (passed) {
+			event_model.getEventStatisticsPage(req, res, next);
+	//	} else {
+	//		res.status(401).json({ error: error });
+	//	}
+	//});
+}
+
+/**
+ * Get the badge Event management page
  *
+ * @return the event management page.
  */
-exports.getBadgeManagementPage = function(req, res, next) {
+exports.getEventManagementPage = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
+		res.render('error', {message: "All expected properties not present"});
 	}
 
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
-			badge_model.getBadgeManagementPage(req, res, next);
+			event_model.getEventManagementPage(req, res, next);
 		} else {
 			//console.log(req);
 			let path = req.baseUrl + req._parsedUrl.pathname;
 			let query = req._parsedUrl.query;
 			res.render('signin', { title: 'Sign In', protocol: cfg.protocol, domain: cfg.domain, path: path, query: JSON.stringify(req.query), pdir: __dirname});
-			// render sign in page
-			//res.status(401).json({ error: 'Unauthorized user!' });
-			//res.status(401).json({ error: req.originalUrl });
 		}
-
 	});
 };
-
-/** FUNCTION FOR BADGE IMAGE MANAGEMENT **/
 
 /**
- * Get the badge image creation/management page
+ * Create an event entry in the system
  */
-exports.getBadgeImageManagementPage = function(req, res, next) {
+exports.createEvent = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
@@ -137,32 +123,14 @@ exports.getBadgeImageManagementPage = function(req, res, next) {
 
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
-			badge_model.getBadgeImageManagementPage(req, res, next);
-		} else {
-			//console.log(req);
-			let path = req.baseUrl + req._parsedUrl.pathname;
-			let query = req._parsedUrl.query;
-			res.render('signin', { title: 'Sign In', protocol: cfg.protocol, domain: cfg.domain, path: path, query: JSON.stringify(req.query), pdir: __dirname});
-		}
-	});
-};
-
-exports.createBadgeImage = function(req, res, next) {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(422).json({ error: errors.mapped() });
-	}
-
-	user_model.verify(req, res, function(passed, error) {
-		if (passed) {
-			badge_model.createBadgeImage(req, res, next);
+			event_model.createEvent(req, res, next);
 		} else {
 			res.status(401).json({ error: error });
 		}
 	});
 }
 
-exports.updateBadgeImage = function(req, res, next) {
+exports.updateEvent = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
@@ -170,14 +138,14 @@ exports.updateBadgeImage = function(req, res, next) {
 
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
-			badge_model.updateBadgeImage(req, res, next);
+			event_model.updateEvent(req, res, next);
 		} else {
 			res.status(401).json({ error: error });
 		}
 	});
 }
 
-exports.publishBadgeImage = function(req, res, next) {
+exports.deleteEvent = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
@@ -185,14 +153,14 @@ exports.publishBadgeImage = function(req, res, next) {
 
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
-			badge_model.publishBadgeImage(req, res, next);
+			event_model.deleteEvent(req, res, next);
 		} else {
 			res.status(401).json({ error: error });
 		}
 	});
 }
 
-exports.deleteBadgeImage = function(req, res, next) {
+exports.getEventById = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
@@ -200,14 +168,14 @@ exports.deleteBadgeImage = function(req, res, next) {
 
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
-			badge_model.deleteBadgeImage(req, res, next);
+			event_model.getEventById(req, res);
 		} else {
 			res.status(401).json({ error: error });
 		}
 	});
 }
 
-exports.listBadgeImages = function(req, res, next) {
+exports.listEvents = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
@@ -215,17 +183,14 @@ exports.listBadgeImages = function(req, res, next) {
 
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
-			badge_model.listBadgeImages(req, res, next);
+			event_model.listEvents(req, res, next);
 		} else {
 			res.status(401).json({ error: error });
 		}
 	});
 }
 
-/***********************************************************/
-
-
-exports.listBadges = function(req, res, next) {
+exports.addOrganizer = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
@@ -233,14 +198,14 @@ exports.listBadges = function(req, res, next) {
 
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
-			badge_model.listBadges(req, res, next);
+			event_model.addOrganizer(req, res, next);
 		} else {
 			res.status(401).json({ error: error });
 		}
 	});
 }
 
-exports.listAllBadges = function(req, res, next) {
+exports.removeOrganizer = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
@@ -248,14 +213,14 @@ exports.listAllBadges = function(req, res, next) {
 
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
-			badge_model.listAllBadges(req, res, next);
+			event_model.removeOrganizer(req, res, next);
 		} else {
 			res.status(401).json({ error: error });
 		}
 	});
 }
 
-exports.getViewIssuerBadgesPage = function(req, res, next) {
+exports.listOrganizers = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
@@ -263,14 +228,14 @@ exports.getViewIssuerBadgesPage = function(req, res, next) {
 
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
-			badge_model.getViewIssuerBadgesPage(req, res, next);
+			event_model.listOrganizers(req, res, next);
 		} else {
 			res.status(401).json({ error: error });
 		}
 	});
 }
 
-exports.createBadge = function(req, res, next) {
+exports.addSponsor = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
@@ -278,14 +243,14 @@ exports.createBadge = function(req, res, next) {
 
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
-			badge_model.createBadge(req, res, next);
+			event_model.addSponsor(req, res, next);
 		} else {
 			res.status(401).json({ error: error });
 		}
 	});
 }
 
-exports.updateBadge = function(req, res, next) {
+exports.removeSponsor = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
@@ -293,14 +258,14 @@ exports.updateBadge = function(req, res, next) {
 
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
-			badge_model.updateBadge(req, res, next);
+			event_model.removeSponsor(req, res, next);
 		} else {
 			res.status(401).json({ error: error });
 		}
 	});
 }
 
-exports.deleteBadge = function(req, res, next) {
+exports.listSponsors = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
@@ -308,14 +273,16 @@ exports.deleteBadge = function(req, res, next) {
 
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
-			badge_model.deleteBadge(req, res, next);
+			event_model.listSponsors(req, res, next);
 		} else {
 			res.status(401).json({ error: error });
 		}
 	});
 }
 
-exports.listAlignments = function(req, res, next) {
+/** EVENT RECIPIENT PERMISSIONS **/
+
+exports.getRecipientPermssionsPage = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
@@ -323,14 +290,14 @@ exports.listAlignments = function(req, res, next) {
 
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
-			badge_model.listAlignments(req, res, next);
+			event_model.getRecipientPermssionsPage(req, res, next);
 		} else {
 			res.status(401).json({ error: error });
 		}
 	});
 }
 
-exports.listCriteriaEvents = function(req, res, next) {
+exports.listIssuerEvents = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
@@ -338,27 +305,89 @@ exports.listCriteriaEvents = function(req, res, next) {
 
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
-			badge_model.listCriteriaEvents(req, res, next);
+			event_model.listIssuerEvents(req, res, next);
 		} else {
 			res.status(401).json({ error: error });
 		}
 	});
 }
 
-exports.validate = function(req, res, next) {
+/**
+ * Create multiple badge recipient event permission records from a cvs file upload.
+ */
+
+
+exports.createBulkRecipientPermissions = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
 	}
 
-	badge_model.validate(req, res, next);
-};
+	user_model.verify(req, res, function(passed, error) {
+		if (passed) {
+			event_model.createBulkRecipientPermissions(req, res, next);
+		} else {
+			res.status(401).json({ error: error });
+		}
+	});
+}
 
-exports.validatesigned = function(req, res, next) {
+exports.addRecipientPermission = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
 	}
 
-	badge_model.validatesigned(req, res, next);
-};
+	user_model.verify(req, res, function(passed, error) {
+		if (passed) {
+			event_model.addRecipientPermission(req, res, next);
+		} else {
+			res.status(401).json({ error: error });
+		}
+	});
+}
+
+exports.updateRecipientPermission = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+
+	user_model.verify(req, res, function(passed, error) {
+		if (passed) {
+			event_model.updateRecipientPermission(req, res, next);
+		} else {
+			res.status(401).json({ error: error });
+		}
+	});
+}
+
+exports.deleteRecipientPermission = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+
+	user_model.verify(req, res, function(passed, error) {
+		if (passed) {
+			event_model.deleteRecipientPermission(req, res, next);
+		} else {
+			res.status(401).json({ error: error });
+		}
+	});
+}
+
+exports.listRecipientPermissions = function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ error: errors.mapped() });
+	}
+
+	user_model.verify(req, res, function(passed, error) {
+		if (passed) {
+			event_model.listRecipientPermissions(req, res, next);
+		} else {
+			res.status(401).json({ error: error });
+		}
+	});
+}

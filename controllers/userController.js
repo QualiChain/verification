@@ -1,7 +1,7 @@
 /*********************************************************************************
 * The MIT License (MIT)                                                          *
 *                                                                                *
-* Copyright (c) 2019 KMi, The Open University UK                                 *
+* Copyright (c) 2020 KMi, The Open University UK                                 *
 *                                                                                *
 * Permission is hereby granted, free of charge, to any person obtaining          *
 * a copy of this software and associated documentation files (the "Software"),   *
@@ -23,16 +23,12 @@
 *                                                                                *
 **********************************************************************************/
 
-/** Author: Michelle Bachler, KMi, The Open University **/
-/** Author: Manoharan Ramachandran, KMi, The Open University **/
-/** Author: Kevin Quick, KMi, The Open University **/
-
-var cfg = require('../config.js');
+const cfg = require('../config.js');
 
 const { check } = require('express-validator/check');
 const { matchedData } = require('express-validator/filter');
 
-var user_model = require('../models/users');
+const user_model = require('../models/users');
 //var async = require('async');
 
 const { validationResult } = require('express-validator/check');
@@ -81,11 +77,11 @@ exports.changePasswordPage = function(req, res, next) {
 		var data = matchedData(req);
 		if (passed) {
 			//var path = req._parsedUrl.pathname;
-			var path = data.from;
-			res.render('changepassword', { title: 'Change Password', protocol: cfg.protocol, domain: cfg.domain, path: path, pdir: __dirname});
+			let path = data.from;
+			res.render('changepassword', { title: 'Change Password', protocol: cfg.protocol, domain: cfg.domain, path: path, pdir: __dirname, mailto: cfg.mailto, mailtosubject: cfg.mailtosubject});
 		} else {
-			var path = req.baseUrl + req._parsedUrl.pathname;
-			var query = req._parsedUrl.query;
+			let path = req.baseUrl + req._parsedUrl.pathname;
+			let query = req._parsedUrl.query;
 			//console.log(req);
 			res.render('signin', { title: 'Sign In', protocol: cfg.protocol, domain: cfg.domain, path: path, query: JSON.stringify(req.query), pdir: __dirname});
 		}

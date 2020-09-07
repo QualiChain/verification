@@ -25,52 +25,37 @@
 
 const cfg = require('../config.js');
 
-const issuer_model = require('../models/issuers');
+const endorsement_model = require('../models/endorsements');
 const user_model = require('../models/users');
 
 const { validationResult } = require('express-validator/check');
 
 
-/**
- * Return the JSON of an issuer
- */
-exports.getIssuerJSONByUniqueId = function(req, res, next) {
+exports.getHostedEndorsementJSONByUniqueId = function(req, res, next) {
+
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
 	}
-
-	// public page so no login checks
-	issuer_model.getIssuerJSONByUniqueId(req, res, next);
+	endorsement_model.getHostedEndorsementJSONByUniqueId(req, res, next);
 }
 
 /**
- * Return the JSON of an issuer
- */
-exports.getHostedIssuerJSONByUniqueId = function(req, res, next) {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(422).json({ error: errors.mapped() });
-	}
-
-	// public page so no login checks
-	issuer_model.getHostedIssuerJSONByUniqueId(req, res, next);
-}
-
-/**
- * Get the Issuer's home page.
+ * Get the badge Endorsers home page
  *
- * @return the Issuer's home page.
+ * @return the badge issuer page.
  */
-exports.getIssuerPage = function(req, res, next) {
+/*
+exports.getEndorsementPage = function(req, res, next) {
+
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
-		return res.status(422).json({ error: errors.mapped() });
+		res.render('error', {message: "All expected properties not present"});
 	}
 
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
-			issuer_model.getIssuerPage(req, res);
+			endorsement_model.getEndorsementPage(req, res);
 		} else {
 			//console.log(req);
 			let path = req.baseUrl + req._parsedUrl.pathname;
@@ -83,22 +68,24 @@ exports.getIssuerPage = function(req, res, next) {
 
 	});
 };
-
+*/
 
 /**
- * Get the page to Manage Issuer's.
+ * Get the badge Endorsements home page
  *
- * @return the page to Manage Issuer's.
+ * @return the badge issuer page.
  */
-exports.getIssuerManagementPage = function(req, res, next) {
+/*
+exports.getEndorsementManagementPage = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
+		res.render('error', {message: "All expected properties not present"});
 	}
 
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
-			issuer_model.getIssuerManagementPage(req, res);
+			endorsement_model.getEndorsementManagementPage(req, res, next);
 		} else {
 			//console.log(req);
 			let path = req.baseUrl + req._parsedUrl.pathname;
@@ -108,12 +95,10 @@ exports.getIssuerManagementPage = function(req, res, next) {
 			//res.status(401).json({ error: 'Unauthorized user!' });
 			//res.status(401).json({ error: req.originalUrl });
 		}
-
 	});
 };
 
-
-exports.getRDFByAddress = function(req, res, next) {
+exports.createEndorsement = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
@@ -121,14 +106,14 @@ exports.getRDFByAddress = function(req, res, next) {
 
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
-			issuer_model.getRDFByAddress(req, res);
+			endorsement_model.createEndorsement(req, res, next);
 		} else {
 			res.status(401).json({ error: error });
 		}
 	});
-};
+}
 
-exports.createIssuer = function(req, res, next) {
+exports.updateEndorsement = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
@@ -136,14 +121,14 @@ exports.createIssuer = function(req, res, next) {
 
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
-			issuer_model.createIssuer(req, res);
+			endorsement_model.updateEndorsement(req, res, next);
 		} else {
 			res.status(401).json({ error: error });
 		}
 	});
 }
 
-exports.createIssuerUserAccount = function(req, res, next) {
+exports.deleteEndorser = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
@@ -151,23 +136,14 @@ exports.createIssuerUserAccount = function(req, res, next) {
 
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
-			issuer_model.createIssuerUserAccount(req, res);
+			endorsement_model.deleteEndorser(req, res, next);
 		} else {
 			res.status(401).json({ error: error });
 		}
 	});
 }
 
-exports.completeRegistration = function(req, res, next) {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(422).json({ error: errors.mapped() });
-	}
-
-	issuer_model.completeRegistration(req, res);
-}
-
-exports.updateIssuer = function(req, res, next) {
+exports.listEndorsements = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
@@ -175,14 +151,14 @@ exports.updateIssuer = function(req, res, next) {
 
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
-			issuer_model.updateIssuer(req, res);
+			endorsement_model.listEndorsements(req, res);
 		} else {
 			res.status(401).json({ error: error });
 		}
 	});
 }
 
-exports.deleteIssuer = function(req, res, next) {
+exports.getEndorsementById = function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ error: errors.mapped() });
@@ -190,40 +166,12 @@ exports.deleteIssuer = function(req, res, next) {
 
 	user_model.verify(req, res, function(passed, error) {
 		if (passed) {
-			issuer_model.deleteIssuer(req, res);
+			endorsement_model.getEndorsementById(req, res);
 		} else {
 			res.status(401).json({ error: error });
 		}
 	});
 }
 
-exports.listIssuers = function(req, res, next) {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(422).json({ error: errors.mapped() });
-	}
-
-	user_model.verify(req, res, function(passed, error) {
-		if (passed) {
-			issuer_model.listIssuers(req, res);
-		} else {
-			res.status(401).json({ error: error });
-		}
-	});
-}
-
-exports.getIssuerById = function(req, res, next) {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(422).json({ error: errors.mapped() });
-	}
-
-	user_model.verify(req, res, function(passed, error) {
-		if (passed) {
-			issuer_model.getIssuerById(req, res);
-		} else {
-			res.status(401).json({ error: error });
-		}
-	});
-}
+*/
 
